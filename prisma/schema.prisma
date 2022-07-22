@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://bambrose24:Password11@funtime-db-identifier.czebvakozjrq.us-west-2.rds.amazonaws.com:3306/funtime_db"
+}
+
+model Games {
+  gid            Int      @id @default(autoincrement())
+  season         Int
+  week           Int
+  ts             DateTime @db.DateTime(0)
+  home           Int
+  away           Int
+  homescore      Int?     @default(0)
+  awayscore      Int?     @default(0)
+  done           Boolean? @default(false)
+  winner         Int?     @default(0)
+  international  Boolean? @default(false)
+  seconds        BigInt?
+  current_record String?  @default("0-0,0-0") @db.VarChar(50)
+  is_tiebreaker  Boolean? @default(dbgenerated("b'0'")) @db.Bit(1)
+}
+
+model LeagueMembers {
+  membership_id Int      @id @default(autoincrement())
+  league_id     Int
+  user_id       Int
+  role          String   @db.Text
+  ts            DateTime @default(now()) @db.DateTime(0)
+  People        People   @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "LeagueMembers_ibfk_1")
+  Leagues       Leagues  @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "LeagueMembers_ibfk_2")
+
+  @@index([league_id], map: "league_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Leagues {
+  league_id          Int             @id @default(autoincrement())
+  created_by_user_id Int
+  name               String          @db.Text
+  scoring_type       String?         @db.Text
+  late_policy        String?         @db.Text
+  reminder_policy    String?         @db.Text
+  created_time       DateTime        @default(now()) @db.DateTime(0)
+  season             Int?
+  People             People          @relation(fields: [created_by_user_id], references: [uid], onUpdate: Restrict, map: "Leagues_ibfk_1")
+  LeagueMembers      LeagueMembers[]
+
+  @@index([created_by_user_id], map: "created_by_user_id")
+}
+
+model People {
+  uid              Int             @id @default(autoincrement())
+  username         String          @db.VarChar(255)
+  fname            String          @db.VarChar(255)
+  lname            String          @db.VarChar(255)
+  email            String          @db.VarChar(255)
+  season           Int
+  email2           String?         @db.VarChar(255)
+  google_photo_url String?         @db.Text
+  google_email     String?         @db.Text
+  google_userid    String?         @db.Text
+  LeagueMembers    LeagueMembers[]
+  Leagues          Leagues[]
+}
+
+model Picks {
+  pickid  Int      @id @default(autoincrement())
+  uid     Int
+  season  Int
+  week    Int
+  gid     Int
+  winner  Int?     @default(0)
+  loser   Int?     @default(0)
+  score   Int?     @default(0)
+  ts      DateTime @default(now()) @db.DateTime(0)
+  correct Int?     @default(0)
+  done    Int?     @default(0)
+}
+
+model Superbowl {
+  pickid Int       @id @default(autoincrement())
+  uid    Int
+  winner Int
+  loser  Int
+  score  Int
+  ts     DateTime? @default(now()) @db.DateTime(0)
+  season Int?
+}
+
+model SuperbowlSquares {
+  square_id       Int      @id @default(autoincrement())
+  uid             Int
+  league_id       Int
+  afc_score_index Int
+  nfc_score_index Int
+  correct         Boolean  @default(dbgenerated("b'0'")) @db.Bit(1)
+  ts              DateTime @default(now()) @db.DateTime(0)
+}
+
+model Teams {
+  teamid     Int     @id @default(autoincrement())
+  abbrev     String? @db.VarChar(50)
+  loc        String  @db.VarChar(255)
+  name       String  @db.VarChar(255)
+  conference String? @db.VarChar(50)
+}
