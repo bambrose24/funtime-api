@@ -13,20 +13,26 @@ datasource db {
 }
 
 model Games {
-  gid            Int      @id @default(autoincrement())
-  season         Int
-  week           Int
-  ts             DateTime @db.DateTime(0)
-  home           Int
-  away           Int
-  homescore      Int?     @default(0)
-  awayscore      Int?     @default(0)
-  done           Boolean? @default(false)
-  winner         Int?     @default(0)
-  international  Boolean? @default(false)
-  seconds        BigInt?
-  current_record String?  @default("0-0,0-0") @db.VarChar(50)
-  is_tiebreaker  Boolean? @default(dbgenerated("b'0'")) @db.Bit(1)
+  gid                     Int      @id @default(autoincrement())
+  season                  Int
+  week                    Int
+  ts                      DateTime @db.DateTime(0)
+  home                    Int
+  away                    Int
+  homescore               Int?     @default(0)
+  awayscore               Int?     @default(0)
+  done                    Boolean? @default(false)
+  winner                  Int?     @default(0)
+  international           Boolean? @default(false)
+  seconds                 BigInt?
+  current_record          String?  @default("0-0,0-0") @db.VarChar(50)
+  is_tiebreaker           Boolean? @default(dbgenerated("b'0'")) @db.Bit(1)
+  Teams_Games_homeToTeams Teams    @relation("Games_homeToTeams", fields: [home], references: [teamid], onUpdate: Restrict, map: "Games_ibfk_1")
+  Teams_Games_awayToTeams Teams    @relation("Games_awayToTeams", fields: [away], references: [teamid], onUpdate: Restrict, map: "Games_ibfk_2")
+  Picks                   Picks[]
+
+  @@index([away], map: "away")
+  @@index([home], map: "home")
 }
 
 model LeagueMembers {
@@ -70,6 +76,9 @@ model People {
   google_userid    String?         @db.Text
   LeagueMembers    LeagueMembers[]
   Leagues          Leagues[]
+  Picks            Picks[]
+
+  @@index([email], map: "email_index")
 }
 
 model Picks {
@@ -84,6 +93,11 @@ model Picks {
   ts      DateTime @default(now()) @db.DateTime(0)
   correct Int?     @default(0)
   done    Int?     @default(0)
+  Games   Games    @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "Picks_ibfk_1")
+  People  People   @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "Picks_ibfk_2")
+
+  @@index([gid], map: "gid")
+  @@index([uid], map: "uid")
 }
 
 model Superbowl {
@@ -107,9 +121,11 @@ model SuperbowlSquares {
 }
 
 model Teams {
-  teamid     Int     @id @default(autoincrement())
-  abbrev     String? @db.VarChar(50)
-  loc        String  @db.VarChar(255)
-  name       String  @db.VarChar(255)
-  conference String? @db.VarChar(50)
+  teamid                  Int     @id @default(autoincrement())
+  abbrev                  String? @db.VarChar(50)
+  loc                     String  @db.VarChar(255)
+  name                    String  @db.VarChar(255)
+  conference              String? @db.VarChar(50)
+  Games_Games_homeToTeams Games[] @relation("Games_homeToTeams")
+  Games_Games_awayToTeams Games[] @relation("Games_awayToTeams")
 }

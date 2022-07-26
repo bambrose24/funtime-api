@@ -1,7 +1,0 @@
-type User {
-  userId: Int!
-  username: String!
-  firstname: String
-  lastname: String
-  picks: [Pick!]!
-}

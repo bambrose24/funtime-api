@@ -13,7 +13,8 @@ import logger from "jet-logger";
 import { CustomError } from "@shared/errors";
 import { ApolloServer } from "apollo-server-express";
 
-import { resolvers } from "@generated/type-graphql";
+import { resolvers as generatedResolvers } from "@generated/type-graphql";
+import resolvers from "./graphql/resolvers";
 import { buildSchema } from "type-graphql";
 import datastore from "./datastore";
 
@@ -62,11 +63,12 @@ app.use(express.static(staticDir));
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers,
+    resolvers: generatedResolvers,
   });
 
   const server = new ApolloServer({
     schema,
+    resolvers,
     context: () => ({ prisma: datastore }),
   });
   server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));

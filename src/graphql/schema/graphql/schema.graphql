@@ -1,8 +1,0 @@
-type Query {
-  helloWorld: String!
-  users(league: Int!): [User!]!
-}
-
-query Test {
-  helloWorld
-}
