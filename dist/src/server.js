@@ -16,9 +16,9 @@ const jet_logger_1 = __importDefault(require("jet-logger"));
 const errors_1 = require("@shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("@generated/type-graphql");
-const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const type_graphql_2 = require("type-graphql");
 const datastore_1 = __importDefault(require("./datastore"));
+const register_1 = __importDefault(require("./graphql/resolvers/register"));
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -52,11 +52,10 @@ const staticDir = path_1.default.join(__dirname, "public");
 app.use(express_1.default.static(staticDir));
 async function bootstrap() {
     const schema = await (0, type_graphql_2.buildSchema)({
-        resolvers: type_graphql_1.resolvers,
+        resolvers: [...type_graphql_1.resolvers, register_1.default],
     });
     const server = new apollo_server_express_1.ApolloServer({
         schema,
-        resolvers: resolvers_1.default,
         context: () => ({ prisma: datastore_1.default }),
     });
     server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));

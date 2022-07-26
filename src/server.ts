@@ -14,9 +14,9 @@ import { CustomError } from "@shared/errors";
 import { ApolloServer } from "apollo-server-express";
 
 import { resolvers as generatedResolvers } from "@generated/type-graphql";
-import resolvers from "./graphql/resolvers";
 import { buildSchema } from "type-graphql";
 import datastore from "./datastore";
+import RegisterResolver from "./graphql/resolvers/register";
 
 const app = express();
 
@@ -63,12 +63,11 @@ app.use(express.static(staticDir));
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers: generatedResolvers,
+    resolvers: [...generatedResolvers, RegisterResolver],
   });
 
   const server = new ApolloServer({
     schema,
-    resolvers,
     context: () => ({ prisma: datastore }),
   });
   server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
