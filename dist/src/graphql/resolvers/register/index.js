@@ -66,7 +66,7 @@ RegisterResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], RegisterResponse);
 let RegisterResolver = class RegisterResolver {
-    async register(firstName, lastName, email, username, previousUserId) {
+    async register(email, username, previousUserId) {
         let user = null;
         if (previousUserId) {
             user = await datastore_1.default.people.findUnique({
@@ -86,11 +86,11 @@ let RegisterResolver = class RegisterResolver {
             if (!user) {
                 user = await datastore_1.default.people.create({
                     data: {
-                        fname: firstName,
-                        lname: lastName,
                         username,
                         email,
                         season: 2022,
+                        fname: "",
+                        lname: "",
                     },
                 });
             }
@@ -113,13 +113,11 @@ let RegisterResolver = class RegisterResolver {
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => RegisterResponse),
-    __param(0, (0, type_graphql_1.Arg)("firstName")),
-    __param(1, (0, type_graphql_1.Arg)("lastName")),
-    __param(2, (0, type_graphql_1.Arg)("email")),
-    __param(3, (0, type_graphql_1.Arg)("username")),
-    __param(4, (0, type_graphql_1.Arg)("previousUserId", { nullable: true })),
+    __param(0, (0, type_graphql_1.Arg)("email")),
+    __param(1, (0, type_graphql_1.Arg)("username")),
+    __param(2, (0, type_graphql_1.Arg)("previousUserId", () => type_graphql_1.Int, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, Number]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RegisterResolver.prototype, "register", null);
 RegisterResolver = __decorate([

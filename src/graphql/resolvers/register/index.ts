@@ -1,6 +1,6 @@
 import datastore from "../../../../src/datastore";
-import { LeagueMembers, People } from "@prisma/client";
-import { Arg, Field, Mutation, ObjectType, Resolver } from "type-graphql";
+import { LeagueMembers, People, Prisma } from "@prisma/client";
+import { Arg, Field, Int, Mutation, ObjectType, Resolver } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
 export const SEASON = 2022;
 export const LEAGUE_ID = 7;
@@ -20,13 +20,26 @@ class RegisterResponse {
 class RegisterResolver {
   @Mutation(() => RegisterResponse)
   async register(
-    @Arg("firstName") firstName: string,
-    @Arg("lastName") lastName: string,
     @Arg("email") email: string,
     @Arg("username") username: string,
-    @Arg("previousUserId", { nullable: true }) previousUserId: number
+    @Arg("previousUserId", () => Int, { nullable: true })
+    previousUserId: number | null
   ): Promise<RegisterResponse> {
     let user: People | null = null;
+
+    // see if user already exists
+    user = await datastore.people.findFirst({
+      where: { email: email, season: { gte: 2021 } },
+    });
+    console.log("user from search", user);
+    if (user) {
+      const membership = await datastore.leagueMembers.findFirst({
+        where: { user_id: user.uid, league_id: LEAGUE_ID },
+      });
+      if (membership) {
+        return { success: true, user, membership };
+      }
+    }
     if (previousUserId) {
       user = await datastore.people.findUnique({
         where: { uid: previousUserId },
@@ -46,11 +59,11 @@ class RegisterResolver {
       if (!user) {
         user = await datastore.people.create({
           data: {
-            fname: firstName,
-            lname: lastName,
             username,
             email,
             season: 2022,
+            fname: "",
+            lname: "",
           },
         });
       }
