@@ -13,7 +13,7 @@ const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const express_1 = __importDefault(require("express"));
 require("express-async-errors");
 const jet_logger_1 = __importDefault(require("jet-logger"));
-const errors_1 = require("@shared/errors");
+const errors_1 = require("./shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("@generated/type-graphql");
 const type_graphql_2 = require("type-graphql");

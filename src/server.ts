@@ -10,7 +10,7 @@ import express, { NextFunction, Request, Response } from "express";
 import "express-async-errors";
 import logger from "jet-logger";
 
-import { CustomError } from "@shared/errors";
+import { CustomError } from "./shared/errors";
 import { ApolloServer } from "apollo-server-express";
 
 import { resolvers as generatedResolvers } from "@generated/type-graphql";

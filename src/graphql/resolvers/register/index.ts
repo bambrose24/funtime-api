@@ -32,7 +32,9 @@ class RegisterResolver {
         where: { uid: previousUserId },
       });
       if (!user) {
-        throw new Error(`Could not find a user with ID ${previousUserId}`);
+        throw new Error(
+          `Could not find a user with previous ID ${previousUserId}`
+        );
       }
     } else {
       user = await datastore.people.findFirst({
