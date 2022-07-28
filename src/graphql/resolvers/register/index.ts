@@ -2,7 +2,7 @@ import datastore from "../../../../src/datastore";
 import { LeagueMembers, People } from "@prisma/client";
 import { Arg, Field, Int, Mutation, ObjectType, Resolver } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
-import { sendRegistrationMail } from "src/email";
+import { sendRegistrationMail } from "../../../../src/email";
 export const SEASON = 2022;
 export const LEAGUE_ID = 7;
 export const DEFAULT_ROLE = "player";
