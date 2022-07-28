@@ -42,6 +42,7 @@ exports.DEFAULT_ROLE = exports.LEAGUE_ID = exports.SEASON = void 0;
 const datastore_1 = __importDefault(require("../../../../src/datastore"));
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
+const email_1 = require("src/email");
 exports.SEASON = 2022;
 exports.LEAGUE_ID = 7;
 exports.DEFAULT_ROLE = "player";
@@ -67,47 +68,8 @@ RegisterResponse = __decorate([
 ], RegisterResponse);
 let RegisterResolver = class RegisterResolver {
     async register(email, username, previousUserId) {
-        let user = null;
-        if (previousUserId) {
-            user = await datastore_1.default.people.findUnique({
-                where: { uid: previousUserId },
-            });
-            if (!user) {
-                throw new Error(`Could not find a user with previous ID ${previousUserId}`);
-            }
-        }
-        else {
-            user = await datastore_1.default.people.findFirst({
-                where: {
-                    email,
-                    season: 2021,
-                },
-            });
-            if (!user) {
-                user = await datastore_1.default.people.create({
-                    data: {
-                        username,
-                        email,
-                        season: 2022,
-                        fname: "",
-                        lname: "",
-                    },
-                });
-            }
-            if (!user) {
-                throw new Error(`Error creating a new user`);
-            }
-        }
-        const membership = await datastore_1.default.leagueMembers.create({
-            data: {
-                league_id: exports.LEAGUE_ID,
-                user_id: user.uid,
-                role: exports.DEFAULT_ROLE,
-            },
-        });
-        if (!membership) {
-            throw new Error(`Error making league membership`);
-        }
+        const { user, membership } = await upsertUserAndMembership(email, username, previousUserId);
+        await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON);
         return { success: true, user, membership };
     }
 };
@@ -123,4 +85,58 @@ __decorate([
 RegisterResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], RegisterResolver);
+async function upsertUserAndMembership(email, username, previousUserId) {
+    let user = null;
+    let membership = null;
+    // see if user already exists for this season
+    user = await datastore_1.default.people.findFirst({
+        where: { email: email, season: { gte: 2021 } },
+    });
+    if (user) {
+        membership = await datastore_1.default.leagueMembers.findFirst({
+            where: { user_id: user.uid, league_id: exports.LEAGUE_ID },
+        });
+        if (membership) {
+            return { user, membership };
+        }
+    }
+    if (previousUserId) {
+        user = await datastore_1.default.people.findUnique({
+            where: { uid: previousUserId },
+        });
+        if (!user) {
+            throw new Error(`Could not find a user with previous ID ${previousUserId}`);
+        }
+    }
+    else {
+        user = await datastore_1.default.people.findFirst({
+            where: {
+                email,
+                season: 2021,
+            },
+        });
+        if (!user) {
+            user = await datastore_1.default.people.create({
+                data: {
+                    username,
+                    email,
+                    season: 2022,
+                    fname: "",
+                    lname: "",
+                },
+            });
+        }
+        if (!user) {
+            throw new Error(`Error creating a new user`);
+        }
+    }
+    membership = await datastore_1.default.leagueMembers.create({
+        data: {
+            league_id: exports.LEAGUE_ID,
+            user_id: user.uid,
+            role: exports.DEFAULT_ROLE,
+        },
+    });
+    return { user, membership };
+}
 exports.default = RegisterResolver;
