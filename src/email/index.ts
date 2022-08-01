@@ -26,7 +26,7 @@ export async function sendRegistrationMail(
       to: email,
       from: "bob.ambrose.funtime@gmail.com",
       subject: "Welcome to Funtime 2022!",
-      cc: email !== "bambrose24@gmail.com" ? email : undefined,
+      cc: email !== "bambrose24@gmail.com" ? "bambrose24@gmail.com" : undefined,
       html: getRegistrationText(username, season),
     });
   } catch (e) {
