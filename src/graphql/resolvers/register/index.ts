@@ -26,14 +26,17 @@ class RegisterResolver {
     @Arg("previousUserId", () => Int, { nullable: true })
     previousUserId: number | null
   ): Promise<RegisterResponse> {
-    console.log("hi this is a test");
     const { user, membership } = await upsertUserAndMembership(
       email,
       username,
       previousUserId
     );
 
-    await sendRegistrationMail(username, email, SEASON);
+    try {
+      await sendRegistrationMail(username, email, SEASON);
+    } catch (e) {
+      console.log("email error", e);
+    }
 
     return { success: true, user, membership };
   }

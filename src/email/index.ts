@@ -1,30 +1,37 @@
 import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
-let transporter = nodemailer.createTransport(
-  {
-    service: "gmail",
-    auth: {
-      user: process.env.SYSTEM_EMAIL,
-      pass: process.env.SYSTEM_EMAIL_PASSWORD,
-    },
-    logger: true,
-  },
-  {
-    from: '"Funtime System" <bob.ambrose.funtime@gmail.com>',
-    cc: "bambrose24@gmail.com",
-  }
-);
+import { MailService } from "@sendgrid/mail";
+
+console.log("refresh token", process.env.SYSTEM_EMAIL_REFRESH_TOKEN);
+// const OAuth2Client = new google.auth.OAuth2(
+//   process.env.SYSTEM_EMAIL_CLIENT_ID,
+//   process.env.SYSTEM_EMAIL_CLIENT_SECRET,
+//   "https://developers.google.com/oauthplayground"
+// );
+// OAuth2Client.setCredentials({
+//   refresh_token: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
+// });
+
+const sgMail = new MailService();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
 export async function sendRegistrationMail(
   username: string,
   email: string,
   season: number
 ): Promise<void> {
-  const info = await transporter.sendMail({
-    to: email,
-    subject: "Welcome to Funtime 2022!",
-    html: getRegistrationText(username, season),
-  });
+  try {
+    await sgMail.send({
+      to: email,
+      from: "bob.ambrose.funtime@gmail.com",
+      subject: "Welcome to Funtime 2022!",
+      cc: email !== "bambrose24@gmail.com" ? email : undefined,
+      html: getRegistrationText(username, season),
+    });
+  } catch (e) {
+    console.log("got a sendgrid error", (e as any).response.body.errors);
+  }
 }
 
 function getRegistrationText(username: string, season: number): string {

@@ -5,18 +5,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendRegistrationMail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-let transporter = nodemailer_1.default.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.SYSTEM_EMAIL,
-        pass: process.env.SYSTEM_EMAIL_PASSWORD,
-    },
-    logger: true,
-}, {
-    from: '"Funtime System" <bob.ambrose.funtime@gmail.com>',
-    cc: "bambrose24@gmail.com",
-});
+const googleapis_1 = require("googleapis");
+const OAuth2Client = new googleapis_1.google.auth.OAuth2(process.env.SYSTEM_EMAIL_CLIENT_ID, process.env.SYSTEM_EMAIL_CLIENT_SECRET, "https://developers.google.com/oauthplayground");
 async function sendRegistrationMail(username, email, season) {
+    const accessToken = await OAuth2Client.getAccessToken();
+    const transporter = nodemailer_1.default.createTransport({
+        // @ts-expect-error Should work
+        service: "gmail",
+        auth: {
+            user: process.env.SYSTEM_EMAIL,
+            type: "OAuth2",
+            clientId: process.env.SYSTEM_EMAIL_CLIENT_ID,
+            clientSecret: process.env.SYSTEM_EMAIL_CLIENT_SECRET,
+            refreshToken: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
+            accessToken: accessToken,
+        },
+        logger: true,
+    }, {
+        from: '"Funtime System" <bob.ambrose.funtime@gmail.com>',
+        cc: "bambrose24@gmail.com",
+    });
     const info = await transporter.sendMail({
         to: email,
         subject: "Welcome to Funtime 2022!",
