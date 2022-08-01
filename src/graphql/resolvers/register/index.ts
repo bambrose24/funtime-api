@@ -26,6 +26,7 @@ class RegisterResolver {
     @Arg("previousUserId", () => Int, { nullable: true })
     previousUserId: number | null
   ): Promise<RegisterResponse> {
+    console.log("hi this is a test");
     const { user, membership } = await upsertUserAndMembership(
       email,
       username,
