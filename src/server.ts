@@ -53,14 +53,6 @@ app.use(
  *                              Serve front-end content
  ***********************************************************************************/
 
-// Set views directory (html)
-const viewsDir = path.join(__dirname, "views");
-app.set("views", viewsDir);
-
-// Set static directory (js and css).
-const staticDir = path.join(__dirname, "public");
-app.use(express.static(staticDir));
-
 async function bootstrap() {
   const schema = await buildSchema({
     resolvers: [...generatedResolvers, RegisterResolver],

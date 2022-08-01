@@ -9,7 +9,7 @@ const configMap: Record<Env, Config> = {
     port: 3001,
   },
   production: {
-    port: 3000,
+    port: 8080,
   },
 };
 

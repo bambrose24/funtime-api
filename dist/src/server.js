@@ -7,7 +7,6 @@ if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
 const morgan_1 = __importDefault(require("morgan"));
-const path_1 = __importDefault(require("path"));
 const helmet_1 = __importDefault(require("helmet"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const express_1 = __importDefault(require("express"));
@@ -44,12 +43,6 @@ app.use((err, _, res, __) => {
 /************************************************************************************
  *                              Serve front-end content
  ***********************************************************************************/
-// Set views directory (html)
-const viewsDir = path_1.default.join(__dirname, "views");
-app.set("views", viewsDir);
-// Set static directory (js and css).
-const staticDir = path_1.default.join(__dirname, "public");
-app.use(express_1.default.static(staticDir));
 async function bootstrap() {
     const schema = await (0, type_graphql_2.buildSchema)({
         resolvers: [...type_graphql_1.resolvers, register_1.default],

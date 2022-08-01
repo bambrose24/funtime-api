@@ -6,7 +6,7 @@ const configMap = {
         port: 3001,
     },
     production: {
-        port: 3000,
+        port: 8080,
     },
 };
 let environment = "production";
