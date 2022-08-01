@@ -30,7 +30,7 @@ export async function sendRegistrationMail(
       html: getRegistrationText(username, season),
     });
   } catch (e) {
-    console.log("got a sendgrid error", (e as any).response.body.errors);
+    console.log("got a sendgrid error", JSON.stringify(e));
   }
 }
 
