@@ -3,7 +3,6 @@ import { google } from "googleapis";
 
 import { MailService } from "@sendgrid/mail";
 
-console.log("refresh token", process.env.SYSTEM_EMAIL_REFRESH_TOKEN);
 // const OAuth2Client = new google.auth.OAuth2(
 //   process.env.SYSTEM_EMAIL_CLIENT_ID,
 //   process.env.SYSTEM_EMAIL_CLIENT_SECRET,
