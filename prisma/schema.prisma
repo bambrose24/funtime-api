@@ -82,19 +82,20 @@ model People {
 }
 
 model Picks {
-  pickid  Int      @id @default(autoincrement())
-  uid     Int
-  season  Int
-  week    Int
-  gid     Int
-  winner  Int?     @default(0)
-  loser   Int?     @default(0)
-  score   Int?     @default(0)
-  ts      DateTime @default(now()) @db.DateTime(0)
-  correct Int?     @default(0)
-  done    Int?     @default(0)
-  Games   Games    @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "Picks_ibfk_1")
-  People  People   @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "Picks_ibfk_2")
+  pickid    Int      @id @default(autoincrement())
+  uid       Int
+  season    Int
+  week      Int
+  gid       Int
+  winner    Int?     @default(0)
+  loser     Int?     @default(0)
+  score     Int?     @default(0)
+  ts        DateTime @default(now()) @db.DateTime(0)
+  correct   Int?     @default(0)
+  done      Int?     @default(0)
+  is_random Boolean?
+  Games     Games    @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "Picks_ibfk_1")
+  People    People   @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "Picks_ibfk_2")
 
   @@index([gid], map: "gid")
   @@index([uid], map: "uid")

@@ -8,7 +8,6 @@ import { getGamesBySeason } from "../../src/mysportsfeeds";
 
 async function run() {
   const season = 2022;
-  console.log("hi");
   const games = await getGamesBySeason(season);
   const teams = await datastore.teams.findMany({
     where: { teamid: { gte: 0 } },
@@ -21,7 +20,6 @@ async function run() {
   const dbGames = games.map((g: any) =>
     convertToDBGameForCreation(season, g, teamsMap)
   );
-
   // const res = await datastore.games.createMany({ data: dbGames });
 }
 
