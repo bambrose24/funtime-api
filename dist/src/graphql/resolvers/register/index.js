@@ -68,9 +68,13 @@ RegisterResponse = __decorate([
 ], RegisterResponse);
 let RegisterResolver = class RegisterResolver {
     async register(email, username, previousUserId) {
-        console.log("hi this is a test");
         const { user, membership } = await upsertUserAndMembership(email, username, previousUserId);
-        await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON);
+        try {
+            await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON);
+        }
+        catch (e) {
+            console.log("email error", e);
+        }
         return { success: true, user, membership };
     }
 };

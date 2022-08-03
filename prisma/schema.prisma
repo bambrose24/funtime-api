@@ -27,6 +27,8 @@ model Games {
   seconds                 BigInt?
   current_record          String?  @default("0-0,0-0") @db.VarChar(50)
   is_tiebreaker           Boolean? @default(dbgenerated("b'0'")) @db.Bit(1)
+  homerecord              String?  @db.VarChar(10)
+  awayrecord              String?  @db.VarChar(10)
   Teams_Games_homeToTeams Teams    @relation("Games_homeToTeams", fields: [home], references: [teamid], onUpdate: Restrict, map: "Games_ibfk_1")
   Teams_Games_awayToTeams Teams    @relation("Games_awayToTeams", fields: [away], references: [teamid], onUpdate: Restrict, map: "Games_ibfk_2")
   Picks                   Picks[]

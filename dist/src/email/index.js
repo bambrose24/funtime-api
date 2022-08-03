@@ -1,35 +1,30 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendRegistrationMail = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const googleapis_1 = require("googleapis");
-const OAuth2Client = new googleapis_1.google.auth.OAuth2(process.env.SYSTEM_EMAIL_CLIENT_ID, process.env.SYSTEM_EMAIL_CLIENT_SECRET, "https://developers.google.com/oauthplayground");
+const mail_1 = require("@sendgrid/mail");
+// const OAuth2Client = new google.auth.OAuth2(
+//   process.env.SYSTEM_EMAIL_CLIENT_ID,
+//   process.env.SYSTEM_EMAIL_CLIENT_SECRET,
+//   "https://developers.google.com/oauthplayground"
+// );
+// OAuth2Client.setCredentials({
+//   refresh_token: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
+// });
+const sgMail = new mail_1.MailService();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 async function sendRegistrationMail(username, email, season) {
-    const accessToken = await OAuth2Client.getAccessToken();
-    const transporter = nodemailer_1.default.createTransport({
-        // @ts-expect-error Should work
-        service: "gmail",
-        auth: {
-            user: process.env.SYSTEM_EMAIL,
-            type: "OAuth2",
-            clientId: process.env.SYSTEM_EMAIL_CLIENT_ID,
-            clientSecret: process.env.SYSTEM_EMAIL_CLIENT_SECRET,
-            refreshToken: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
-            accessToken: accessToken,
-        },
-        logger: true,
-    }, {
-        from: '"Funtime System" <bob.ambrose.funtime@gmail.com>',
-        cc: "bambrose24@gmail.com",
-    });
-    const info = await transporter.sendMail({
-        to: email,
-        subject: "Welcome to Funtime 2022!",
-        html: getRegistrationText(username, season),
-    });
+    try {
+        await sgMail.send({
+            to: email,
+            from: "bob.ambrose.funtime@gmail.com",
+            subject: "Welcome to Funtime 2022!",
+            cc: email !== "bambrose24@gmail.com" ? "bambrose24@gmail.com" : undefined,
+            html: getRegistrationText(username, season),
+        });
+    }
+    catch (e) {
+        console.log("got a sendgrid error", JSON.stringify(e));
+    }
 }
 exports.sendRegistrationMail = sendRegistrationMail;
 function getRegistrationText(username, season) {
