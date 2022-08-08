@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 import { Games } from "@prisma/client";
-import datastore from "../../src/datastore";
+import datastore from "@shared/datastore";
 
 // npx ts-node src/scripts/update-tiebreakers.ts
 async function run() {

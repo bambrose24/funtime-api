@@ -39,10 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEFAULT_ROLE = exports.LEAGUE_ID = exports.SEASON = void 0;
-const datastore_1 = __importDefault(require("../../../../src/datastore"));
+const datastore_1 = __importDefault(require("@shared/datastore"));
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const email_1 = require("../../../../src/email");
+const email_1 = require("@shared/email");
 exports.SEASON = 2022;
 exports.LEAGUE_ID = 7;
 exports.DEFAULT_ROLE = "player";

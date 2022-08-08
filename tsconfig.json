@@ -87,9 +87,6 @@
       "@util/*": [
         "src/util/*"
       ],
-      "@src/*": [
-        "src/*"
-      ],
     },
     "useUnknownInCatchVariables": false
   },

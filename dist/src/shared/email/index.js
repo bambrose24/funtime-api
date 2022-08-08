@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendPickSuccessEmail = exports.sendRegistrationMail = void 0;
 const mail_1 = require("@sendgrid/mail");
-const datastore_1 = __importDefault(require("src/datastore"));
+const datastore_1 = __importDefault(require("@shared/datastore"));
 // const OAuth2Client = new google.auth.OAuth2(
 //   process.env.SYSTEM_EMAIL_CLIENT_ID,
 //   process.env.SYSTEM_EMAIL_CLIENT_SECRET,

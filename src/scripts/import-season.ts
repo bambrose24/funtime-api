@@ -5,8 +5,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 import { Games, Teams } from "@prisma/client";
 import { AnyKindOfDictionary } from "lodash";
-import datastore from "@src/datastore";
-import { getGamesBySeason } from "@src/mysportsfeeds";
+import datastore from "@shared/datastore";
+import { getGamesBySeason } from "@shared/mysportsfeeds";
 
 async function run() {
   const season = 2022;

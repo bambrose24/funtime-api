@@ -1,4 +1,4 @@
-import datastore from "@src/datastore";
+import datastore from "@shared/datastore";
 import { People } from "@prisma/client";
 import {
   Arg,
@@ -10,7 +10,7 @@ import {
   Resolver,
 } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
-import { sendPickSuccessEmail } from "@src/email";
+import { sendPickSuccessEmail } from "@shared/email";
 export const LEAGUE_ID = 7;
 export const DEFAULT_ROLE = "player";
 

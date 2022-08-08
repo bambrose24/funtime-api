@@ -2,7 +2,6 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 import morgan from "morgan";
-import path from "path";
 import helmet from "helmet";
 import StatusCodes from "http-status-codes";
 import express, { NextFunction, Request, Response } from "express";
@@ -15,8 +14,7 @@ import { ApolloServer } from "apollo-server-express";
 
 import { resolvers as generatedResolvers } from "@generated/type-graphql";
 import { buildSchema } from "type-graphql";
-import datastore from "./datastore";
-import RegisterResolver from "./graphql/resolvers/register";
+import datastore from "@shared/datastore";
 
 import resolvers from "./graphql/resolvers";
 

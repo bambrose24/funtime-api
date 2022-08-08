@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     require("dotenv").config();
 }
-const datastore_1 = __importDefault(require("../../src/datastore"));
+const datastore_1 = __importDefault(require("@shared/datastore"));
 // npx ts-node src/scripts/update-tiebreakers.ts
 async function run() {
     const games = await datastore_1.default.games.findMany({

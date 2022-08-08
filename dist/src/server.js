@@ -16,7 +16,7 @@ const errors_1 = require("./shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("@generated/type-graphql");
 const type_graphql_2 = require("type-graphql");
-const datastore_1 = __importDefault(require("./datastore"));
+const datastore_1 = __importDefault(require("@shared/datastore"));
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const app = (0, express_1.default)();
 /************************************************************************************
