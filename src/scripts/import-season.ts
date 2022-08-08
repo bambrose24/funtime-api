@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 if (process.env.NODE_ENV !== "production") {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   require("dotenv").config();
 }
 import { Games, Teams } from "@prisma/client";
 import { AnyKindOfDictionary } from "lodash";
-import datastore from "../../src/datastore";
-import { getGamesBySeason } from "../../src/mysportsfeeds";
+import datastore from "@src/datastore";
+import { getGamesBySeason } from "@src/mysportsfeeds";
 
 async function run() {
   const season = 2022;

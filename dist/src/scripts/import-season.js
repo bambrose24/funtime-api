@@ -3,11 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     require("dotenv").config();
 }
-const datastore_1 = __importDefault(require("../../src/datastore"));
-const mysportsfeeds_1 = require("../../src/mysportsfeeds");
+const datastore_1 = __importDefault(require("@src/datastore"));
+const mysportsfeeds_1 = require("@src/mysportsfeeds");
 async function run() {
     const season = 2022;
     const games = await (0, mysportsfeeds_1.getGamesBySeason)(season);

@@ -18,6 +18,8 @@ import { buildSchema } from "type-graphql";
 import datastore from "./datastore";
 import RegisterResolver from "./graphql/resolvers/register";
 
+import resolvers from "./graphql/resolvers";
+
 const app = express();
 
 /************************************************************************************
@@ -55,7 +57,7 @@ app.use(
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers: [...generatedResolvers, RegisterResolver],
+    resolvers: [...generatedResolvers, ...resolvers],
   });
 
   const server = new ApolloServer({

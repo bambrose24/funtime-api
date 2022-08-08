@@ -5,6 +5,7 @@ var MySportsFeeds = require("mysportsfeeds-node");
 var msf = new MySportsFeeds("2.0", true);
 msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, "MYSPORTSFEEDS");
 /*
+
 game.schedule: {
   id: 71714,
   week: 1,

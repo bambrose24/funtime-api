@@ -45,6 +45,7 @@ model LeagueMembers {
   ts            DateTime @default(now()) @db.DateTime(0)
   People        People   @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "LeagueMembers_ibfk_1")
   Leagues       Leagues  @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "LeagueMembers_ibfk_2")
+  Picks         Picks[]
 
   @@index([league_id], map: "league_id")
   @@index([user_id], map: "user_id")
@@ -84,23 +85,26 @@ model People {
 }
 
 model Picks {
-  pickid    Int      @id @default(autoincrement())
-  uid       Int
-  season    Int
-  week      Int
-  gid       Int
-  winner    Int?     @default(0)
-  loser     Int?     @default(0)
-  score     Int?     @default(0)
-  ts        DateTime @default(now()) @db.DateTime(0)
-  correct   Int?     @default(0)
-  done      Int?     @default(0)
-  is_random Boolean?
-  Games     Games    @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "Picks_ibfk_1")
-  People    People   @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "Picks_ibfk_2")
+  pickid        Int            @id @default(autoincrement())
+  uid           Int
+  season        Int
+  week          Int
+  gid           Int
+  winner        Int?           @default(0)
+  loser         Int?           @default(0)
+  score         Int?           @default(0)
+  ts            DateTime       @default(now()) @db.DateTime(0)
+  correct       Int?           @default(0)
+  done          Int?           @default(0)
+  is_random     Boolean?
+  member_id     Int?
+  Games         Games          @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "Picks_ibfk_1")
+  People        People         @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "Picks_ibfk_2")
+  LeagueMembers LeagueMembers? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "Picks_ibfk_3")
 
   @@index([gid], map: "gid")
   @@index([uid], map: "uid")
+  @@index([member_id], map: "Picks_ibfk_3")
 }
 
 model Superbowl {

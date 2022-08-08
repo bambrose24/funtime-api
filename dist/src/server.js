@@ -17,7 +17,7 @@ const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("@generated/type-graphql");
 const type_graphql_2 = require("type-graphql");
 const datastore_1 = __importDefault(require("./datastore"));
-const register_1 = __importDefault(require("./graphql/resolvers/register"));
+const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -45,7 +45,7 @@ app.use((err, _, res, __) => {
  ***********************************************************************************/
 async function bootstrap() {
     const schema = await (0, type_graphql_2.buildSchema)({
-        resolvers: [...type_graphql_1.resolvers, register_1.default],
+        resolvers: [...type_graphql_1.resolvers, ...resolvers_1.default],
     });
     const server = new apollo_server_express_1.ApolloServer({
         schema,
