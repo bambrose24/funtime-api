@@ -67,11 +67,11 @@ let GamePick = class GamePick {
     score;
 };
 __decorate([
-    (0, type_graphql_1.Field)(),
+    (0, type_graphql_1.Field)(() => type_graphql_1.Int),
     __metadata("design:type", Number)
 ], GamePick.prototype, "game_id", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(),
+    (0, type_graphql_1.Field)(() => type_graphql_1.Int),
     __metadata("design:type", Number)
 ], GamePick.prototype, "winner", void 0);
 __decorate([
@@ -144,12 +144,16 @@ async function upsertWeekPicksForMember(member_id, picks) {
     }
     await datastore_1.default.picks.createMany({
         data: picks.map(({ game_id, winner, score, is_random }) => {
+            const game = games.find((g) => g.gid === game_id);
+            const loserId = game.away === winner ? game.home : game?.away;
             return {
                 uid: user.uid,
+                member_id,
                 week,
                 season,
                 gid: game_id,
                 winner,
+                loser: loserId,
                 score,
                 is_random,
             };

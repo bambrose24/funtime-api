@@ -80,6 +80,7 @@ async function sendPickSuccessEmail(member_id, week, season) {
                 teams,
             }),
         });
+        console.log(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
     }
     catch (e) {
         console.log("got an error sending pick success email: ", JSON.stringify(e));
