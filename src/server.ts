@@ -14,9 +14,9 @@ import { ApolloServer } from "apollo-server-express";
 
 import { resolvers as generatedResolvers } from "@generated/type-graphql";
 import { buildSchema } from "type-graphql";
-import datastore from "@shared/datastore";
 
 import resolvers from "./graphql/resolvers";
+import datastore from "@shared/datastore";
 
 const app = express();
 

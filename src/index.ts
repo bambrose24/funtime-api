@@ -1,3 +1,4 @@
+import "module-alias/register";
 import "reflect-metadata";
 import logger from "jet-logger";
 import server from "./server";
