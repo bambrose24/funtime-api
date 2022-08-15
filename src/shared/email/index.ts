@@ -1,6 +1,3 @@
-import nodemailer from "nodemailer";
-import { google } from "googleapis";
-
 import { MailService } from "@sendgrid/mail";
 import datastore from "@shared/datastore";
 import { Games, People, Picks, Teams } from "@prisma/client";
