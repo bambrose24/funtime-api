@@ -60,6 +60,7 @@ async function bootstrap() {
     dateScalarMode: "isoDate",
   });
 
+  // TODO consider pulling the server into a different file for creation
   const server = new ApolloServer({
     schema,
     context: () => ({ prisma: datastore }),
