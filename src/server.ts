@@ -63,7 +63,7 @@ async function bootstrap() {
   const server = new ApolloServer({
     schema,
     context: () => ({ prisma: datastore }),
-    cache: new KeyvAdapter(new Keyv("redis://localhost:6379")),
+    cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
   });
   server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
 }
