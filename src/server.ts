@@ -12,11 +12,12 @@ import logger from "jet-logger";
 import { CustomError } from "./shared/errors";
 import { ApolloServer } from "apollo-server-express";
 
-import { resolvers as generatedResolvers } from "@generated/type-graphql";
 import { buildSchema } from "type-graphql";
 
 import resolvers from "./graphql/resolvers";
 import datastore from "@shared/datastore";
+import Keyv from "keyv";
+import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 
 const app = express();
 
@@ -55,12 +56,14 @@ app.use(
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers: [...generatedResolvers, ...resolvers],
+    resolvers,
+    dateScalarMode: "isoDate",
   });
 
   const server = new ApolloServer({
     schema,
     context: () => ({ prisma: datastore }),
+    cache: new KeyvAdapter(new Keyv("redis://localhost:6379")),
   });
   server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
 }
