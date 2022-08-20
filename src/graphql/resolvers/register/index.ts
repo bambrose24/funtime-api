@@ -35,7 +35,7 @@ class RegisterResolver {
     try {
       await sendRegistrationMail(username, email, SEASON);
     } catch (e) {
-      console.log("email error", e);
+      console.log("email error:", e);
     }
 
     return { success: true, user, membership };
