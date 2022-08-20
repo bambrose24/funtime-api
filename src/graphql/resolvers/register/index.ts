@@ -3,6 +3,7 @@ import { LeagueMembers, People } from "@prisma/client";
 import { Arg, Field, Int, Mutation, ObjectType, Resolver } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { sendRegistrationMail } from "@shared/email";
+import internal from "stream";
 export const SEASON = 2022;
 export const LEAGUE_ID = 7;
 export const DEFAULT_ROLE = "player";
@@ -24,13 +25,18 @@ class RegisterResolver {
     @Arg("email") email: string,
     @Arg("username") username: string,
     @Arg("previousUserId", () => Int, { nullable: true })
-    previousUserId: number | null
+    previousUserId: number | null,
+    @Arg("superbowlWinner", () => Int) superbowlWinner: number,
+    @Arg("superbowlLoser", () => Int) superbowlLoser: number,
+    @Arg("superbowlScore", () => Int) superbowlScore: number
   ): Promise<RegisterResponse> {
     const { user, membership } = await upsertUserAndMembership(
       email,
       username,
       previousUserId
     );
+
+    // TODO save the superbowl pick
 
     try {
       await sendRegistrationMail(username, email, SEASON);
