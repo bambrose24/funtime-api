@@ -24,6 +24,10 @@ export async function sendRegistrationMail(
       to: email,
       from: "bob.ambrose.funtime@gmail.com",
       subject: "Welcome to Funtime 2022!",
+      replyToList: [
+        { name: "Bob Ambrose", email: "bambrose24@gmail.com" },
+        { name: "Erica Ambrose", email: "erica0ambrose@gmail.com" },
+      ],
       cc: email !== "bambrose24@gmail.com" ? "bambrose24@gmail.com" : undefined,
       html: getRegistrationText(username, season),
     });
@@ -83,6 +87,10 @@ export async function sendPickSuccessEmail(
       to: user.email,
       from: "bob.ambrose.funtime@gmail.com",
       subject: `Your Funtime Picks for Week ${week}, ${season}`,
+      replyToList: [
+        { name: "Bob Ambrose", email: "bambrose24@gmail.com" },
+        { name: "Erica Ambrose", email: "erica0ambrose@gmail.com" },
+      ],
       cc: email !== "bambrose24@gmail.com" ? "bambrose24@gmail.com" : undefined,
       html: getWeekPicksContent({
         week,
