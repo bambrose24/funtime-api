@@ -13,7 +13,13 @@ export function getDefaultSendParams(
   };
 }
 
-export function getRegistrationText(username: string, season: number): string {
+export function getRegistrationText(
+  username: string,
+  season: number,
+  winner: Teams,
+  loser: Teams,
+  score: number
+): string {
   return (
     `Welcome to the ${season} season, ${username}! You're all set.` +
     "<br/><br/>" +
@@ -21,8 +27,14 @@ export function getRegistrationText(username: string, season: number): string {
     `You'll only get ` +
     `emails from this system when you make picks.` +
     "<br/><br/>" +
-    `The next step will be to pick a winner, loser, and total score for the Super Bowl ` +
-    `at the end of the season.` +
+    `Your Super Bowl pick for the 2022 season is` +
+    "<br/><br/>" +
+    `winner: ${winner.abbrev || ""}` +
+    "<br/>" +
+    `loser: ${loser.abbrev || ""}` +
+    "<br/>" +
+    `score: ${score}` +
+    "<br/>" +
     "<br/><br/>" +
     `If you have any questions, reach out to Bob at bambrose24@gmail.com ` +
     `or Erica at billyanderica@verizon.net.`

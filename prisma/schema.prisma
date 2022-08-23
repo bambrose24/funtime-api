@@ -108,13 +108,14 @@ model Picks {
 }
 
 model Superbowl {
-  pickid Int       @id @default(autoincrement())
-  uid    Int
-  winner Int
-  loser  Int
-  score  Int
-  ts     DateTime? @default(now()) @db.DateTime(0)
-  season Int?
+  pickid    Int       @id @default(autoincrement())
+  uid       Int
+  winner    Int
+  loser     Int
+  score     Int
+  ts        DateTime? @default(now()) @db.DateTime(0)
+  season    Int?
+  member_id Int?
 }
 
 model SuperbowlSquares {

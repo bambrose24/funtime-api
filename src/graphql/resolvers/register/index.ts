@@ -30,16 +30,24 @@ class RegisterResolver {
     @Arg("superbowlLoser", () => Int) superbowlLoser: number,
     @Arg("superbowlScore", () => Int) superbowlScore: number
   ): Promise<RegisterResponse> {
-    const { user, membership } = await upsertUserAndMembership(
+    const { user, membership } = await registerImpl(
       email,
       username,
-      previousUserId
+      previousUserId,
+      superbowlWinner,
+      superbowlLoser,
+      superbowlScore
     );
 
-    // TODO save the superbowl pick
-
     try {
-      await sendRegistrationMail(username, email, SEASON);
+      await sendRegistrationMail(
+        username,
+        email,
+        SEASON,
+        superbowlWinner,
+        superbowlLoser,
+        superbowlScore
+      );
     } catch (e) {
       console.log("email error:", e);
     }
@@ -48,10 +56,13 @@ class RegisterResolver {
   }
 }
 
-async function upsertUserAndMembership(
+async function registerImpl(
   email: string,
   username: string,
-  previousUserId: number | null
+  previousUserId: number | null,
+  superbowlWinner: number,
+  superbowlLoser: number,
+  superbowlScore: number
 ): Promise<{ user: People; membership: LeagueMembers }> {
   let user: People | null = null;
   let membership: LeagueMembers | null = null;
@@ -106,6 +117,16 @@ async function upsertUserAndMembership(
       league_id: LEAGUE_ID,
       user_id: user.uid,
       role: DEFAULT_ROLE,
+    },
+  });
+
+  await datastore.superbowl.create({
+    data: {
+      uid: user.uid,
+      winner: superbowlWinner,
+      loser: superbowlLoser,
+      score: superbowlScore,
+      member_id: membership.membership_id,
     },
   });
 

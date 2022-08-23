@@ -19,15 +19,31 @@ import {
 export async function sendRegistrationMail(
   username: string,
   email: string,
-  season: number
+  season: number,
+  superbowlWinner: number,
+  superbowlLoser: number,
+  superbowlScore: number
 ): Promise<void> {
+  const teams = await datastore.teams.findMany({
+    where: { teamid: { gte: 0 } },
+  });
+
+  const winner = teams.find((t) => t.teamid === superbowlWinner)!;
+  const loser = teams.find((t) => t.teamid === superbowlLoser)!;
+
   try {
     await mailClient.send({
       ...getDefaultSendParams(email),
       to: email,
       from: "bob.ambrose.funtime@gmail.com",
       subject: "Welcome to Funtime 2022!",
-      html: getRegistrationText(username, season),
+      html: getRegistrationText(
+        username,
+        season,
+        winner,
+        loser,
+        superbowlScore
+      ),
     });
   } catch (e) {
     console.log("got a sendgrid error", JSON.stringify(e));
