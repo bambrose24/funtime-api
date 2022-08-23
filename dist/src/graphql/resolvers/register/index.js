@@ -67,13 +67,13 @@ RegisterResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], RegisterResponse);
 let RegisterResolver = class RegisterResolver {
-    async register(email, username, previousUserId) {
-        const { user, membership } = await upsertUserAndMembership(email, username, previousUserId);
+    async register(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore) {
+        const { user, membership } = await registerImpl(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore);
         try {
-            await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON);
+            await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
         }
         catch (e) {
-            console.log("email error", e);
+            console.log("email error:", e);
         }
         return { success: true, user, membership };
     }
@@ -83,14 +83,17 @@ __decorate([
     __param(0, (0, type_graphql_1.Arg)("email")),
     __param(1, (0, type_graphql_1.Arg)("username")),
     __param(2, (0, type_graphql_1.Arg)("previousUserId", () => type_graphql_1.Int, { nullable: true })),
+    __param(3, (0, type_graphql_1.Arg)("superbowlWinner", () => type_graphql_1.Int)),
+    __param(4, (0, type_graphql_1.Arg)("superbowlLoser", () => type_graphql_1.Int)),
+    __param(5, (0, type_graphql_1.Arg)("superbowlScore", () => type_graphql_1.Int)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [String, String, Object, Number, Number, Number]),
     __metadata("design:returntype", Promise)
 ], RegisterResolver.prototype, "register", null);
 RegisterResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], RegisterResolver);
-async function upsertUserAndMembership(email, username, previousUserId) {
+async function registerImpl(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore) {
     let user = null;
     let membership = null;
     // see if user already exists for this season
@@ -140,6 +143,15 @@ async function upsertUserAndMembership(email, username, previousUserId) {
             league_id: exports.LEAGUE_ID,
             user_id: user.uid,
             role: exports.DEFAULT_ROLE,
+        },
+    });
+    await datastore_1.default.superbowl.create({
+        data: {
+            uid: user.uid,
+            winner: superbowlWinner,
+            loser: superbowlLoser,
+            score: superbowlScore,
+            member_id: membership.membership_id,
         },
     });
     return { user, membership };

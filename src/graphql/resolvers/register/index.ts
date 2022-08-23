@@ -67,6 +67,7 @@ async function registerImpl(
   let user: People | null = null;
   let membership: LeagueMembers | null = null;
 
+  let x = 3;
   // see if user already exists for this season
   user = await datastore.people.findFirst({
     where: { email: email, season: { gte: 2021 } },

@@ -14,10 +14,11 @@ require("express-async-errors");
 const jet_logger_1 = __importDefault(require("jet-logger"));
 const errors_1 = require("./shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
-const type_graphql_1 = require("@generated/type-graphql");
-const type_graphql_2 = require("type-graphql");
+const type_graphql_1 = require("type-graphql");
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
+const keyv_1 = __importDefault(require("keyv"));
+const utils_keyvadapter_1 = require("@apollo/utils.keyvadapter");
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -44,12 +45,15 @@ app.use((err, _, res, __) => {
  *                              Serve front-end content
  ***********************************************************************************/
 async function bootstrap() {
-    const schema = await (0, type_graphql_2.buildSchema)({
-        resolvers: [...type_graphql_1.resolvers, ...resolvers_1.default],
+    const schema = await (0, type_graphql_1.buildSchema)({
+        resolvers: resolvers_1.default,
+        dateScalarMode: "isoDate",
     });
+    // TODO consider pulling the server into a different file for creation
     const server = new apollo_server_express_1.ApolloServer({
         schema,
         context: () => ({ prisma: datastore_1.default }),
+        cache: new utils_keyvadapter_1.KeyvAdapter(new keyv_1.default(process.env.REDIS_URL)),
     });
     server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
 }
