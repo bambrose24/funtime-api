@@ -96,6 +96,7 @@ RegisterResolver = __decorate([
 async function registerImpl(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore) {
     let user = null;
     let membership = null;
+    let x = 3;
     // see if user already exists for this season
     user = await datastore_1.default.people.findFirst({
         where: { email: email, season: { gte: 2021 } },
