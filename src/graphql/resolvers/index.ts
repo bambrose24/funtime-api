@@ -12,6 +12,7 @@ import {
   applyModelsEnhanceMap,
 } from "@generated/type-graphql";
 import { Field } from "type-graphql";
+import PicksByWeekResolver from "./picks-by-week";
 
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
@@ -53,6 +54,7 @@ const resolvers = [
   ...generatedResolvers,
   RegisterResolver,
   MakePicksResolver,
+  PicksByWeekResolver,
 ] as const;
 
 export default resolvers;
