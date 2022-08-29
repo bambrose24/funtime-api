@@ -68,7 +68,8 @@ RegisterResponse = __decorate([
 ], RegisterResponse);
 let RegisterResolver = class RegisterResolver {
     async register(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore) {
-        const { user, membership } = await registerImpl(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore);
+        const { user, membership } = await registerUser(email, username, previousUserId);
+        await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
         try {
             await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
         }
@@ -93,10 +94,40 @@ __decorate([
 RegisterResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], RegisterResolver);
-async function registerImpl(email, username, previousUserId, superbowlWinner, superbowlLoser, superbowlScore) {
+async function upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore) {
+    const currentSuperbowlPick = await datastore_1.default.superbowl.findFirst({
+        where: {
+            member_id: { equals: membership.membership_id },
+        },
+    });
+    if (currentSuperbowlPick) {
+        await datastore_1.default.superbowl.update({
+            where: {
+                pickid: currentSuperbowlPick.pickid,
+            },
+            data: {
+                uid: user.uid,
+                winner: superbowlWinner,
+                loser: superbowlLoser,
+                score: superbowlScore,
+                member_id: membership.membership_id,
+            },
+        });
+        return;
+    }
+    await datastore_1.default.superbowl.create({
+        data: {
+            uid: user.uid,
+            winner: superbowlWinner,
+            loser: superbowlLoser,
+            score: superbowlScore,
+            member_id: membership.membership_id,
+        },
+    });
+}
+async function registerUser(email, username, previousUserId) {
     let user = null;
     let membership = null;
-    let x = 3;
     // see if user already exists for this season
     user = await datastore_1.default.people.findFirst({
         where: { email: email, season: { gte: 2021 } },
@@ -144,15 +175,6 @@ async function registerImpl(email, username, previousUserId, superbowlWinner, su
             league_id: exports.LEAGUE_ID,
             user_id: user.uid,
             role: exports.DEFAULT_ROLE,
-        },
-    });
-    await datastore_1.default.superbowl.create({
-        data: {
-            uid: user.uid,
-            winner: superbowlWinner,
-            loser: superbowlLoser,
-            score: superbowlScore,
-            member_id: membership.membership_id,
         },
     });
     return { user, membership };

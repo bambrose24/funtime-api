@@ -12,7 +12,7 @@ function getDefaultSendParams(email) {
 }
 exports.getDefaultSendParams = getDefaultSendParams;
 function getRegistrationText(username, season, winner, loser, score) {
-    return (`Welcome to the ${season} season, ${username}! You're all set.` +
+    return (`Welcome to the ${season} season, <strong>${username}</strong>! You're all set.` +
         "<br/><br/>" +
         `Keep an eye out for information when we're closer to the start of the season. ` +
         `You'll only get ` +
@@ -20,11 +20,11 @@ function getRegistrationText(username, season, winner, loser, score) {
         "<br/><br/>" +
         `Your Super Bowl pick for the 2022 season is` +
         "<br/><br/>" +
-        `winner: ${winner.abbrev || ""}` +
+        `<strong>Winner</strong>:${winner.abbrev || ""}` +
         "<br/>" +
-        `loser: ${loser.abbrev || ""}` +
+        `<strong>Loser</strong>: ${loser.abbrev || ""}` +
         "<br/>" +
-        `score: ${score}` +
+        `<strong>Score</strong>: ${score}` +
         "<br/>" +
         "<br/><br/>" +
         `If you have any questions, reach out to Bob at bambrose24@gmail.com ` +

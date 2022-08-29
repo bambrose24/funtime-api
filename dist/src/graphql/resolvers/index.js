@@ -12,6 +12,9 @@ const graphql_scalars_1 = require("graphql-scalars");
 graphql_scalars_1.DateTimeResolver.name = "DateTimeBetterSerialization";
 const type_graphql_2 = require("@generated/type-graphql");
 const type_graphql_3 = require("type-graphql");
+const picks_by_week_1 = __importDefault(require("./picks-by-week"));
+const first_not_started_week_1 = __importDefault(require("./first-not-started-week"));
+const most_recent_started_week_1 = __importDefault(require("./most-recent-started-week"));
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
     Picks: {
@@ -50,5 +53,8 @@ const resolvers = [
     ...type_graphql_1.resolvers,
     register_1.default,
     make_picks_1.default,
+    picks_by_week_1.default,
+    first_not_started_week_1.default,
+    most_recent_started_week_1.default,
 ];
 exports.default = resolvers;
