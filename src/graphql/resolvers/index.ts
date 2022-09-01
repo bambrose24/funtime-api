@@ -15,6 +15,7 @@ import { Field } from "type-graphql";
 import PicksByWeekResolver from "./picks-by-week";
 import FirstNotStartedWeekResolver from "./first-not-started-week";
 import MostRecentStartedWeekResolver from "./most-recent-started-week";
+import GameLiveResolver from "./live-game";
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
   Picks: {
@@ -58,6 +59,7 @@ const resolvers = [
   PicksByWeekResolver,
   FirstNotStartedWeekResolver,
   MostRecentStartedWeekResolver,
+  GameLiveResolver,
 ] as const;
 
 export default resolvers;

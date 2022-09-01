@@ -17,8 +17,6 @@ const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
-const keyv_1 = __importDefault(require("keyv"));
-const utils_keyvadapter_1 = require("@apollo/utils.keyvadapter");
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -52,10 +50,15 @@ async function bootstrap() {
     // TODO consider pulling the server into a different file for creation
     const server = new apollo_server_express_1.ApolloServer({
         schema,
-        context: () => ({ prisma: datastore_1.default }),
-        cache: new utils_keyvadapter_1.KeyvAdapter(new keyv_1.default(process.env.REDIS_URL)),
+        context: (req, res) => {
+            return { prisma: datastore_1.default };
+        },
+        // Need to figure out how to clear the cache after mutations
+        // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
     });
-    server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
+    server.start().then(() => {
+        server.applyMiddleware({ app, path: "/graphql" });
+    });
 }
 bootstrap();
 /************************************************************************************

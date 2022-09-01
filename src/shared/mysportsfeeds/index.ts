@@ -1,8 +1,9 @@
 import { Games } from "@prisma/client";
+import { MSFGame, MSFGameSchedule } from "./types";
 
 var MySportsFeeds = require("mysportsfeeds-node");
 
-var msf = new MySportsFeeds("2.0", true);
+var msf = new MySportsFeeds("2.1", true);
 msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, "MYSPORTSFEEDS");
 
 /*
@@ -38,8 +39,9 @@ game.score: {
     quarters: []
   }
 */
-export async function getGamesBySeason(season: number) {
-  console.log("api key");
+export async function getGamesBySeason(
+  season: number
+): Promise<Array<MSFGameSchedule>> {
   try {
     const games = await msf.getData(
       "nfl",
@@ -48,12 +50,29 @@ export async function getGamesBySeason(season: number) {
       "json"
     );
 
-    console.log("game?", games.games[0]);
-
     return games.games.map((g: any) => g.schedule);
   } catch (e) {
     console.log("error", e);
   }
+  return [];
 }
 
-// export function convertToDBGameForAddition(game: any): Games {}
+export async function getGamesByWeek(
+  season: number,
+  week: number
+): Promise<Array<MSFGame>> {
+  try {
+    const games = await msf.getData(
+      "nfl",
+      `${season}-${season + 1}-regular`,
+      "weekly_games",
+      "json",
+      { week }
+    );
+
+    return games.games.map((g: any) => g as MSFGame);
+  } catch (e) {
+    console.error("error getting weekly games", e);
+  }
+  return [];
+}

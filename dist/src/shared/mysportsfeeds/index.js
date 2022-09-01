@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGamesBySeason = void 0;
+exports.getGamesByWeek = exports.getGamesBySeason = void 0;
 var MySportsFeeds = require("mysportsfeeds-node");
-var msf = new MySportsFeeds("2.0", true);
+var msf = new MySportsFeeds("2.1", true);
 msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, "MYSPORTSFEEDS");
 /*
 
@@ -38,15 +38,24 @@ game.score: {
   }
 */
 async function getGamesBySeason(season) {
-    console.log("api key");
     try {
         const games = await msf.getData("nfl", `${season}-${season + 1}-regular`, "seasonal_games", "json");
-        console.log("game?", games.games[0]);
         return games.games.map((g) => g.schedule);
     }
     catch (e) {
         console.log("error", e);
     }
+    return [];
 }
 exports.getGamesBySeason = getGamesBySeason;
-// export function convertToDBGameForAddition(game: any): Games {}
+async function getGamesByWeek(season, week) {
+    try {
+        const games = await msf.getData("nfl", `${season}-${season + 1}-regular`, "weekly_games", "json", { week });
+        return games.games.map((g) => g);
+    }
+    catch (e) {
+        console.error("error getting weekly games", e);
+    }
+    return [];
+}
+exports.getGamesByWeek = getGamesByWeek;

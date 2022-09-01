@@ -18,6 +18,7 @@ import resolvers from "./graphql/resolvers";
 import datastore from "@shared/datastore";
 import Keyv from "keyv";
 import { KeyvAdapter } from "@apollo/utils.keyvadapter";
+import { ApolloPrismaContext } from "./graphql/server/types";
 
 const app = express();
 
@@ -63,7 +64,10 @@ async function bootstrap() {
   // TODO consider pulling the server into a different file for creation
   const server = new ApolloServer({
     schema,
-    context: (req: express.Request, res: express.Response) => {
+    context: (
+      req: express.Request,
+      res: express.Response
+    ): ApolloPrismaContext => {
       return { prisma: datastore };
     },
     // Need to figure out how to clear the cache after mutations

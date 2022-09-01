@@ -28,7 +28,7 @@ function getRegistrationText(username, season, winner, loser, score) {
         "<br/>" +
         "<br/><br/>" +
         `If you have any questions, reach out to Bob at bambrose24@gmail.com ` +
-        `or Erica at billyanderica@verizon.net.`);
+        `or Erica at erica0ambrose@gmail.com.`);
 }
 exports.getRegistrationText = getRegistrationText;
 function getWeekPicksContent({ week, season, user, games, picks, teams, }) {
