@@ -6,6 +6,8 @@ import helmet from "helmet";
 import StatusCodes from "http-status-codes";
 import express, { NextFunction, Request, Response } from "express";
 
+import cron from "node-cron";
+
 import "express-async-errors";
 import logger from "jet-logger";
 
@@ -19,6 +21,7 @@ import datastore from "@shared/datastore";
 import Keyv from "keyv";
 import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import { ApolloPrismaContext } from "./graphql/server/types";
+import keepThingsUpdated from "./cron/keepThingsUpdated";
 
 const app = express();
 
@@ -79,6 +82,11 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+// Run the 3 minute cron
+cron.schedule("*/5 * * * *", () => {
+  keepThingsUpdated();
+});
 
 /************************************************************************************
  *                              Export Server
