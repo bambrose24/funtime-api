@@ -1,4 +1,5 @@
 import { Games } from "@prisma/client";
+import { redis } from "../../shared/redis";
 import { MSFGame, MSFGameSchedule } from "./types";
 
 var MySportsFeeds = require("mysportsfeeds-node");
@@ -57,11 +58,22 @@ export async function getGamesBySeason(
   return [];
 }
 
+function getWeekRedisKey(options: { season: number; week: number }): string {
+  return `msf_week_${options.week}_${options.season}`;
+}
+
 export async function getGamesByWeek(
   season: number,
   week: number
 ): Promise<Array<MSFGame>> {
   try {
+    const redisResult = await redis.get(getWeekRedisKey({ season, week }));
+    console.log("redis result", redisResult);
+    if (redisResult) {
+      const res = JSON.parse(redisResult) as Array<MSFGame>;
+      return res;
+    }
+
     const games = await msf.getData(
       "nfl",
       `${season}-${season + 1}-regular`,
@@ -70,7 +82,15 @@ export async function getGamesByWeek(
       { week }
     );
 
-    return games.games.map((g: any) => g as MSFGame);
+    const res = games.games.map((g: any) => g as MSFGame);
+
+    await redis.set(
+      getWeekRedisKey({ season, week }),
+      JSON.stringify(res),
+      "EX",
+      60
+    );
+    return res;
   } catch (e) {
     console.error("error getting weekly games", e);
   }
