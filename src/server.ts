@@ -63,10 +63,15 @@ async function bootstrap() {
   // TODO consider pulling the server into a different file for creation
   const server = new ApolloServer({
     schema,
-    context: () => ({ prisma: datastore }),
-    cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
+    context: (req: express.Request, res: express.Response) => {
+      return { prisma: datastore };
+    },
+    // Need to figure out how to clear the cache after mutations
+    // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
   });
-  server.start().then(() => server.applyMiddleware({ app, path: "/graphql" }));
+  server.start().then(() => {
+    server.applyMiddleware({ app, path: "/graphql" });
+  });
 }
 
 bootstrap();
