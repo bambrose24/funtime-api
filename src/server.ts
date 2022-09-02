@@ -84,8 +84,8 @@ async function bootstrap() {
 bootstrap();
 
 // Run the 3 minute cron
-cron.schedule("*/5 * * * *", () => {
-  keepThingsUpdated();
+cron.schedule("*/3 * * * *", async () => {
+  await keepThingsUpdated();
 });
 
 /************************************************************************************

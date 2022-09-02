@@ -1,5 +1,4 @@
-import { Games } from "@prisma/client";
-import { redis } from "../../shared/redis";
+import { memoryCache } from "../caching/memory";
 import { MSFGame, MSFGameSchedule } from "./types";
 
 var MySportsFeeds = require("mysportsfeeds-node");
@@ -42,7 +41,7 @@ game.score: {
 */
 export async function getGamesBySeason(
   season: number
-): Promise<Array<MSFGameSchedule>> {
+): Promise<Array<MSFGame>> {
   try {
     const games = await msf.getData(
       "nfl",
@@ -51,27 +50,28 @@ export async function getGamesBySeason(
       "json"
     );
 
-    return games.games.map((g: any) => g.schedule);
+    return games.games.map((g: any) => g as MSFGame);
   } catch (e) {
-    console.log("error", e);
+    console.log("error getting games by season", e);
   }
   return [];
 }
 
-function getWeekRedisKey(options: { season: number; week: number }): string {
+function getWeekKey(options: { season: number; week: number }): string {
   return `msf_week_${options.week}_${options.season}`;
 }
 
 export async function getGamesByWeek(
   season: number,
-  week: number
+  week: number,
+  useRedis: boolean = false
 ): Promise<Array<MSFGame>> {
   try {
-    const redisResult = await redis.get(getWeekRedisKey({ season, week }));
-    console.log("redis result", redisResult);
-    if (redisResult) {
-      const res = JSON.parse(redisResult) as Array<MSFGame>;
-      return res;
+    const memoryCacheResult = memoryCache.get<Array<MSFGame>>(
+      getWeekKey({ season, week })
+    );
+    if (memoryCacheResult) {
+      return memoryCacheResult;
     }
 
     const games = await msf.getData(
@@ -83,13 +83,7 @@ export async function getGamesByWeek(
     );
 
     const res = games.games.map((g: any) => g as MSFGame);
-
-    await redis.set(
-      getWeekRedisKey({ season, week }),
-      JSON.stringify(res),
-      "EX",
-      60
-    );
+    memoryCache.set(getWeekKey({ season, week }), res);
     return res;
   } catch (e) {
     console.error("error getting weekly games", e);
