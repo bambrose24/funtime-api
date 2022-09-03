@@ -19,10 +19,11 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     return prev;
   }, {} as Record<number, Teams>);
 
-  dbGames.forEach(async (dbGame) => {
+  await dbGames.forEach(async (dbGame) => {
     if (dbGame.done) {
       return;
     }
+    console.info(`[cron] updating game ${dbGame.gid}`);
     const homeTeam = teamsMap[dbGame.home];
     const awayTeam = teamsMap[dbGame.away];
     const msfGame = games.find(
@@ -46,6 +47,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       const picks = await datastore.picks.findMany({
         where: { gid: dbGame.gid },
       });
+      console.info(`[cron] setting game ${dbGame.gid} to done`);
       await datastore.games.update({
         data: {
           done: true,
@@ -54,6 +56,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           gid: dbGame.gid,
         },
       });
+      console.info(`[cron] updating picks for ${dbGame.gid}`);
       await picks.forEach(async (p) => {
         let correct = false;
         if (
@@ -63,6 +66,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         ) {
           correct = true;
         }
+        console.info(`[cron] setting pick ${p.pickid} as correct ${correct}`);
         await datastore.picks.update({
           where: { pickid: p.pickid },
           data: { correct: correct ? 1 : 0 },
@@ -87,7 +91,4 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       });
     }
   });
-
-  // TODO adjust homescore and awayscore and ts for each game based on MSF result
-  // if playedStatus === COMPLETE then mark the game done
 }
