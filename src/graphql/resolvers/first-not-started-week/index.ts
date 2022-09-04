@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Games, Picks, Prisma } from "@prisma/client";
+import { Games } from "@prisma/client";
 import datastore from "@shared/datastore";
-import moment from "moment";
 import * as TypeGraphQL from "@generated/type-graphql";
-import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
+import { Field, Int, ObjectType, Query } from "type-graphql";
+import { now } from "@util/time";
+import { PhoneNumberMock } from "graphql-scalars";
 
 @ObjectType()
 class FirstNotStartedWeekResponse {
   @Field(() => Int, { nullable: true })
-  week: number;
+  week: number | null;
   @Field(() => Int, { nullable: true })
-  season: number;
+  season: number | null;
   @Field(() => [TypeGraphQL.Games]!)
   games: Array<Games>;
 }
@@ -18,18 +19,12 @@ class FirstNotStartedWeekResponse {
 class FirstNotStartedWeekResolver {
   @Query(() => FirstNotStartedWeekResponse)
   async firstNotStartedWeek(): Promise<FirstNotStartedWeekResponse> {
-    const mostRecentStartedGame = await datastore.games.findFirst({
-      where: {
-        ts: { gte: moment().toDate() },
-      },
-      orderBy: { ts: "asc" },
-    });
-
-    if (!mostRecentStartedGame) {
-      throw new Error("No games have ts before right now");
+    const res = await findWeekForPicks();
+    if (res === null) {
+      return { week: null, season: null, games: [] };
     }
 
-    const { week, season } = mostRecentStartedGame;
+    const { week, season } = res;
 
     const games = await datastore.games.findMany({ where: { week, season } });
 
@@ -39,6 +34,38 @@ class FirstNotStartedWeekResolver {
       games,
     };
   }
+}
+
+async function findWeekForPicks(): Promise<{
+  week: number;
+  season: number;
+} | null> {
+  const gamesWithinMonth = await datastore.games.findMany({
+    where: {
+      ts: {
+        gte: now().subtract({ months: 1 }).toDate(),
+        lte: now().add({ months: 1 }).toDate(),
+      },
+    },
+    orderBy: { ts: "asc" },
+  });
+
+  const startedWeeks = new Set<string>();
+
+  gamesWithinMonth.forEach((game) => {
+    if (game.ts < now().toDate()) {
+      startedWeeks.add(`${game.week},${game.season}`);
+    }
+  });
+  console.log("startedWeeks", startedWeeks);
+
+  for (let i = 0; i < gamesWithinMonth.length; i++) {
+    const { week, season } = gamesWithinMonth[i];
+    if (!startedWeeks.has(`${week},${season}`)) {
+      return { week, season };
+    }
+  }
+  return null;
 }
 
 export default FirstNotStartedWeekResolver;

@@ -29,7 +29,7 @@
     "@shared": "dist/src/shared",
     "@server": "dist/server",
     "@routes": "dist/routes",
-    "@util": "dist/util"
+    "@util": "dist/src/util"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",

@@ -42,6 +42,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const moment_1 = __importDefault(require("moment"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
+const time_1 = require("@util/time");
 let PicksByWeekResponse = class PicksByWeekResponse {
     week;
     season;
@@ -97,7 +98,7 @@ class PicksByWeekResolver {
         else {
             const lastStartedGame = await datastore_1.default.games.findFirst({
                 where: {
-                    ts: { lte: (0, moment_1.default)().toDate() },
+                    ts: { lte: (0, time_1.now)().toDate() },
                     season: { equals: season },
                 },
                 orderBy: { ts: "asc" },

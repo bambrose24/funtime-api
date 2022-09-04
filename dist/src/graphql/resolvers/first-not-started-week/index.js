@@ -36,9 +36,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const datastore_1 = __importDefault(require("@shared/datastore"));
-const moment_1 = __importDefault(require("moment"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
+const time_1 = require("@util/time");
 let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
     week;
     season;
@@ -46,11 +46,11 @@ let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", Object)
 ], FirstNotStartedWeekResponse.prototype, "week", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", Object)
 ], FirstNotStartedWeekResponse.prototype, "season", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => [TypeGraphQL.Games]),
@@ -61,16 +61,11 @@ FirstNotStartedWeekResponse = __decorate([
 ], FirstNotStartedWeekResponse);
 class FirstNotStartedWeekResolver {
     async firstNotStartedWeek() {
-        const mostRecentStartedGame = await datastore_1.default.games.findFirst({
-            where: {
-                ts: { gte: (0, moment_1.default)().toDate() },
-            },
-            orderBy: { ts: "asc" },
-        });
-        if (!mostRecentStartedGame) {
-            throw new Error("No games have ts before right now");
+        const res = await findWeekForPicks();
+        if (res === null) {
+            return { week: null, season: null, games: [] };
         }
-        const { week, season } = mostRecentStartedGame;
+        const { week, season } = res;
         const games = await datastore_1.default.games.findMany({ where: { week, season } });
         return {
             week,
@@ -85,4 +80,29 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], FirstNotStartedWeekResolver.prototype, "firstNotStartedWeek", null);
+async function findWeekForPicks() {
+    const gamesWithinMonth = await datastore_1.default.games.findMany({
+        where: {
+            ts: {
+                gte: (0, time_1.now)().subtract({ months: 1 }).toDate(),
+                lte: (0, time_1.now)().add({ months: 1 }).toDate(),
+            },
+        },
+        orderBy: { ts: "asc" },
+    });
+    const startedWeeks = new Set();
+    gamesWithinMonth.forEach((game) => {
+        if (game.ts < (0, time_1.now)().toDate()) {
+            startedWeeks.add(`${game.week},${game.season}`);
+        }
+    });
+    console.log("startedWeeks", startedWeeks);
+    for (let i = 0; i < gamesWithinMonth.length; i++) {
+        const { week, season } = gamesWithinMonth[i];
+        if (!startedWeeks.has(`${week},${season}`)) {
+            return { week, season };
+        }
+    }
+    return null;
+}
 exports.default = FirstNotStartedWeekResolver;

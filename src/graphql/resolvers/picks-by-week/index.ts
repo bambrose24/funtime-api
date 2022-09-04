@@ -4,6 +4,7 @@ import datastore from "@shared/datastore";
 import moment from "moment";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
+import { now } from "@util/time";
 
 @ObjectType()
 class PicksByWeekResponse {
@@ -55,7 +56,7 @@ class PicksByWeekResolver {
     } else {
       const lastStartedGame = await datastore.games.findFirst({
         where: {
-          ts: { lte: moment().toDate() },
+          ts: { lte: now().toDate() },
           season: { equals: season },
         },
         orderBy: { ts: "asc" },

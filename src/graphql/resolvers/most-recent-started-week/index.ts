@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Games, Picks, Prisma } from "@prisma/client";
+import { Games, Picks } from "@prisma/client";
 import datastore from "@shared/datastore";
-import moment from "moment";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
+import { now } from "@util/time";
+import moment from "moment";
 
 @ObjectType()
 class MostRecentStartedWeekResponse {
@@ -20,15 +21,17 @@ class MostRecentStartedWeekResponse {
 class MostRecentStartedWeekResolver {
   @Query(() => MostRecentStartedWeekResponse)
   async mostRecentStartedWeek(
-    @Arg("leagueId", () => Int)
+    @Arg("league_id", () => Int)
     league_id: number
   ): Promise<MostRecentStartedWeekResponse> {
     const mostRecentStartedGame = await datastore.games.findFirst({
       where: {
-        ts: { lte: moment().toDate() },
+        ts: { lte: now().toDate() },
       },
       orderBy: { ts: "desc" },
     });
+
+    console.log(mostRecentStartedGame, now(), moment());
 
     if (!mostRecentStartedGame) {
       throw new Error("No games have ts before right now");

@@ -39,9 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const datastore_1 = __importDefault(require("@shared/datastore"));
-const moment_1 = __importDefault(require("moment"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
+const time_1 = require("@util/time");
+const moment_1 = __importDefault(require("moment"));
 let MostRecentStartedWeekResponse = class MostRecentStartedWeekResponse {
     week;
     season;
@@ -71,10 +72,11 @@ class MostRecentStartedWeekResolver {
     async mostRecentStartedWeek(league_id) {
         const mostRecentStartedGame = await datastore_1.default.games.findFirst({
             where: {
-                ts: { lte: (0, moment_1.default)().toDate() },
+                ts: { lte: (0, time_1.now)().toDate() },
             },
             orderBy: { ts: "desc" },
         });
+        console.log(mostRecentStartedGame, (0, time_1.now)(), (0, moment_1.default)());
         if (!mostRecentStartedGame) {
             throw new Error("No games have ts before right now");
         }
@@ -95,7 +97,7 @@ class MostRecentStartedWeekResolver {
 }
 __decorate([
     (0, type_graphql_1.Query)(() => MostRecentStartedWeekResponse),
-    __param(0, (0, type_graphql_1.Arg)("leagueId", () => type_graphql_1.Int)),
+    __param(0, (0, type_graphql_1.Arg)("league_id", () => type_graphql_1.Int)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)

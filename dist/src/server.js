@@ -10,6 +10,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const express_1 = __importDefault(require("express"));
+const node_cron_1 = __importDefault(require("node-cron"));
 require("express-async-errors");
 const jet_logger_1 = __importDefault(require("jet-logger"));
 const errors_1 = require("./shared/errors");
@@ -17,6 +18,7 @@ const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
+const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -61,6 +63,10 @@ async function bootstrap() {
     });
 }
 bootstrap();
+// Run the 3 minute cron
+node_cron_1.default.schedule("*/3 * * * *", async () => {
+    await (0, keepThingsUpdated_1.default)();
+});
 /************************************************************************************
  *                              Export Server
  ***********************************************************************************/
