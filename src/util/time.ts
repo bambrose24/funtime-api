@@ -1,5 +1,5 @@
 import moment from "moment";
-import { env } from "src/config";
+import { env } from "../config";
 
 export function now(): moment.Moment {
   if (env === "production") {

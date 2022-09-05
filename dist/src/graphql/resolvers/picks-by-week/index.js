@@ -63,11 +63,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], PicksByWeekResponse.prototype, "canView", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [TypeGraphQL.Picks]),
+    (0, type_graphql_1.Field)(() => [TypeGraphQL.Pick]),
     __metadata("design:type", Array)
 ], PicksByWeekResponse.prototype, "picks", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [TypeGraphQL.Games]),
+    (0, type_graphql_1.Field)(() => [TypeGraphQL.Game]),
     __metadata("design:type", Array)
 ], PicksByWeekResponse.prototype, "games", void 0);
 PicksByWeekResponse = __decorate([

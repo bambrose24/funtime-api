@@ -56,11 +56,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], RegisterResponse.prototype, "success", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => TypeGraphQL.People),
+    (0, type_graphql_1.Field)(() => TypeGraphQL.User),
     __metadata("design:type", Object)
 ], RegisterResponse.prototype, "user", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => TypeGraphQL.LeagueMembers),
+    (0, type_graphql_1.Field)(() => TypeGraphQL.LeagueMember),
     __metadata("design:type", Object)
 ], RegisterResponse.prototype, "membership", void 0);
 RegisterResponse = __decorate([

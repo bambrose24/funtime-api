@@ -58,11 +58,11 @@ __decorate([
     __metadata("design:type", Number)
 ], MostRecentStartedWeekResponse.prototype, "season", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [TypeGraphQL.Picks]),
+    (0, type_graphql_1.Field)(() => [TypeGraphQL.Pick]),
     __metadata("design:type", Array)
 ], MostRecentStartedWeekResponse.prototype, "picks", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [TypeGraphQL.Games]),
+    (0, type_graphql_1.Field)(() => [TypeGraphQL.Game]),
     __metadata("design:type", Array)
 ], MostRecentStartedWeekResponse.prototype, "games", void 0);
 MostRecentStartedWeekResponse = __decorate([
