@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Game {
-  gid                     Int      @id(map: "idx_17979_primary") @default(autoincrement())
+  gid                     Int      @id(map: "idx_18403_primary") @default(autoincrement())
   season                  Int
   week                    Int
   ts                      DateTime @db.Timestamptz(6)
@@ -32,13 +32,13 @@ model Game {
   teams_games_awayToteams Team     @relation("games_awayToteams", fields: [away], references: [teamid], onUpdate: Restrict, map: "games_ibfk_2")
   picks                   Pick[]
 
-  @@index([away], map: "idx_17979_away")
-  @@index([home], map: "idx_17979_home")
+  @@index([away], map: "idx_18403_away")
+  @@index([home], map: "idx_18403_home")
   @@map("games")
 }
 
 model LeagueMember {
-  membership_id Int         @id(map: "idx_17990_primary") @default(autoincrement())
+  membership_id Int         @id(map: "idx_18414_primary") @default(autoincrement())
   league_id     Int
   user_id       Int
   role          String
@@ -48,13 +48,13 @@ model LeagueMember {
   picks         Pick[]
   superbowl     Superbowl[]
 
-  @@index([league_id], map: "idx_17990_league_id")
-  @@index([user_id], map: "idx_17990_user_id")
+  @@index([league_id], map: "idx_18414_league_id")
+  @@index([user_id], map: "idx_18414_user_id")
   @@map("leaguemembers")
 }
 
 model League {
-  league_id          Int            @id(map: "idx_17998_primary") @default(autoincrement())
+  league_id          Int            @id(map: "idx_18422_primary") @default(autoincrement())
   created_by_user_id Int
   name               String
   scoring_type       String?
@@ -65,12 +65,12 @@ model League {
   people             User           @relation(fields: [created_by_user_id], references: [uid], onUpdate: Restrict, map: "leagues_ibfk_1")
   leaguemembers      LeagueMember[]
 
-  @@index([created_by_user_id], map: "idx_17998_created_by_user_id")
+  @@index([created_by_user_id], map: "idx_18422_created_by_user_id")
   @@map("leagues")
 }
 
 model User {
-  uid              Int            @id(map: "idx_18006_primary") @default(autoincrement())
+  uid              Int            @id(map: "idx_18430_primary") @default(autoincrement())
   username         String         @db.VarChar(255)
   fname            String         @db.VarChar(255)
   lname            String         @db.VarChar(255)
@@ -84,12 +84,12 @@ model User {
   leagues          League[]
   picks            Pick[]
 
-  @@index([email], map: "idx_18006_email_index")
+  @@index([email], map: "idx_18430_email_index")
   @@map("people")
 }
 
 model Pick {
-  pickid        Int           @id(map: "idx_18013_primary") @default(autoincrement())
+  pickid        Int           @id(map: "idx_18437_primary") @default(autoincrement())
   uid           Int
   season        Int
   week          Int
@@ -106,14 +106,14 @@ model Pick {
   people        User          @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "picks_ibfk_2")
   leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "picks_ibfk_3")
 
-  @@index([gid], map: "idx_18013_gid")
-  @@index([member_id], map: "idx_18013_picks_ibfk_3")
-  @@index([uid], map: "idx_18013_uid")
+  @@index([gid], map: "idx_18437_gid")
+  @@index([member_id], map: "idx_18437_picks_ibfk_3")
+  @@index([uid], map: "idx_18437_uid")
   @@map("picks")
 }
 
 model Superbowl {
-  pickid        Int           @id(map: "idx_18024_primary") @default(autoincrement())
+  pickid        Int           @id(map: "idx_18448_primary") @default(autoincrement())
   uid           Int
   winner        Int
   loser         Int
@@ -123,12 +123,12 @@ model Superbowl {
   member_id     Int?
   leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "superbowl_ibfk_1")
 
-  @@index([member_id], map: "idx_18024_member_id")
+  @@index([member_id], map: "idx_18448_member_id")
   @@map("superbowl")
 }
 
 model SuperbowlSquare {
-  square_id       Int      @id(map: "idx_18030_primary") @default(autoincrement())
+  square_id       Int      @id(map: "idx_18454_primary") @default(autoincrement())
   uid             Int
   league_id       Int
   afc_score_index Int
@@ -140,7 +140,7 @@ model SuperbowlSquare {
 }
 
 model Team {
-  teamid                  Int     @id(map: "idx_18036_primary") @default(autoincrement())
+  teamid                  Int     @id(map: "idx_18460_primary") @default(autoincrement())
   abbrev                  String? @db.VarChar(50)
   loc                     String  @db.VarChar(255)
   name                    String  @db.VarChar(255)
