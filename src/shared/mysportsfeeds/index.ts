@@ -71,6 +71,7 @@ export async function getGamesByWeek(
       getWeekKey({ season, week })
     );
     if (memoryCacheResult) {
+      console.log("memory cache hit");
       return memoryCacheResult;
     }
 
