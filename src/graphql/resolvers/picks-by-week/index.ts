@@ -30,7 +30,7 @@ class PicksByWeekResolver {
     @Arg("override", { nullable: true })
     override: boolean
   ): Promise<PicksByWeekResponse> {
-    console.log("getting picks by week...");
+    console.log("getting picks by week...", process.version);
     return { week, season: 2022, games: [], picks: [], canView: true };
     // const league = await datastore.league.findFirst({
     //   where: { league_id: { equals: league_id } },
