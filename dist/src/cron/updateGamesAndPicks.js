@@ -30,7 +30,7 @@ async function updateGamesAndPicks(games) {
         const msfGame = games.find((g) => g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
             g.schedule.awayTeam.abbreviation === awayTeam.abbrev);
         if (!msfGame) {
-            console.log("could not find");
+            console.log(`could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`);
         }
         const homeScore = msfGame?.score.homeScoreTotal;
         const awayScore = msfGame?.score.awayScoreTotal;

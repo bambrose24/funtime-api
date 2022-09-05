@@ -87,8 +87,6 @@ bootstrap();
 
 app.use(cors());
 
-console.log("free mem and total mem", os.freemem(), os.totalmem());
-
 // Run the 3 minute cron
 cron.schedule("*/3 * * * *", async () => {
   // await keepThingsUpdated();

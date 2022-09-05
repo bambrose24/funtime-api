@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
-const os_1 = __importDefault(require("os"));
 const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
@@ -65,7 +64,6 @@ async function bootstrap() {
 }
 bootstrap();
 app.use((0, cors_1.default)());
-console.log("free mem and total mem", os_1.default.freemem(), os_1.default.totalmem());
 // Run the 3 minute cron
 node_cron_1.default.schedule("*/3 * * * *", async () => {
     // await keepThingsUpdated();

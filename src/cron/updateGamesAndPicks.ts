@@ -31,7 +31,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         g.schedule.awayTeam.abbreviation === awayTeam.abbrev
     );
     if (!msfGame) {
-      console.log("could not find");
+      console.log(
+        `could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
+      );
     }
 
     const homeScore = msfGame?.score.homeScoreTotal!;
