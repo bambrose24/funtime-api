@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const types_1 = require("@shared/mysportsfeeds/types");
 const moment_1 = __importDefault(require("moment"));
-const register_1 = require("src/graphql/resolvers/register");
+const register_1 = require("../graphql/resolvers/register");
 async function updateGamesAndPicks(games) {
     const [dbGames, teams] = await Promise.all([
         datastore_1.default.game.findMany({
@@ -25,7 +25,6 @@ async function updateGamesAndPicks(games) {
         if (dbGame.done) {
             return;
         }
-        console.info(`[cron] updating game ${dbGame.gid}`);
         const homeTeam = teamsMap[dbGame.home];
         const awayTeam = teamsMap[dbGame.away];
         const msfGame = games.find((g) => g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&

@@ -2,7 +2,7 @@ import { Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import moment from "moment";
-import { SEASON } from "src/graphql/resolvers/register";
+import { SEASON } from "../graphql/resolvers/register";
 
 export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   const [dbGames, teams] = await Promise.all([
