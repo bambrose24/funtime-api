@@ -24,7 +24,7 @@ export async function sendRegistrationMail(
   superbowlLoser: number,
   superbowlScore: number
 ): Promise<void> {
-  const teams = await datastore.teams.findMany({
+  const teams = await datastore.team.findMany({
     where: { teamid: { gte: 0 } },
   });
 
@@ -56,20 +56,20 @@ export async function sendPickSuccessEmail(
   season: number
 ): Promise<boolean> {
   const [games, picks, user, teams] = await Promise.all([
-    datastore.games.findMany({
+    datastore.game.findMany({
       where: { week: { equals: week }, season: { equals: season } },
     }),
-    datastore.picks.findMany({
+    datastore.pick.findMany({
       where: {
         season: { equals: season },
         week: { equals: week },
         member_id: { equals: member_id },
       },
     }),
-    datastore.leagueMembers
+    datastore.leagueMember
       .findFirstOrThrow({ where: { membership_id: member_id } })
-      .People(),
-    datastore.teams.findMany({ where: { teamid: { gt: 0 } } }),
+      .people(),
+    datastore.team.findMany({ where: { teamid: { gt: 0 } } }),
   ]);
 
   if (!user) {

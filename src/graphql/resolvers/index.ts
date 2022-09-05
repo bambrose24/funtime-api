@@ -18,22 +18,22 @@ import MostRecentStartedWeekResolver from "./most-recent-started-week";
 import GameLiveResolver from "./live-game";
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
-  Picks: {
+  Pick: {
     fields: {
       ts: [Field(() => DateTimeResolver)],
     },
   },
-  Games: {
+  Game: {
     fields: {
       ts: [Field(() => DateTimeResolver)],
     },
   },
-  LeagueMembers: {
+  LeagueMember: {
     fields: {
       ts: [Field(() => DateTimeResolver)],
     },
   },
-  Leagues: {
+  League: {
     fields: {
       created_time: [Field(() => DateTimeResolver)],
     },
@@ -43,7 +43,7 @@ const modelsEnhanceMap: ModelsEnhanceMap = {
       ts: [Field(() => DateTimeResolver)],
     },
   },
-  SuperbowlSquares: {
+  SuperbowlSquare: {
     fields: {
       ts: [Field(() => DateTimeResolver)],
     },

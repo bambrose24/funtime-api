@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Games } from "@prisma/client";
+import { Game } from "@prisma/client";
 import datastore from "@shared/datastore";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { Field, Int, ObjectType, Query } from "type-graphql";
@@ -12,8 +12,8 @@ class FirstNotStartedWeekResponse {
   week: number | null;
   @Field(() => Int, { nullable: true })
   season: number | null;
-  @Field(() => [TypeGraphQL.Games]!)
-  games: Array<Games>;
+  @Field(() => [TypeGraphQL.Game]!)
+  games: Array<Game>;
 }
 
 class FirstNotStartedWeekResolver {
@@ -26,7 +26,7 @@ class FirstNotStartedWeekResolver {
 
     const { week, season } = res;
 
-    const games = await datastore.games.findMany({ where: { week, season } });
+    const games = await datastore.game.findMany({ where: { week, season } });
 
     return {
       week,
@@ -40,7 +40,7 @@ async function findWeekForPicks(): Promise<{
   week: number;
   season: number;
 } | null> {
-  const gamesWithinMonth = await datastore.games.findMany({
+  const gamesWithinMonth = await datastore.game.findMany({
     where: {
       ts: {
         gte: now().subtract({ months: 1 }).toDate(),

@@ -1,4 +1,4 @@
-import { Teams } from "@prisma/client";
+import { Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import moment from "moment";
@@ -6,18 +6,18 @@ import { SEASON } from "src/graphql/resolvers/register";
 
 export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   const [dbGames, teams] = await Promise.all([
-    datastore.games.findMany({
+    datastore.game.findMany({
       where: {
         season: { equals: SEASON },
         week: { in: games.map((g) => g.schedule.week) },
       },
     }),
-    datastore.teams.findMany({ where: { teamid: { gt: 0 } } }),
+    datastore.team.findMany({ where: { teamid: { gt: 0 } } }),
   ]);
   const teamsMap = teams.reduce((prev, curr) => {
     prev[curr.teamid] = curr;
     return prev;
-  }, {} as Record<number, Teams>);
+  }, {} as Record<number, Team>);
 
   await dbGames.forEach(async (dbGame) => {
     if (dbGame.done) {
@@ -44,11 +44,11 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       awayScore !== null
     ) {
       // game is done, time to update picks and dbGame.done = true
-      const picks = await datastore.picks.findMany({
+      const picks = await datastore.pick.findMany({
         where: { gid: dbGame.gid },
       });
       console.info(`[cron] setting game ${dbGame.gid} to done`);
-      await datastore.games.update({
+      await datastore.game.update({
         data: {
           done: true,
         },
@@ -67,7 +67,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           correct = true;
         }
         console.info(`[cron] setting pick ${p.pickid} as correct ${correct}`);
-        await datastore.picks.update({
+        await datastore.pick.update({
           where: { pickid: p.pickid },
           data: { correct: correct ? 1 : 0 },
         });
@@ -75,7 +75,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     }
 
     if (homeScore !== null && awayScore !== null) {
-      const data: Parameters<typeof datastore.games.update>[number]["data"] = {
+      const data: Parameters<typeof datastore.game.update>[number]["data"] = {
         homescore: homeScore,
         awayscore: awayScore,
       };
@@ -85,7 +85,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       console.info(
         `[cron] setting ${dbGame.gid} to data ${JSON.stringify(data)}`
       );
-      await datastore.games.update({
+      await datastore.game.update({
         where: { gid: dbGame.gid },
         data,
       });

@@ -9,13 +9,13 @@ const moment_1 = __importDefault(require("moment"));
 const register_1 = require("src/graphql/resolvers/register");
 async function updateGamesAndPicks(games) {
     const [dbGames, teams] = await Promise.all([
-        datastore_1.default.games.findMany({
+        datastore_1.default.game.findMany({
             where: {
                 season: { equals: register_1.SEASON },
                 week: { in: games.map((g) => g.schedule.week) },
             },
         }),
-        datastore_1.default.teams.findMany({ where: { teamid: { gt: 0 } } }),
+        datastore_1.default.team.findMany({ where: { teamid: { gt: 0 } } }),
     ]);
     const teamsMap = teams.reduce((prev, curr) => {
         prev[curr.teamid] = curr;
@@ -39,11 +39,11 @@ async function updateGamesAndPicks(games) {
             homeScore !== null &&
             awayScore !== null) {
             // game is done, time to update picks and dbGame.done = true
-            const picks = await datastore_1.default.picks.findMany({
+            const picks = await datastore_1.default.pick.findMany({
                 where: { gid: dbGame.gid },
             });
             console.info(`[cron] setting game ${dbGame.gid} to done`);
-            await datastore_1.default.games.update({
+            await datastore_1.default.game.update({
                 data: {
                     done: true,
                 },
@@ -60,7 +60,7 @@ async function updateGamesAndPicks(games) {
                     correct = true;
                 }
                 console.info(`[cron] setting pick ${p.pickid} as correct ${correct}`);
-                await datastore_1.default.picks.update({
+                await datastore_1.default.pick.update({
                     where: { pickid: p.pickid },
                     data: { correct: correct ? 1 : 0 },
                 });
@@ -75,7 +75,7 @@ async function updateGamesAndPicks(games) {
                 data["ts"] = (0, moment_1.default)(msfGame.schedule.startTime).toDate();
             }
             console.info(`[cron] setting ${dbGame.gid} to data ${JSON.stringify(data)}`);
-            await datastore_1.default.games.update({
+            await datastore_1.default.game.update({
                 where: { gid: dbGame.gid },
                 data,
             });

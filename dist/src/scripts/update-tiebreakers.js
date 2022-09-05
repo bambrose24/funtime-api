@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== "production") {
 const datastore_1 = __importDefault(require("@shared/datastore"));
 // npx ts-node src/scripts/update-tiebreakers.ts
 async function run() {
-    const games = await datastore_1.default.games.findMany({
+    const games = await datastore_1.default.game.findMany({
         where: { season: { equals: 2022 } },
         orderBy: { ts: "asc" },
     });
@@ -22,7 +22,7 @@ async function run() {
         gamesToMakeTiebreakers.push(weekGames[weekGames.length - 1]);
     });
     console.log(`going to update ${gamesToMakeTiebreakers.length} games`);
-    const { count } = await datastore_1.default.games.updateMany({
+    const { count } = await datastore_1.default.game.updateMany({
         where: {
             gid: { in: gamesToMakeTiebreakers.map((g) => g.gid) },
         },

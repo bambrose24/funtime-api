@@ -10,6 +10,7 @@ function now() {
     if (config_1.env === "production") {
         return (0, moment_1.default)();
     }
+    // when testing times, add a delta here -- need to build the app before running again for changes to take effect
     return (0, moment_1.default)();
 }
 exports.now = now;

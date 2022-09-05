@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Games, Picks } from "@prisma/client";
+import { Game, Pick } from "@prisma/client";
 import datastore from "@shared/datastore";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
@@ -12,10 +12,10 @@ class MostRecentStartedWeekResponse {
   week: number;
   @Field(() => Int, { nullable: true })
   season: number;
-  @Field(() => [TypeGraphQL.Picks]!)
-  picks: Array<Picks>;
-  @Field(() => [TypeGraphQL.Games]!)
-  games: Array<Games>;
+  @Field(() => [TypeGraphQL.Pick]!)
+  picks: Array<Pick>;
+  @Field(() => [TypeGraphQL.Game]!)
+  games: Array<Game>;
 }
 
 class MostRecentStartedWeekResolver {
@@ -24,7 +24,7 @@ class MostRecentStartedWeekResolver {
     @Arg("league_id", () => Int)
     league_id: number
   ): Promise<MostRecentStartedWeekResponse> {
-    const mostRecentStartedGame = await datastore.games.findFirst({
+    const mostRecentStartedGame = await datastore.game.findFirst({
       where: {
         ts: { lte: now().toDate() },
       },
@@ -40,9 +40,9 @@ class MostRecentStartedWeekResolver {
     const { week, season } = mostRecentStartedGame;
 
     const [games, picks] = await Promise.all([
-      datastore.games.findMany({ where: { week, season } }),
-      datastore.picks.findMany({
-        where: { week, LeagueMembers: { league_id } },
+      datastore.game.findMany({ where: { week, season } }),
+      datastore.pick.findMany({
+        where: { week, leaguemembers: { league_id } },
       }),
     ]);
 

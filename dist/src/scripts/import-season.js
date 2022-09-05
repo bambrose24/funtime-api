@@ -13,7 +13,7 @@ const mysportsfeeds_1 = require("@shared/mysportsfeeds");
 async function run() {
     const season = 2022;
     const games = await (0, mysportsfeeds_1.getGamesBySeason)(season);
-    const teams = await datastore_1.default.teams.findMany({
+    const teams = await datastore_1.default.team.findMany({
         where: { teamid: { gte: 0 } },
     });
     const teamsMap = {};
@@ -32,7 +32,7 @@ function convertToDBGameForCreation(season, game, teamsMap) {
         season,
         week: game.week,
         ts: new Date(game.startTime),
-        seconds: BigInt(new Date(game.startTime).getTime() / 1000),
+        seconds: new Date(game.startTime).getTime() / 1000,
         done: false,
         winner: null,
     };

@@ -18,22 +18,22 @@ const most_recent_started_week_1 = __importDefault(require("./most-recent-starte
 const live_game_1 = __importDefault(require("./live-game"));
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
-    Picks: {
+    Pick: {
         fields: {
             ts: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },
     },
-    Games: {
+    Game: {
         fields: {
             ts: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },
     },
-    LeagueMembers: {
+    LeagueMember: {
         fields: {
             ts: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },
     },
-    Leagues: {
+    League: {
         fields: {
             created_time: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },
@@ -43,7 +43,7 @@ const modelsEnhanceMap = {
             ts: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },
     },
-    SuperbowlSquares: {
+    SuperbowlSquare: {
         fields: {
             ts: [(0, type_graphql_3.Field)(() => graphql_scalars_1.DateTimeResolver)],
         },

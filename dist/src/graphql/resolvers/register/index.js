@@ -129,11 +129,11 @@ async function registerUser(email, username, previousUserId) {
     let user = null;
     let membership = null;
     // see if user already exists for this season
-    user = await datastore_1.default.people.findFirst({
+    user = await datastore_1.default.user.findFirst({
         where: { email: email, season: { gte: 2021 } },
     });
     if (user) {
-        membership = await datastore_1.default.leagueMembers.findFirst({
+        membership = await datastore_1.default.leagueMember.findFirst({
             where: { user_id: user.uid, league_id: exports.LEAGUE_ID },
         });
         if (membership) {
@@ -141,7 +141,7 @@ async function registerUser(email, username, previousUserId) {
         }
     }
     if (previousUserId) {
-        user = await datastore_1.default.people.findUnique({
+        user = await datastore_1.default.user.findUnique({
             where: { uid: previousUserId },
         });
         if (!user) {
@@ -149,14 +149,14 @@ async function registerUser(email, username, previousUserId) {
         }
     }
     else {
-        user = await datastore_1.default.people.findFirst({
+        user = await datastore_1.default.user.findFirst({
             where: {
                 email,
                 season: 2021,
             },
         });
         if (!user) {
-            user = await datastore_1.default.people.create({
+            user = await datastore_1.default.user.create({
                 data: {
                     username,
                     email,
@@ -170,7 +170,7 @@ async function registerUser(email, username, previousUserId) {
             throw new Error(`Error creating a new user`);
         }
     }
-    membership = await datastore_1.default.leagueMembers.create({
+    membership = await datastore_1.default.leagueMember.create({
         data: {
             league_id: exports.LEAGUE_ID,
             user_id: user.uid,

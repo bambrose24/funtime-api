@@ -75,7 +75,7 @@ PicksByWeekResponse = __decorate([
 ], PicksByWeekResponse);
 class PicksByWeekResolver {
     async picksByWeek(league_id, week, override) {
-        const league = await datastore_1.default.leagues.findFirst({
+        const league = await datastore_1.default.league.findFirst({
             where: { league_id: { equals: league_id } },
         });
         const season = league?.season;
@@ -87,7 +87,7 @@ class PicksByWeekResolver {
         if (week) {
             whereInput["week"] = { equals: week };
             whereInput["season"] = { equals: season };
-            games = await datastore_1.default.games.findMany({
+            games = await datastore_1.default.game.findMany({
                 where: {
                     week: { equals: week },
                     season: { equals: season },
@@ -96,7 +96,7 @@ class PicksByWeekResolver {
             });
         }
         else {
-            const lastStartedGame = await datastore_1.default.games.findFirst({
+            const lastStartedGame = await datastore_1.default.game.findFirst({
                 where: {
                     ts: { lte: (0, time_1.now)().toDate() },
                     season: { equals: season },
@@ -107,7 +107,7 @@ class PicksByWeekResolver {
                 games = [];
             }
             else {
-                games = await datastore_1.default.games.findMany({
+                games = await datastore_1.default.game.findMany({
                     where: {
                         week: { equals: lastStartedGame.week },
                         season: { equals: lastStartedGame.season },
@@ -127,11 +127,11 @@ class PicksByWeekResolver {
         }
         const { week: realWeek, season: realSeason } = games[0];
         const canView = games[0].ts < (0, moment_1.default)().toDate();
-        const picks = await datastore_1.default.picks.findMany({
+        const picks = await datastore_1.default.pick.findMany({
             where: {
                 week: { equals: realWeek },
                 season: { equals: realSeason },
-                LeagueMembers: {
+                leaguemembers: {
                     league_id: { equals: league_id },
                 },
             },

@@ -54,7 +54,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], MakePicksResponse.prototype, "success", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => TypeGraphQL.People),
+    (0, type_graphql_1.Field)(() => TypeGraphQL.User),
     __metadata("design:type", Object)
 ], MakePicksResponse.prototype, "user", void 0);
 MakePicksResponse = __decorate([
@@ -94,9 +94,9 @@ let MakePicksResolver = class MakePicksResolver {
         catch (e) {
             console.log("email error", e);
         }
-        const user = await datastore_1.default.leagueMembers
+        const user = await datastore_1.default.leagueMember
             .findFirstOrThrow({ where: { membership_id: { equals: member_id } } })
-            .People();
+            .people();
         return { success: true, user: user };
     }
 };
@@ -112,13 +112,13 @@ MakePicksResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], MakePicksResolver);
 async function upsertWeekPicksForMember(member_id, picks) {
-    const user = await datastore_1.default.leagueMembers
+    const user = await datastore_1.default.leagueMember
         .findUniqueOrThrow({ where: { membership_id: member_id } })
-        .People();
+        .people();
     if (!user) {
         throw new Error("Could not make picks for unknown member");
     }
-    const games = await datastore_1.default.games.findMany({
+    const games = await datastore_1.default.game.findMany({
         where: { gid: { in: picks.map((g) => g.game_id) } },
     });
     // check if they're all the same week
@@ -130,11 +130,11 @@ async function upsertWeekPicksForMember(member_id, picks) {
     const season = games[0].season;
     // TODO check if the person is able to make picks for the week based on game start time
     // TODO let picks happen until the "majority" time
-    const existingPick = await datastore_1.default.picks.findFirst({
+    const existingPick = await datastore_1.default.pick.findFirst({
         where: { member_id: { equals: member_id } },
     });
     if (existingPick) {
-        await datastore_1.default.picks.deleteMany({
+        await datastore_1.default.pick.deleteMany({
             where: {
                 member_id: { equals: member_id },
                 week: { equals: week },
@@ -142,7 +142,7 @@ async function upsertWeekPicksForMember(member_id, picks) {
             },
         });
     }
-    await datastore_1.default.picks.createMany({
+    await datastore_1.default.pick.createMany({
         data: picks.map(({ game_id, winner, score, is_random }) => {
             const game = games.find((g) => g.gid === game_id);
             const loserId = game.away === winner ? game.home : game?.away;

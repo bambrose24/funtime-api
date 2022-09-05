@@ -1,5 +1,5 @@
 import { MailDataRequired } from "@sendgrid/mail";
-import { Games, People, Picks, Teams } from "@prisma/client";
+import { Game, User, Pick as DBPick, Team } from "@prisma/client";
 
 export function getDefaultSendParams(
   email: string
@@ -16,8 +16,8 @@ export function getDefaultSendParams(
 export function getRegistrationText(
   username: string,
   season: number,
-  winner: Teams,
-  loser: Teams,
+  winner: Team,
+  loser: Team,
   score: number
 ): string {
   return (
@@ -51,10 +51,10 @@ export function getWeekPicksContent({
 }: {
   week: number;
   season: number;
-  user: People;
-  games: Array<Games>;
-  picks: Array<Picks>;
-  teams: Array<Teams>;
+  user: User;
+  games: Array<Game>;
+  picks: Array<DBPick>;
+  teams: Array<Team>;
 }): string {
   let res =
     `Congrats ${user.username}! You just made your picks for Week ${week}, ${season}, and ` +

@@ -70,7 +70,7 @@ MostRecentStartedWeekResponse = __decorate([
 ], MostRecentStartedWeekResponse);
 class MostRecentStartedWeekResolver {
     async mostRecentStartedWeek(league_id) {
-        const mostRecentStartedGame = await datastore_1.default.games.findFirst({
+        const mostRecentStartedGame = await datastore_1.default.game.findFirst({
             where: {
                 ts: { lte: (0, time_1.now)().toDate() },
             },
@@ -82,9 +82,9 @@ class MostRecentStartedWeekResolver {
         }
         const { week, season } = mostRecentStartedGame;
         const [games, picks] = await Promise.all([
-            datastore_1.default.games.findMany({ where: { week, season } }),
-            datastore_1.default.picks.findMany({
-                where: { week, LeagueMembers: { league_id } },
+            datastore_1.default.game.findMany({ where: { week, season } }),
+            datastore_1.default.pick.findMany({
+                where: { week, leaguemembers: { league_id } },
             }),
         ]);
         return {

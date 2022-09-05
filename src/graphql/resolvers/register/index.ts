@@ -1,5 +1,5 @@
 import datastore from "@shared/datastore";
-import { LeagueMembers, People } from "@prisma/client";
+import { LeagueMember, User } from "@prisma/client";
 import { Arg, Field, Int, Mutation, ObjectType, Resolver } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { sendRegistrationMail } from "@shared/email";
@@ -11,10 +11,10 @@ export const DEFAULT_ROLE = "player";
 class RegisterResponse {
   @Field()
   success: boolean;
-  @Field(() => TypeGraphQL.People)
-  user: People;
-  @Field(() => TypeGraphQL.LeagueMembers)
-  membership: LeagueMembers;
+  @Field(() => TypeGraphQL.User)
+  user: User;
+  @Field(() => TypeGraphQL.LeagueMember)
+  membership: LeagueMember;
 }
 
 @Resolver()
@@ -61,8 +61,8 @@ class RegisterResolver {
 }
 
 async function upsertSuperbowlPick(
-  user: People,
-  membership: LeagueMembers,
+  user: User,
+  membership: LeagueMember,
   superbowlWinner: number,
   superbowlLoser: number,
   superbowlScore: number
@@ -104,17 +104,17 @@ async function registerUser(
   email: string,
   username: string,
   previousUserId: number | null
-): Promise<{ user: People; membership: LeagueMembers }> {
-  let user: People | null = null;
-  let membership: LeagueMembers | null = null;
+): Promise<{ user: User; membership: LeagueMember }> {
+  let user: User | null = null;
+  let membership: LeagueMember | null = null;
 
   // see if user already exists for this season
-  user = await datastore.people.findFirst({
+  user = await datastore.user.findFirst({
     where: { email: email, season: { gte: 2021 } },
   });
 
   if (user) {
-    membership = await datastore.leagueMembers.findFirst({
+    membership = await datastore.leagueMember.findFirst({
       where: { user_id: user.uid, league_id: LEAGUE_ID },
     });
     if (membership) {
@@ -122,7 +122,7 @@ async function registerUser(
     }
   }
   if (previousUserId) {
-    user = await datastore.people.findUnique({
+    user = await datastore.user.findUnique({
       where: { uid: previousUserId },
     });
     if (!user) {
@@ -131,14 +131,14 @@ async function registerUser(
       );
     }
   } else {
-    user = await datastore.people.findFirst({
+    user = await datastore.user.findFirst({
       where: {
         email,
         season: 2021,
       },
     });
     if (!user) {
-      user = await datastore.people.create({
+      user = await datastore.user.create({
         data: {
           username,
           email,
@@ -153,7 +153,7 @@ async function registerUser(
     }
   }
 
-  membership = await datastore.leagueMembers.create({
+  membership = await datastore.leagueMember.create({
     data: {
       league_id: LEAGUE_ID,
       user_id: user.uid,

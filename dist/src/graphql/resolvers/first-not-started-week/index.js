@@ -53,7 +53,7 @@ __decorate([
     __metadata("design:type", Object)
 ], FirstNotStartedWeekResponse.prototype, "season", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [TypeGraphQL.Games]),
+    (0, type_graphql_1.Field)(() => [TypeGraphQL.Game]),
     __metadata("design:type", Array)
 ], FirstNotStartedWeekResponse.prototype, "games", void 0);
 FirstNotStartedWeekResponse = __decorate([
@@ -66,7 +66,7 @@ class FirstNotStartedWeekResolver {
             return { week: null, season: null, games: [] };
         }
         const { week, season } = res;
-        const games = await datastore_1.default.games.findMany({ where: { week, season } });
+        const games = await datastore_1.default.game.findMany({ where: { week, season } });
         return {
             week,
             season,
@@ -81,7 +81,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FirstNotStartedWeekResolver.prototype, "firstNotStartedWeek", null);
 async function findWeekForPicks() {
-    const gamesWithinMonth = await datastore_1.default.games.findMany({
+    const gamesWithinMonth = await datastore_1.default.game.findMany({
         where: {
             ts: {
                 gte: (0, time_1.now)().subtract({ months: 1 }).toDate(),

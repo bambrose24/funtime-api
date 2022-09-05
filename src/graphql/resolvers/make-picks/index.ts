@@ -1,5 +1,5 @@
 import datastore from "@shared/datastore";
-import { People } from "@prisma/client";
+import { User } from "@prisma/client";
 import {
   Arg,
   Field,
@@ -18,8 +18,8 @@ export const DEFAULT_ROLE = "player";
 class MakePicksResponse {
   @Field()
   success: boolean;
-  @Field(() => TypeGraphQL.People)
-  user: People;
+  @Field(() => TypeGraphQL.User)
+  user: User;
 }
 
 @InputType()
@@ -49,11 +49,11 @@ class MakePicksResolver {
       console.log("email error", e);
     }
 
-    const user = await datastore.leagueMembers
+    const user = await datastore.leagueMember
       .findFirstOrThrow({ where: { membership_id: { equals: member_id } } })
-      .People();
+      .people();
 
-    return { success: true, user: user as People };
+    return { success: true, user: user as User };
   }
 }
 
@@ -61,15 +61,15 @@ async function upsertWeekPicksForMember(
   member_id: number,
   picks: Array<GamePick>
 ): Promise<{ week: number; season: number }> {
-  const user = await datastore.leagueMembers
+  const user = await datastore.leagueMember
     .findUniqueOrThrow({ where: { membership_id: member_id } })
-    .People();
+    .people();
 
   if (!user) {
     throw new Error("Could not make picks for unknown member");
   }
 
-  const games = await datastore.games.findMany({
+  const games = await datastore.game.findMany({
     where: { gid: { in: picks.map((g) => g.game_id) } },
   });
 
@@ -88,12 +88,12 @@ async function upsertWeekPicksForMember(
 
   // TODO let picks happen until the "majority" time
 
-  const existingPick = await datastore.picks.findFirst({
+  const existingPick = await datastore.pick.findFirst({
     where: { member_id: { equals: member_id } },
   });
 
   if (existingPick) {
-    await datastore.picks.deleteMany({
+    await datastore.pick.deleteMany({
       where: {
         member_id: { equals: member_id },
         week: { equals: week },
@@ -102,7 +102,7 @@ async function upsertWeekPicksForMember(
     });
   }
 
-  await datastore.picks.createMany({
+  await datastore.pick.createMany({
     data: picks.map(({ game_id, winner, score, is_random }) => {
       const game = games.find((g) => g.gid === game_id)!;
       const loserId = game.away === winner ? game.home : game?.away;

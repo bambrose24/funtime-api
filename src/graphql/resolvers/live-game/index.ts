@@ -11,7 +11,7 @@ import * as TypeGraphQL from "@generated/type-graphql";
 import { ApolloPrismaContext } from "src/graphql/server/types";
 import { getGamesByWeek } from "../../../shared/mysportsfeeds";
 import { MSFGamePlayedStatus } from "../../../shared/mysportsfeeds/types";
-import { Games } from "@prisma/client";
+import { Game } from "@prisma/client";
 
 @ObjectType("GameLive")
 class GameLive {
@@ -23,15 +23,15 @@ class GameLive {
   playedStatus: MSFGamePlayedStatus | null | undefined;
 }
 
-@Resolver(() => TypeGraphQL.Games)
+@Resolver(() => TypeGraphQL.Game)
 export default class GameLiveResolver {
   @FieldResolver((_type) => GameLive, { nullable: true })
   async liveStatus(
-    @Root() game: Games,
+    @Root() game: Game,
     @Ctx() { prisma: datastore }: ApolloPrismaContext
   ): Promise<GameLive | undefined | null> {
     const [teams, msfGames] = await Promise.all([
-      datastore.teams.findMany({ where: { teamid: { gt: 0 } } }),
+      datastore.team.findMany({ where: { teamid: { gt: 0 } } }),
       getGamesByWeek(game.season, game.week),
     ]);
     const homeTeam = teams.find((t) => t.teamid === game.home)!;

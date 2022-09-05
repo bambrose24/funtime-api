@@ -16,7 +16,7 @@ const util_1 = require("./util");
 //   refresh_token: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
 // });
 async function sendRegistrationMail(username, email, season, superbowlWinner, superbowlLoser, superbowlScore) {
-    const teams = await datastore_1.default.teams.findMany({
+    const teams = await datastore_1.default.team.findMany({
         where: { teamid: { gte: 0 } },
     });
     const winner = teams.find((t) => t.teamid === superbowlWinner);
@@ -37,20 +37,20 @@ async function sendRegistrationMail(username, email, season, superbowlWinner, su
 exports.sendRegistrationMail = sendRegistrationMail;
 async function sendPickSuccessEmail(member_id, week, season) {
     const [games, picks, user, teams] = await Promise.all([
-        datastore_1.default.games.findMany({
+        datastore_1.default.game.findMany({
             where: { week: { equals: week }, season: { equals: season } },
         }),
-        datastore_1.default.picks.findMany({
+        datastore_1.default.pick.findMany({
             where: {
                 season: { equals: season },
                 week: { equals: week },
                 member_id: { equals: member_id },
             },
         }),
-        datastore_1.default.leagueMembers
+        datastore_1.default.leagueMember
             .findFirstOrThrow({ where: { membership_id: member_id } })
-            .People(),
-        datastore_1.default.teams.findMany({ where: { teamid: { gt: 0 } } }),
+            .people(),
+        datastore_1.default.team.findMany({ where: { teamid: { gt: 0 } } }),
     ]);
     if (!user) {
         throw new Error(`Could not load user to send pick confirmation email (member_id: ${member_id})`);

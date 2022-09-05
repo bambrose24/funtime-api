@@ -62,7 +62,7 @@ GameLive = __decorate([
 let GameLiveResolver = class GameLiveResolver {
     async liveStatus(game, { prisma: datastore }) {
         const [teams, msfGames] = await Promise.all([
-            datastore.teams.findMany({ where: { teamid: { gt: 0 } } }),
+            datastore.team.findMany({ where: { teamid: { gt: 0 } } }),
             (0, mysportsfeeds_1.getGamesByWeek)(game.season, game.week),
         ]);
         const homeTeam = teams.find((t) => t.teamid === game.home);
@@ -88,6 +88,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GameLiveResolver.prototype, "liveStatus", null);
 GameLiveResolver = __decorate([
-    (0, type_graphql_1.Resolver)(() => TypeGraphQL.Games)
+    (0, type_graphql_1.Resolver)(() => TypeGraphQL.Game)
 ], GameLiveResolver);
 exports.default = GameLiveResolver;
