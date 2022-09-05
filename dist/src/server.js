@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
+const os_1 = __importDefault(require("os"));
 const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
@@ -18,7 +19,6 @@ const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
-const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 /************************************************************************************
@@ -65,9 +65,10 @@ async function bootstrap() {
 }
 bootstrap();
 app.use((0, cors_1.default)());
+console.log("free mem and total mem", os_1.default.freemem(), os_1.default.totalmem());
 // Run the 3 minute cron
 node_cron_1.default.schedule("*/3 * * * *", async () => {
-    await (0, keepThingsUpdated_1.default)();
+    // await keepThingsUpdated();
 });
 /************************************************************************************
  *                              Export Server

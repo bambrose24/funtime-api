@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+import os from "os";
 import morgan from "morgan";
 import helmet from "helmet";
 import StatusCodes from "http-status-codes";
@@ -84,7 +85,9 @@ async function bootstrap() {
 
 bootstrap();
 
-// app.use(cors());
+app.use(cors());
+
+console.log("free mem and total mem", os.freemem(), os.totalmem());
 
 // Run the 3 minute cron
 cron.schedule("*/3 * * * *", async () => {
