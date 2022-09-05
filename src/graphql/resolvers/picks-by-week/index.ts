@@ -9,7 +9,7 @@ import { now } from "@util/time";
 @ObjectType()
 class PicksByWeekResponse {
   @Field(() => Int, { nullable: true })
-  week: number;
+  week: number | null;
   @Field(() => Int, { nullable: true })
   season: number;
   @Field()
@@ -26,7 +26,7 @@ class PicksByWeekResolver {
     @Arg("league_id", () => Int)
     league_id: number,
     @Arg("week", () => Int, { nullable: true })
-    week: number,
+    week: number | null,
     @Arg("override", { nullable: true })
     override: boolean
   ): Promise<PicksByWeekResponse> {
