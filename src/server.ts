@@ -22,6 +22,7 @@ import Keyv from "keyv";
 import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import { ApolloPrismaContext } from "./graphql/server/types";
 import keepThingsUpdated from "./cron/keepThingsUpdated";
+import cors from "cors";
 
 const app = express();
 
@@ -82,6 +83,8 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+app.use(cors());
 
 // Run the 3 minute cron
 cron.schedule("*/3 * * * *", async () => {

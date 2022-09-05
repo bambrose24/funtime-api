@@ -19,6 +19,7 @@ const type_graphql_1 = require("type-graphql");
 const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -63,6 +64,7 @@ async function bootstrap() {
     });
 }
 bootstrap();
+app.use((0, cors_1.default)());
 // Run the 3 minute cron
 node_cron_1.default.schedule("*/3 * * * *", async () => {
     await (0, keepThingsUpdated_1.default)();
