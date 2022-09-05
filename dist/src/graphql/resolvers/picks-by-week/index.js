@@ -34,15 +34,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const datastore_1 = __importDefault(require("@shared/datastore"));
-const moment_1 = __importDefault(require("moment"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
-const time_1 = require("@util/time");
 let PicksByWeekResponse = class PicksByWeekResponse {
     week;
     season;
@@ -75,79 +69,79 @@ PicksByWeekResponse = __decorate([
 ], PicksByWeekResponse);
 class PicksByWeekResolver {
     async picksByWeek(league_id, week, override) {
-        const league = await datastore_1.default.league.findFirst({
-            where: { league_id: { equals: league_id } },
-        });
-        const season = league?.season;
-        if (!season) {
-            throw new Error(`could not find season from league_id ${league_id}`);
-        }
-        let games;
-        const whereInput = {};
-        if (week) {
-            whereInput["week"] = { equals: week };
-            whereInput["season"] = { equals: season };
-            games = await datastore_1.default.game.findMany({
-                where: {
-                    week: { equals: week },
-                    season: { equals: season },
-                },
-                orderBy: { ts: "asc" },
-            });
-        }
-        else {
-            const lastStartedGame = await datastore_1.default.game.findFirst({
-                where: {
-                    ts: { lte: (0, time_1.now)().toDate() },
-                    season: { equals: season },
-                },
-                orderBy: { ts: "asc" },
-            });
-            if (!lastStartedGame) {
-                games = [];
-            }
-            else {
-                games = await datastore_1.default.game.findMany({
-                    where: {
-                        week: { equals: lastStartedGame.week },
-                        season: { equals: lastStartedGame.season },
-                    },
-                    orderBy: { ts: "asc" },
-                });
-            }
-        }
-        if (!games || games.length === 0) {
-            return {
-                week,
-                season,
-                canView: override || false,
-                picks: [],
-                games: [],
-            };
-        }
-        const { week: realWeek, season: realSeason } = games[0];
-        const canView = games[0].ts < (0, moment_1.default)().toDate();
-        const picks = await datastore_1.default.pick.findMany({
-            where: {
-                week: { equals: realWeek },
-                season: { equals: realSeason },
-                leaguemembers: {
-                    league_id: { equals: league_id },
-                },
-            },
-        });
-        return {
-            week: realWeek,
-            season: realSeason,
-            canView: override || canView,
-            picks,
-            games,
-        };
+        console.log("getting picks by week...");
+        return { week, season: 2022, picks: [], games: [], canView: true };
+        // const league = await datastore.league.findFirst({
+        //   where: { league_id: { equals: league_id } },
+        // });
+        // const season = league?.season as number;
+        // if (!season) {
+        //   throw new Error(`could not find season from league_id ${league_id}`);
+        // }
+        // let games: Array<Game> | undefined;
+        // const whereInput: Prisma.GameWhereInput = {};
+        // if (week) {
+        //   whereInput["week"] = { equals: week };
+        //   whereInput["season"] = { equals: season };
+        //   games = await datastore.game.findMany({
+        //     where: {
+        //       week: { equals: week },
+        //       season: { equals: season },
+        //     },
+        //     orderBy: { ts: "asc" },
+        //   });
+        // } else {
+        //   const lastStartedGame = await datastore.game.findFirst({
+        //     where: {
+        //       ts: { lte: now().toDate() },
+        //       season: { equals: season },
+        //     },
+        //     orderBy: { ts: "asc" },
+        //   });
+        //   if (!lastStartedGame) {
+        //     games = [];
+        //   } else {
+        //     games = await datastore.game.findMany({
+        //       where: {
+        //         week: { equals: lastStartedGame.week },
+        //         season: { equals: lastStartedGame.season },
+        //       },
+        //       orderBy: { ts: "asc" },
+        //     });
+        //   }
+        // }
+        // if (!games || games.length === 0) {
+        //   return {
+        //     week,
+        //     season,
+        //     canView: override || false,
+        //     picks: [],
+        //     games: [],
+        //   };
+        // }
+        // const { week: realWeek, season: realSeason } = games[0];
+        // const canView = games[0].ts < moment().toDate();
+        // const picks = await datastore.pick.findMany({
+        //   where: {
+        //     week: { equals: realWeek },
+        //     season: { equals: realSeason },
+        //     leaguemembers: {
+        //       league_id: { equals: league_id },
+        //     },
+        //   },
+        // });
+        // return {
+        //   week: realWeek,
+        //   season: realSeason,
+        //   canView: override || canView,
+        //   picks,
+        //   games,
+        // };
     }
 }
 __decorate([
     (0, type_graphql_1.Query)(() => PicksByWeekResponse),
-    __param(0, (0, type_graphql_1.Arg)("leagueId", () => type_graphql_1.Int)),
+    __param(0, (0, type_graphql_1.Arg)("league_id", () => type_graphql_1.Int)),
     __param(1, (0, type_graphql_1.Arg)("week", () => type_graphql_1.Int, { nullable: true })),
     __param(2, (0, type_graphql_1.Arg)("override", { nullable: true })),
     __metadata("design:type", Function),

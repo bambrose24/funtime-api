@@ -23,7 +23,7 @@ class PicksByWeekResponse {
 class PicksByWeekResolver {
   @Query(() => PicksByWeekResponse)
   async picksByWeek(
-    @Arg("leagueId", () => Int)
+    @Arg("league_id", () => Int)
     league_id: number,
     @Arg("week", () => Int, { nullable: true })
     week: number,
