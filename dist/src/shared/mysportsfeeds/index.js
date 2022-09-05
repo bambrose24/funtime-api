@@ -56,6 +56,7 @@ async function getGamesByWeek(season, week, useRedis = false) {
     try {
         const memoryCacheResult = memory_1.memoryCache.get(getWeekKey({ season, week }));
         if (memoryCacheResult) {
+            console.log("memory cache hit");
             return memoryCacheResult;
         }
         const games = await msf.getData("nfl", `${season}-${season + 1}-regular`, "weekly_games", "json", { week });
