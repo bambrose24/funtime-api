@@ -23,7 +23,6 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     if (dbGame.done) {
       return;
     }
-    console.info(`[cron] updating game ${dbGame.gid}`);
     const homeTeam = teamsMap[dbGame.home];
     const awayTeam = teamsMap[dbGame.away];
     const msfGame = games.find(
