@@ -1,4 +1,4 @@
-# fly.toml file generated for funtime-api on 2022-07-21T21:38:36-04:00
+# fly.toml file generated for funtime-api on 2022-09-05T09:59:16-04:00
 
 app = "funtime-api"
 kill_signal = "SIGINT"
