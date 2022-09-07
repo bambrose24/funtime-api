@@ -152,10 +152,11 @@ async function registerUser(
     }
   }
 
-  // if they inputted a different email and we found their user before, these wont match -- let's update if need be
-  if (user.email !== email) {
-    await datastore.user.update({ where: { uid: user.uid }, data: { email } });
-  }
+  // if they inputted a different email and we found their user before, these wont match -- let's update just in case
+  await datastore.user.update({
+    where: { uid: user.uid },
+    data: { email, username },
+  });
 
   membership = await datastore.leagueMember.create({
     data: {
