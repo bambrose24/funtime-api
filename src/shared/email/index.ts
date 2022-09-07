@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import datastore from "@shared/datastore";
 import mailClient from "./client";
 
@@ -17,8 +18,7 @@ import {
 // });
 
 export async function sendRegistrationMail(
-  username: string,
-  email: string,
+  user: User,
   season: number,
   superbowlWinner: number,
   superbowlLoser: number,
@@ -33,12 +33,12 @@ export async function sendRegistrationMail(
 
   try {
     await mailClient.send({
-      ...getDefaultSendParams(email),
-      to: email,
+      ...getDefaultSendParams(user.email),
+      to: user.email,
       from: "bob.ambrose.funtime@gmail.com",
       subject: "Welcome to Funtime 2022!",
       html: getRegistrationText(
-        username,
+        user.username,
         season,
         winner,
         loser,

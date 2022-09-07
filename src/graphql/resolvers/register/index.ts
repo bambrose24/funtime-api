@@ -45,8 +45,7 @@ class RegisterResolver {
 
     try {
       await sendRegistrationMail(
-        username,
-        email,
+        user
         SEASON,
         superbowlWinner,
         superbowlLoser,
