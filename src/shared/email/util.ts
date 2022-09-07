@@ -29,7 +29,7 @@ export function getRegistrationText(
     "<br/><br/>" +
     `Your Super Bowl pick for the 2022 season is` +
     "<br/><br/>" +
-    `<strong>Winner</strong>:${winner.abbrev || ""}` +
+    `<strong>Winner</strong>: ${winner.abbrev || ""}` +
     "<br/>" +
     `<strong>Loser</strong>: ${loser.abbrev || ""}` +
     "<br/>" +
