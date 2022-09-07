@@ -153,6 +153,10 @@ async function registerUser(
     }
   }
 
+  if (user.email !== email) {
+    await datastore.user.update({ where: { uid: user.uid }, data: { email } });
+  }
+
   membership = await datastore.leagueMember.create({
     data: {
       league_id: LEAGUE_ID,
