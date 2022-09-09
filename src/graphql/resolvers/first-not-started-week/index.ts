@@ -57,7 +57,6 @@ async function findWeekForPicks(): Promise<{
       startedWeeks.add(`${game.week},${game.season}`);
     }
   });
-  console.log("startedWeeks", startedWeeks);
 
   for (let i = 0; i < gamesWithinMonth.length; i++) {
     const { week, season } = gamesWithinMonth[i];
