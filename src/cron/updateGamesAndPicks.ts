@@ -38,7 +38,6 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
 
     const homeScore = msfGame?.score.homeScoreTotal!;
     const awayScore = msfGame?.score.awayScoreTotal!;
-    console.log("msfGame", msfGame);
 
     if (
       msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&

@@ -88,7 +88,7 @@ bootstrap();
 app.use(cors());
 
 // Run the 3 minute cron
-cron.schedule("*/3 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   await keepThingsUpdated();
 });
 
