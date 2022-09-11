@@ -20,9 +20,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   }, {} as Record<number, Team>);
 
   await dbGames.forEach(async (dbGame) => {
-    if (dbGame.done) {
-      return;
-    }
+    // TODO put this back when winner is set properly below for every "done" game
+    // if (dbGame.done) {
+    //   return;
+    // }
     const homeTeam = teamsMap[dbGame.home];
     const awayTeam = teamsMap[dbGame.away];
     const msfGame = games.find(
@@ -52,6 +53,12 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       await datastore.game.update({
         data: {
           done: true,
+          winner:
+            homeScore === awayScore
+              ? null
+              : homeScore > awayScore
+              ? dbGame.home
+              : dbGame.away,
         },
         where: {
           gid: dbGame.gid,
