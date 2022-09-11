@@ -45,6 +45,12 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       homeScore !== null &&
       awayScore !== null
     ) {
+      const winner =
+        homeScore === awayScore
+          ? null
+          : homeScore > awayScore
+          ? dbGame.home
+          : dbGame.away;
       // game is done, time to update picks and dbGame.done = true
       const picks = await datastore.pick.findMany({
         where: { gid: dbGame.gid },
@@ -53,12 +59,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       await datastore.game.update({
         data: {
           done: true,
-          winner:
-            homeScore === awayScore
-              ? null
-              : homeScore > awayScore
-              ? dbGame.home
-              : dbGame.away,
+          winner,
         },
         where: {
           gid: dbGame.gid,
@@ -67,11 +68,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       console.info(`[cron] updating picks for ${dbGame.gid}`);
       await picks.forEach(async (p) => {
         let correct = false;
-        if (
-          homeScore === awayScore ||
-          (homeScore > awayScore && p.winner === homeTeam.teamid) ||
-          (awayScore > homeScore && p.winner == awayTeam.teamid)
-        ) {
+        if (winner === null || p.winner === winner) {
           correct = true;
         }
         console.info(`[cron] setting pick ${p.pickid} as correct ${correct}`);
