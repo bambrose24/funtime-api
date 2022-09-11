@@ -20,10 +20,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   }, {} as Record<number, Team>);
 
   await dbGames.forEach(async (dbGame) => {
-    // TODO put this back when winner is set properly below for every "done" game
-    // if (dbGame.done) {
-    //   return;
-    // }
+    if (dbGame.done) {
+      return;
+    }
     const homeTeam = teamsMap[dbGame.home];
     const awayTeam = teamsMap[dbGame.away];
     const msfGame = games.find(
