@@ -32,7 +32,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     );
     if (!msfGame) {
       console.log(
-        `could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
+        `[cron] could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
       );
     }
 
