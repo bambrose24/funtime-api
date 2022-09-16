@@ -59,7 +59,7 @@ class PicksByWeekResolver {
           ts: { lte: now().toDate() },
           season: { equals: season },
         },
-        orderBy: { ts: "asc" },
+        orderBy: { ts: "desc" },
       });
       if (!lastStartedGame) {
         games = [];
