@@ -20,9 +20,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   }, {} as Record<number, Team>);
 
   await dbGames.forEach(async (dbGame) => {
-    if (dbGame.done) {
-      return;
-    }
+    // if (dbGame.done) {
+    //   return;
+    // }
     const homeTeam = teamsMap[dbGame.home];
     const awayTeam = teamsMap[dbGame.away];
     const msfGame = games.find(
@@ -55,10 +55,39 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         where: { gid: dbGame.gid },
       });
       console.info(`[cron] setting game ${dbGame.gid} to done`);
+
+      const prevHomeGame = dbGames.find(
+        (g) =>
+          g.week === dbGame.week - 1 &&
+          (g.home === dbGame.home || g.away === dbGame.home)
+      );
+
+      const prevAwayGame = dbGames.find(
+        (g) =>
+          g.week === dbGame.week - 1 &&
+          (g.home === dbGame.home || g.away === dbGame.home)
+      );
+
+      const prevHomeRecord =
+        (dbGame.home === prevHomeGame?.home
+          ? prevHomeGame?.homerecord
+          : prevHomeGame?.awayrecord) || "0-0";
+      const prevAwayRecord =
+        (dbGame.away === prevAwayGame?.home
+          ? prevAwayGame?.homerecord
+          : prevAwayGame?.awayrecord) || "0-0";
+
+      const awayRecord = getNewRecord(prevAwayRecord, dbGame.away, winner);
+      const homeRecord = getNewRecord(prevHomeRecord, dbGame.home, winner);
+
       await datastore.game.update({
         data: {
           done: true,
           winner,
+          homescore: homeScore,
+          awayscore: awayScore,
+          homerecord: homeRecord,
+          awayrecord: awayRecord,
         },
         where: {
           gid: dbGame.gid,
@@ -95,4 +124,31 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       });
     }
   });
+}
+
+function getNewRecord(
+  prevRecord: string,
+  team: number,
+  winner: number | null
+): string {
+  const split = prevRecord.split("-");
+  if (split.length === 2) {
+    const [wins, losses] = split;
+    if (winner === null) {
+      return `${wins}-${losses}-1`;
+    }
+    if (team === winner) {
+      return `${parseInt(wins) + 1}-${losses}`;
+    }
+    return `${wins}-${parseInt(losses) + 1}`;
+  } else {
+    const [wins, losses, ties] = split;
+    if (winner === null) {
+      return `${wins}-${losses}-${parseInt(ties) + 1}`;
+    } else if (team === winner) {
+      return `${parseInt(wins) + 1}-${losses}-${ties}`;
+    } else {
+      return `${wins}-${parseInt(losses) + 1}-${ties}`;
+    }
+  }
 }
