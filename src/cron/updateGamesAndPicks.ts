@@ -85,8 +85,6 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         winner,
         homescore: homeScore,
         awayscore: awayScore,
-        homerecord: homeRecord,
-        awayrecord: awayRecord,
       };
 
       console.info(
@@ -94,12 +92,52 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           gameUpdateData
         )}`
       );
-      await datastore.game.update({
-        data: gameUpdateData,
-        where: {
-          gid: dbGame.gid,
-        },
-      });
+
+      await Promise.all([
+        datastore.game.update({
+          data: gameUpdateData,
+          where: {
+            gid: dbGame.gid,
+          },
+        }),
+        // change the future home team's record to the current home team's new record (if exists)
+        datastore.game.updateMany({
+          data: { homerecord: homeRecord },
+          where: {
+            week: dbGame.week + 1,
+            season: dbGame.season,
+            home: dbGame.home,
+          },
+        }),
+        // change the future away team's record to the current home team's new record (if exists)
+        datastore.game.updateMany({
+          data: { awayrecord: homeRecord },
+          where: {
+            week: dbGame.week + 1,
+            season: dbGame.season,
+            away: dbGame.home,
+          },
+        }),
+        // change the future home team's record to the current away team's new record (if exists)
+        datastore.game.updateMany({
+          data: { homerecord: awayRecord },
+          where: {
+            week: dbGame.week + 1,
+            season: dbGame.season,
+            home: dbGame.away,
+          },
+        }),
+        // change the future away team's record to the current away team's new record (if exists)
+        datastore.game.updateMany({
+          data: { awayrecord: awayRecord },
+          where: {
+            week: dbGame.week + 1,
+            season: dbGame.season,
+            away: dbGame.away,
+          },
+        }),
+      ]);
+
       console.info(`[cron] updating picks for ${dbGame.gid}`);
       await picks.forEach(async (p) => {
         let correct = false;
