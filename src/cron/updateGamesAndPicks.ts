@@ -19,7 +19,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     return prev;
   }, {} as Record<number, Team>);
 
-  await dbGames.forEach(async (dbGame) => {
+  dbGames.forEach(async (dbGame) => {
     // if (dbGame.done) {
     //   return;
     // }
@@ -80,15 +80,22 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       const awayRecord = getNewRecord(prevAwayRecord, dbGame.away, winner);
       const homeRecord = getNewRecord(prevHomeRecord, dbGame.home, winner);
 
+      const gameUpdateData = {
+        done: true,
+        winner,
+        homescore: homeScore,
+        awayscore: awayScore,
+        homerecord: homeRecord,
+        awayrecord: awayRecord,
+      };
+
+      console.info(
+        `[cron] updating game ${dbGame.gid} to ${JSON.stringify(
+          gameUpdateData
+        )}`
+      );
       await datastore.game.update({
-        data: {
-          done: true,
-          winner,
-          homescore: homeScore,
-          awayscore: awayScore,
-          homerecord: homeRecord,
-          awayrecord: awayRecord,
-        },
+        data: gameUpdateData,
         where: {
           gid: dbGame.gid,
         },
