@@ -80,6 +80,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       const awayRecord = getNewRecord(prevAwayRecord, dbGame.away, winner);
       const homeRecord = getNewRecord(prevHomeRecord, dbGame.home, winner);
 
+      console.log(
+        `[cron] setting awayRecord to ${awayRecord} from ${prevAwayRecord} (winner ${winner}, game.away ${dbGame.away}, game.gid ${dbGame.gid})`
+      );
+
       const gameUpdateData = {
         done: true,
         winner,
