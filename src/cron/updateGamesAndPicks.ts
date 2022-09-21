@@ -97,7 +97,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         )}`
       );
 
-      await Promise.all([
+      datastore.$transaction;
+
+      await datastore.$transaction([
         datastore.game.update({
           data: gameUpdateData,
           where: {

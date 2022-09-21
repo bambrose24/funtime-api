@@ -34,7 +34,9 @@ import { PrismaClient } from "@prisma/client";
 //   },
 // });
 
-const datastore = new PrismaClient();
+const datastore = new PrismaClient({
+  log: ["error", "info", "query", "warn"],
+});
 
 // datastore.$use(cacheMiddleware);
 export default datastore;
