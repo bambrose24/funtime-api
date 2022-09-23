@@ -13,7 +13,7 @@
     "test:no-reloading": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./spec",
     "generate": "graphql-codegen --config codegen.yml",
     "fly-deploy": "npm run build && npm run start",
-    "postinstall": "npx prisma generate"
+    "postinstall": "npx prisma generate --data-proxy"
   },
   "nodemonConfig": {
     "watch": [
