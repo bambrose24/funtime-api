@@ -8,7 +8,7 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = env("PRISMA_DB_PROXY_URL")
+  url      = env("SUPABASS_DB_PRISMA")
 }
 
 model Game {
