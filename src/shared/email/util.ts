@@ -79,7 +79,7 @@ export function getWeekPicksContent({
     }
     const homeTeam = winnerTeam.teamid === g.home ? winnerTeam : loserTeam;
     const awayTeam = winnerTeam.teamid === g.away ? winnerTeam : loserTeam;
-    res += `  ${homeTeam.abbrev || ""} @ ${awayTeam.abbrev || ""} -- ${
+    res += `  ${awayTeam.abbrev || ""} @ ${homeTeam.abbrev || ""} -- ${
       winnerTeam.abbrev || ""
     }`;
     if (pick.score) {
