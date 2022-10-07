@@ -39,6 +39,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
+const register_1 = require("../register");
 let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
     week;
     season;
@@ -59,13 +60,37 @@ __decorate([
 FirstNotStartedWeekResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], FirstNotStartedWeekResponse);
+let FirstNotStartedWeekRequest = class FirstNotStartedWeekRequest {
+    override;
+    week;
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Object)
+], FirstNotStartedWeekRequest.prototype, "override", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Object)
+], FirstNotStartedWeekRequest.prototype, "week", void 0);
+FirstNotStartedWeekRequest = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], FirstNotStartedWeekRequest);
 class FirstNotStartedWeekResolver {
-    async firstNotStartedWeek() {
-        const res = await findWeekForPicks();
-        if (res === null) {
-            return { week: null, season: null, games: [] };
+    async firstNotStartedWeek(data) {
+        let week;
+        let season;
+        if (data.week && data.override) {
+            week = data.week;
+            season = register_1.SEASON;
         }
-        const { week, season } = res;
+        else {
+            const res = await findWeekForPicks();
+            if (res === null) {
+                return { week: null, season: null, games: [] };
+            }
+            week = res.week;
+            season = res.season;
+        }
         const games = await datastore_1.default.game.findMany({ where: { week, season } });
         return {
             week,
@@ -77,7 +102,7 @@ class FirstNotStartedWeekResolver {
 __decorate([
     (0, type_graphql_1.Query)(() => FirstNotStartedWeekResponse),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [FirstNotStartedWeekRequest]),
     __metadata("design:returntype", Promise)
 ], FirstNotStartedWeekResolver.prototype, "firstNotStartedWeek", null);
 async function findWeekForPicks() {
@@ -96,7 +121,6 @@ async function findWeekForPicks() {
             startedWeeks.add(`${game.week},${game.season}`);
         }
     });
-    console.log("startedWeeks", startedWeeks);
     for (let i = 0; i < gamesWithinMonth.length; i++) {
         const { week, season } = gamesWithinMonth[i];
         if (!startedWeeks.has(`${week},${season}`)) {

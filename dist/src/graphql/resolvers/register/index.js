@@ -71,7 +71,7 @@ let RegisterResolver = class RegisterResolver {
         const { user, membership } = await registerUser(email, username, previousUserId);
         await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
         try {
-            await (0, email_1.sendRegistrationMail)(username, email, exports.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
+            await (0, email_1.sendRegistrationMail)(user, exports.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
         }
         catch (e) {
             console.log("email error:", e);
@@ -170,6 +170,11 @@ async function registerUser(email, username, previousUserId) {
             throw new Error(`Error creating a new user`);
         }
     }
+    // if they inputted a different email and we found their user before, these wont match -- let's update just in case
+    await datastore_1.default.user.update({
+        where: { uid: user.uid },
+        data: { email, username },
+    });
     membership = await datastore_1.default.leagueMember.create({
         data: {
             league_id: exports.LEAGUE_ID,

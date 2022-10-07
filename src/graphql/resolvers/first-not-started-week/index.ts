@@ -2,9 +2,10 @@
 import { Game } from "@prisma/client";
 import datastore from "@shared/datastore";
 import * as TypeGraphQL from "@generated/type-graphql";
-import { Field, Int, ObjectType, Query } from "type-graphql";
+import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
 import { now } from "@util/time";
 import { PhoneNumberMock } from "graphql-scalars";
+import { SEASON } from "../register";
 
 @ObjectType()
 class FirstNotStartedWeekResponse {
@@ -16,20 +17,43 @@ class FirstNotStartedWeekResponse {
   games: Array<Game>;
 }
 
+@ObjectType()
+class FirstNotStartedWeekRequest {
+  @Field(() => Boolean, { nullable: true })
+  override?: boolean | null;
+  @Field(() => Int, { nullable: true })
+  week?: number | null;
+}
+
 class FirstNotStartedWeekResolver {
   @Query(() => FirstNotStartedWeekResponse)
-  async firstNotStartedWeek(): Promise<FirstNotStartedWeekResponse> {
-    const res = await findWeekForPicks();
-    if (res === null) {
-      return { week: null, season: null, games: [] };
+  async firstNotStartedWeek(
+    @Arg("override", () => Boolean, { nullable: true })
+    override?: boolean | null,
+    @Arg("week", () => Int, { nullable: true })
+    week?: number | null
+  ): Promise<FirstNotStartedWeekResponse> {
+    let weekRes: number;
+    let season: number;
+    if (week && override) {
+      weekRes = week;
+      season = SEASON;
+    } else {
+      const res = await findWeekForPicks();
+      if (res === null) {
+        return { week: null, season: null, games: [] };
+      }
+
+      weekRes = res.week;
+      season = res.season;
     }
 
-    const { week, season } = res;
-
-    const games = await datastore.game.findMany({ where: { week, season } });
+    const games = await datastore.game.findMany({
+      where: { week: weekRes, season },
+    });
 
     return {
-      week,
+      week: weekRes,
       season,
       games,
     };

@@ -34,6 +34,8 @@ const client_1 = require("@prisma/client");
 //     console.log("error", key);
 //   },
 // });
-const datastore = new client_1.PrismaClient();
+const datastore = new client_1.PrismaClient({
+    log: ["error", "info", "query", "warn"],
+});
 // datastore.$use(cacheMiddleware);
 exports.default = datastore;

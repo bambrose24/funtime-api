@@ -52,7 +52,7 @@ let PicksByWeekResponse = class PicksByWeekResponse {
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", Object)
 ], PicksByWeekResponse.prototype, "week", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
@@ -101,7 +101,7 @@ class PicksByWeekResolver {
                     ts: { lte: (0, time_1.now)().toDate() },
                     season: { equals: season },
                 },
-                orderBy: { ts: "asc" },
+                orderBy: { ts: "desc" },
             });
             if (!lastStartedGame) {
                 games = [];
@@ -151,7 +151,7 @@ __decorate([
     __param(1, (0, type_graphql_1.Arg)("week", () => type_graphql_1.Int, { nullable: true })),
     __param(2, (0, type_graphql_1.Arg)("override", { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Boolean]),
+    __metadata("design:paramtypes", [Number, Object, Boolean]),
     __metadata("design:returntype", Promise)
 ], PicksByWeekResolver.prototype, "picksByWeek", null);
 exports.default = PicksByWeekResolver;

@@ -15,7 +15,7 @@ const util_1 = require("./util");
 // OAuth2Client.setCredentials({
 //   refresh_token: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
 // });
-async function sendRegistrationMail(username, email, season, superbowlWinner, superbowlLoser, superbowlScore) {
+async function sendRegistrationMail(user, season, superbowlWinner, superbowlLoser, superbowlScore) {
     const teams = await datastore_1.default.team.findMany({
         where: { teamid: { gte: 0 } },
     });
@@ -23,11 +23,11 @@ async function sendRegistrationMail(username, email, season, superbowlWinner, su
     const loser = teams.find((t) => t.teamid === superbowlLoser);
     try {
         await client_1.default.send({
-            ...(0, util_1.getDefaultSendParams)(email),
-            to: email,
+            ...(0, util_1.getDefaultSendParams)(user.email),
+            to: user.email,
             from: "bob.ambrose.funtime@gmail.com",
             subject: "Welcome to Funtime 2022!",
-            html: (0, util_1.getRegistrationText)(username, season, winner, loser, superbowlScore),
+            html: (0, util_1.getRegistrationText)(user.username, season, winner, loser, superbowlScore),
         });
     }
     catch (e) {

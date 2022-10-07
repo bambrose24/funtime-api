@@ -20,7 +20,7 @@ function getRegistrationText(username, season, winner, loser, score) {
         "<br/><br/>" +
         `Your Super Bowl pick for the 2022 season is` +
         "<br/><br/>" +
-        `<strong>Winner</strong>:${winner.abbrev || ""}` +
+        `<strong>Winner</strong>: ${winner.abbrev || ""}` +
         "<br/>" +
         `<strong>Loser</strong>: ${loser.abbrev || ""}` +
         "<br/>" +
@@ -49,7 +49,7 @@ function getWeekPicksContent({ week, season, user, games, picks, teams, }) {
         }
         const homeTeam = winnerTeam.teamid === g.home ? winnerTeam : loserTeam;
         const awayTeam = winnerTeam.teamid === g.away ? winnerTeam : loserTeam;
-        res += `  ${homeTeam.abbrev || ""} @ ${awayTeam.abbrev || ""} -- ${winnerTeam.abbrev || ""}`;
+        res += `  ${awayTeam.abbrev || ""} @ ${homeTeam.abbrev || ""} -- ${winnerTeam.abbrev || ""}`;
         if (pick.score) {
             res += ` (total score ${pick.score})`;
         }
