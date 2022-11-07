@@ -22,7 +22,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
 const cors_1 = __importDefault(require("cors"));
 const config_1 = require("./config");
-const auth_1 = require("@services/auth");
+const auth_1 = require("@shared/auth");
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -74,7 +74,7 @@ app.use(async (req, res, next) => {
     if (bearerToken) {
         const token = bearerToken.split(" ").at(1);
         if (token) {
-            await (0, auth_1.setSupabaseUser)(token);
+            await (0, auth_1.authorizeAndSetSupabaseUser)(token);
         }
     }
     next();

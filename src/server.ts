@@ -24,7 +24,7 @@ import { ApolloPrismaContext } from "./graphql/server/types";
 import keepThingsUpdated from "./cron/keepThingsUpdated";
 import cors from "cors";
 import { env } from "./config";
-import { authorizeAndSetSupabaseUser } from "src/auth";
+import { authorizeAndSetSupabaseUser } from "@shared/auth";
 
 const app = express();
 
