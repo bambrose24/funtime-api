@@ -5,6 +5,7 @@ import moment from "moment";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
 import { now } from "@util/time";
+import { getUser } from "src/auth/user";
 
 @ObjectType()
 class PicksByWeekResponse {

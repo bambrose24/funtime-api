@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-import os from "os";
 import morgan from "morgan";
 import helmet from "helmet";
 import StatusCodes from "http-status-codes";
@@ -12,6 +11,8 @@ import cron from "node-cron";
 import "express-async-errors";
 import logger from "jet-logger";
 
+import httpContext from "express-http-context";
+
 import { CustomError } from "./shared/errors";
 import { ApolloServer } from "apollo-server-express";
 
@@ -19,12 +20,11 @@ import { buildSchema } from "type-graphql";
 
 import resolvers from "./graphql/resolvers";
 import datastore from "@shared/datastore";
-import Keyv from "keyv";
-import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import { ApolloPrismaContext } from "./graphql/server/types";
 import keepThingsUpdated from "./cron/keepThingsUpdated";
 import cors from "cors";
 import { env } from "./config";
+import { authorizeAndSetSupabaseUser } from "src/auth";
 
 const app = express();
 
@@ -71,8 +71,8 @@ async function bootstrap() {
   const server = new ApolloServer({
     schema,
     context: (
-      req: express.Request,
-      res: express.Response
+      _req: express.Request,
+      _res: express.Response
     ): ApolloPrismaContext => {
       return { prisma: datastore };
     },
@@ -88,12 +88,27 @@ bootstrap();
 
 app.use(cors());
 
+app.use(httpContext.middleware);
+
+app.use(async (req, res, next) => {
+  const bearerToken = req.get("Authorization");
+  if (bearerToken) {
+    const token = bearerToken.split(" ").at(1);
+    if (token) {
+      await authorizeAndSetSupabaseUser(token);
+    }
+  }
+  next();
+});
+
 // keepThingsUpdated();
 
 // Run the 3 minute cron
-cron.schedule("*/3 * * * *", async () => {
-  await keepThingsUpdated();
-});
+if (env === "production") {
+  cron.schedule("*/3 * * * *", async () => {
+    await keepThingsUpdated();
+  });
+}
 
 /************************************************************************************
  *                              Export Server

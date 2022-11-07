@@ -13,6 +13,7 @@ const express_1 = __importDefault(require("express"));
 const node_cron_1 = __importDefault(require("node-cron"));
 require("express-async-errors");
 const jet_logger_1 = __importDefault(require("jet-logger"));
+const express_http_context_1 = __importDefault(require("express-http-context"));
 const errors_1 = require("./shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
@@ -20,6 +21,8 @@ const resolvers_1 = __importDefault(require("./graphql/resolvers"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
 const cors_1 = __importDefault(require("cors"));
+const config_1 = require("./config");
+const auth_1 = require("@services/auth");
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -53,7 +56,7 @@ async function bootstrap() {
     // TODO consider pulling the server into a different file for creation
     const server = new apollo_server_express_1.ApolloServer({
         schema,
-        context: (req, res) => {
+        context: (_req, _res) => {
             return { prisma: datastore_1.default };
         },
         // Need to figure out how to clear the cache after mutations
@@ -65,11 +68,24 @@ async function bootstrap() {
 }
 bootstrap();
 app.use((0, cors_1.default)());
+app.use(express_http_context_1.default.middleware);
+app.use(async (req, res, next) => {
+    const bearerToken = req.get("Authorization");
+    if (bearerToken) {
+        const token = bearerToken.split(" ").at(1);
+        if (token) {
+            await (0, auth_1.setSupabaseUser)(token);
+        }
+    }
+    next();
+});
 // keepThingsUpdated();
 // Run the 3 minute cron
-node_cron_1.default.schedule("*/3 * * * *", async () => {
-    await (0, keepThingsUpdated_1.default)();
-});
+if (config_1.env === "production") {
+    node_cron_1.default.schedule("*/3 * * * *", async () => {
+        await (0, keepThingsUpdated_1.default)();
+    });
+}
 /************************************************************************************
  *                              Export Server
  ***********************************************************************************/

@@ -73,50 +73,48 @@ async function updateGamesAndPicks(games) {
                     awayscore: awayScore,
                 };
                 console.info(`[cron] updating game ${dbGame.gid} to ${JSON.stringify(gameUpdateData)}`);
-                await datastore_1.default.$transaction([
-                    datastore_1.default.game.update({
-                        data: gameUpdateData,
-                        where: {
-                            gid: dbGame.gid,
-                        },
-                    }),
-                    // change the future home team's record to the current home team's new record (if exists)
-                    datastore_1.default.game.updateMany({
-                        data: { homerecord: homeRecord },
-                        where: {
-                            week: dbGame.week + 1,
-                            season: dbGame.season,
-                            home: dbGame.home,
-                        },
-                    }),
-                    // change the future away team's record to the current home team's new record (if exists)
-                    datastore_1.default.game.updateMany({
-                        data: { awayrecord: homeRecord },
-                        where: {
-                            week: dbGame.week + 1,
-                            season: dbGame.season,
-                            away: dbGame.home,
-                        },
-                    }),
-                    // change the future home team's record to the current away team's new record (if exists)
-                    datastore_1.default.game.updateMany({
-                        data: { homerecord: awayRecord },
-                        where: {
-                            week: dbGame.week + 1,
-                            season: dbGame.season,
-                            home: dbGame.away,
-                        },
-                    }),
-                    // change the future away team's record to the current away team's new record (if exists)
-                    datastore_1.default.game.updateMany({
-                        data: { awayrecord: awayRecord },
-                        where: {
-                            week: dbGame.week + 1,
-                            season: dbGame.season,
-                            away: dbGame.away,
-                        },
-                    }),
-                ]);
+                await datastore_1.default.game.update({
+                    data: gameUpdateData,
+                    where: {
+                        gid: dbGame.gid,
+                    },
+                });
+                // change the future home team's record to the current home team's new record (if exists)
+                await datastore_1.default.game.updateMany({
+                    data: { homerecord: homeRecord },
+                    where: {
+                        week: dbGame.week + 1,
+                        season: dbGame.season,
+                        home: dbGame.home,
+                    },
+                });
+                // change the future away team's record to the current home team's new record (if exists)
+                await datastore_1.default.game.updateMany({
+                    data: { awayrecord: homeRecord },
+                    where: {
+                        week: dbGame.week + 1,
+                        season: dbGame.season,
+                        away: dbGame.home,
+                    },
+                });
+                // change the future home team's record to the current away team's new record (if exists)
+                await datastore_1.default.game.updateMany({
+                    data: { homerecord: awayRecord },
+                    where: {
+                        week: dbGame.week + 1,
+                        season: dbGame.season,
+                        home: dbGame.away,
+                    },
+                });
+                // change the future away team's record to the current away team's new record (if exists)
+                await datastore_1.default.game.updateMany({
+                    data: { awayrecord: awayRecord },
+                    where: {
+                        week: dbGame.week + 1,
+                        season: dbGame.season,
+                        away: dbGame.away,
+                    },
+                });
                 console.info(`[cron] updating picks for ${dbGame.gid}`);
                 const correctPickIds = [];
                 const wrongPickIds = [];

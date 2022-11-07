@@ -31,6 +31,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -76,11 +79,11 @@ FirstNotStartedWeekRequest = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], FirstNotStartedWeekRequest);
 class FirstNotStartedWeekResolver {
-    async firstNotStartedWeek(data) {
-        let week;
+    async firstNotStartedWeek(override, week) {
+        let weekRes;
         let season;
-        if (data.week && data.override) {
-            week = data.week;
+        if (week && override) {
+            weekRes = week;
             season = register_1.SEASON;
         }
         else {
@@ -88,12 +91,14 @@ class FirstNotStartedWeekResolver {
             if (res === null) {
                 return { week: null, season: null, games: [] };
             }
-            week = res.week;
+            weekRes = res.week;
             season = res.season;
         }
-        const games = await datastore_1.default.game.findMany({ where: { week, season } });
+        const games = await datastore_1.default.game.findMany({
+            where: { week: weekRes, season },
+        });
         return {
-            week,
+            week: weekRes,
             season,
             games,
         };
@@ -101,8 +106,10 @@ class FirstNotStartedWeekResolver {
 }
 __decorate([
     (0, type_graphql_1.Query)(() => FirstNotStartedWeekResponse),
+    __param(0, (0, type_graphql_1.Arg)("override", () => Boolean, { nullable: true })),
+    __param(1, (0, type_graphql_1.Arg)("week", () => type_graphql_1.Int, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [FirstNotStartedWeekRequest]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], FirstNotStartedWeekResolver.prototype, "firstNotStartedWeek", null);
 async function findWeekForPicks() {
