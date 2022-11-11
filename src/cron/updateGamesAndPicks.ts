@@ -59,38 +59,16 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         });
         console.info(`[cron] setting game ${dbGame.gid} to done`);
 
-        const prevHomeGame = dbGames.find(
-          (g) =>
-            g.week === dbGame.week - 1 &&
-            (g.home === dbGame.home || g.away === dbGame.home)
+        const awayRecord = getNewRecord(
+          dbGame.awayrecord || "0-0",
+          dbGame.away,
+          winner
         );
-
-        const prevAwayGame = dbGames.find(
-          (g) =>
-            g.week === dbGame.week - 1 &&
-            (g.home === dbGame.home || g.away === dbGame.home)
+        const homeRecord = getNewRecord(
+          dbGame.homerecord || "0-0",
+          dbGame.home,
+          winner
         );
-
-        const prevHomeRecord =
-          (dbGame.home === prevHomeGame?.home
-            ? prevHomeGame?.homerecord
-            : prevHomeGame?.awayrecord) || "0-0";
-        const prevAwayRecord =
-          (dbGame.away === prevAwayGame?.home
-            ? prevAwayGame?.homerecord
-            : prevAwayGame?.awayrecord) || "0-0";
-
-        const awayRecord = getNewRecord(prevAwayRecord, dbGame.away, winner);
-        const homeRecord = getNewRecord(prevHomeRecord, dbGame.home, winner);
-
-        if (dbGame.home === 10 || dbGame.away === 10) {
-          console.log(
-            `[cron] ${dbGame.away} (away) setting awayRecord to ${awayRecord} from ${prevAwayRecord} (winner ${winner}, game.away ${dbGame.away}, game.gid ${dbGame.gid})`
-          );
-          console.log(
-            `[cron] ${dbGame.home} (home) setting homeRecord to ${homeRecord} from ${prevHomeRecord} (winner ${winner}, game.away ${dbGame.home}, game.gid ${dbGame.gid})`
-          );
-        }
 
         const gameUpdateData = {
           done: true,
