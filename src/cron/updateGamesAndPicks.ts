@@ -69,6 +69,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           awayscore: awayScore,
           homerecord: homeRecord,
           awayrecord: awayRecord,
+          ...(msfGame?.schedule.startTime
+            ? { ts: moment(msfGame.schedule.startTime).toDate() }
+            : {}),
         };
 
         await datastore.game.update({
