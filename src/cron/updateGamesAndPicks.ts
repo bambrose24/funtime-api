@@ -115,14 +115,17 @@ function getRecord(
   currGame: Game,
   teamId: number
 ): string {
-  const prevGamesWithTeam = dbGames.filter(
-    (g) => (g.home === teamId || g.away === teamId) && g.week < currGame.week
+  const prevDoneGamesWithTeam = dbGames.filter(
+    (g) =>
+      (g.home === teamId || g.away === teamId) &&
+      g.week < currGame.week &&
+      g.done
   );
-  const wins = prevGamesWithTeam.filter((g) => g.winner === teamId).length;
-  const losses = prevGamesWithTeam.filter(
+  const wins = prevDoneGamesWithTeam.filter((g) => g.winner === teamId).length;
+  const losses = prevDoneGamesWithTeam.filter(
     (g) => g.winner && g.winner !== teamId
   ).length;
-  const ties = prevGamesWithTeam.filter((g) => !g.winner).length;
+  const ties = prevDoneGamesWithTeam.filter((g) => !g.winner).length;
 
   if (ties) {
     return `${wins}-${losses}-${ties}`;
