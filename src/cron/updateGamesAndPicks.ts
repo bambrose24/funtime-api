@@ -1,4 +1,4 @@
-import { Team } from "@prisma/client";
+import { Game, Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import _ from "lodash";
@@ -59,72 +59,23 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         });
         console.info(`[cron] setting game ${dbGame.gid} to done`);
 
-        const awayRecord = getNewRecord(
-          dbGame.awayrecord || "0-0",
-          dbGame.away,
-          winner
-        );
-        const homeRecord = getNewRecord(
-          dbGame.homerecord || "0-0",
-          dbGame.home,
-          winner
-        );
+        const awayRecord = getRecord(dbGames, dbGame, dbGame.away);
+        const homeRecord = getRecord(dbGames, dbGame, dbGame.home);
 
         const gameUpdateData = {
           done: true,
           winner,
           homescore: homeScore,
           awayscore: awayScore,
+          homerecord: homeRecord,
+          awayrecord: awayRecord,
         };
 
-        console.info(
-          `[cron] updating game ${dbGame.gid} to ${JSON.stringify(
-            gameUpdateData
-          )}`
-        );
-
         await datastore.game.update({
+          where: { gid: dbGame.gid },
           data: gameUpdateData,
-          where: {
-            gid: dbGame.gid,
-          },
         });
-        // change the future home team's record to the current home team's new record (if exists)
-        await datastore.game.updateMany({
-          data: { homerecord: homeRecord },
-          where: {
-            week: dbGame.week + 1,
-            season: dbGame.season,
-            home: dbGame.home,
-          },
-        });
-        // change the future away team's record to the current home team's new record (if exists)
-        await datastore.game.updateMany({
-          data: { awayrecord: homeRecord },
-          where: {
-            week: dbGame.week + 1,
-            season: dbGame.season,
-            away: dbGame.home,
-          },
-        });
-        // change the future home team's record to the current away team's new record (if exists)
-        await datastore.game.updateMany({
-          data: { homerecord: awayRecord },
-          where: {
-            week: dbGame.week + 1,
-            season: dbGame.season,
-            home: dbGame.away,
-          },
-        });
-        // change the future away team's record to the current away team's new record (if exists)
-        await datastore.game.updateMany({
-          data: { awayrecord: awayRecord },
-          where: {
-            week: dbGame.week + 1,
-            season: dbGame.season,
-            away: dbGame.away,
-          },
-        });
+
         console.info(`[cron] updating picks for ${dbGame.gid}`);
         const correctPickIds: number[] = [];
         const wrongPickIds: number[] = [];
@@ -146,50 +97,26 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           data: { correct: 0 },
         });
       }
-
-      if (homeScore !== null && awayScore !== null) {
-        const data: Parameters<typeof datastore.game.update>[number]["data"] = {
-          homescore: homeScore,
-          awayscore: awayScore,
-        };
-        if (msfGame?.schedule.startTime) {
-          data["ts"] = moment(msfGame.schedule.startTime).toDate();
-        }
-        console.info(
-          `[cron] setting ${dbGame.gid} to data ${JSON.stringify(data)}`
-        );
-        await datastore.game.update({
-          where: { gid: dbGame.gid },
-          data,
-        });
-      }
     });
   }
 }
 
-function getNewRecord(
-  prevRecord: string,
-  team: number,
-  winner: number | null
+function getRecord(
+  dbGames: Array<Game>,
+  currGame: Game,
+  teamId: number
 ): string {
-  const split = prevRecord.split("-");
-  if (split.length === 2) {
-    const [wins, losses] = split;
-    if (winner === null) {
-      return `${wins}-${losses}-1`;
-    }
-    if (team === winner) {
-      return `${parseInt(wins) + 1}-${losses}`;
-    }
-    return `${wins}-${parseInt(losses) + 1}`;
-  } else {
-    const [wins, losses, ties] = split;
-    if (winner === null) {
-      return `${wins}-${losses}-${parseInt(ties) + 1}`;
-    } else if (team === winner) {
-      return `${parseInt(wins) + 1}-${losses}-${ties}`;
-    } else {
-      return `${wins}-${parseInt(losses) + 1}-${ties}`;
-    }
+  const prevGamesWithTeam = dbGames.filter(
+    (g) => (g.home === teamId || g.away === teamId) && g.week < currGame.week
+  );
+  const wins = prevGamesWithTeam.filter((g) => g.winner === teamId).length;
+  const losses = prevGamesWithTeam.filter(
+    (g) => g.winner && g.winner !== teamId
+  ).length;
+  const ties = prevGamesWithTeam.filter((g) => !g.winner).length;
+
+  if (ties) {
+    return `${wins}-${losses}-${ties}`;
   }
+  return `${wins}-${losses}`;
 }
