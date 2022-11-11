@@ -59,16 +59,11 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         });
         console.info(`[cron] setting game ${dbGame.gid} to done`);
 
-        const awayRecord = getRecord(dbGames, dbGame, dbGame.away);
-        const homeRecord = getRecord(dbGames, dbGame, dbGame.home);
-
         const gameUpdateData = {
           done: true,
           winner,
           homescore: homeScore,
           awayscore: awayScore,
-          homerecord: homeRecord,
-          awayrecord: awayRecord,
           ...(msfGame?.schedule.startTime
             ? { ts: moment(msfGame.schedule.startTime).toDate() }
             : {}),
@@ -100,6 +95,17 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           data: { correct: 0 },
         });
       }
+
+      const awayrecord = getRecord(dbGames, dbGame, dbGame.away);
+      const homerecord = getRecord(dbGames, dbGame, dbGame.home);
+
+      await datastore.game.update({
+        where: { gid: dbGame.gid },
+        data: {
+          homerecord,
+          awayrecord,
+        },
+      });
     });
   }
 }
