@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const types_1 = require("@shared/mysportsfeeds/types");
 const lodash_1 = __importDefault(require("lodash"));
+const moment_1 = __importDefault(require("moment"));
 const register_1 = require("../graphql/resolvers/register");
 async function updateGamesAndPicks(games) {
     const [dbGames, teams] = await Promise.all([
@@ -58,6 +59,9 @@ async function updateGamesAndPicks(games) {
                     awayscore: awayScore,
                     homerecord: homeRecord,
                     awayrecord: awayRecord,
+                    ...(msfGame?.schedule.startTime
+                        ? { ts: (0, moment_1.default)(msfGame.schedule.startTime).toDate() }
+                        : {}),
                 };
                 await datastore_1.default.game.update({
                     where: { gid: dbGame.gid },
