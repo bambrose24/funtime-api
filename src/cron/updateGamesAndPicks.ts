@@ -42,6 +42,11 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       const homeScore = msfGame?.score.homeScoreTotal!;
       const awayScore = msfGame?.score.awayScoreTotal!;
 
+      await datastore.game.update({
+        where: { gid: dbGame.gid },
+        data: { homescore: homeScore, awayscore: awayScore },
+      });
+
       if (
         msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&
         homeScore !== null &&
