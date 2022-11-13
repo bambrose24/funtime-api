@@ -44,7 +44,12 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
 
       await datastore.game.update({
         where: { gid: dbGame.gid },
-        data: { homescore: homeScore, awayscore: awayScore },
+        data: {
+          homescore:
+            homeScore === null || homeScore === undefined ? 0 : homeScore,
+          awayscore:
+            awayScore === null || awayScore === undefined ? 0 : awayScore,
+        },
       });
 
       if (
