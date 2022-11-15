@@ -113,15 +113,17 @@ model Pick {
 }
 
 model Superbowl {
-  pickid        Int           @id(map: "idx_18448_primary") @default(autoincrement())
-  uid           Int
-  winner        Int
-  loser         Int
-  score         Int
-  ts            DateTime?     @default(now()) @db.Timestamptz(6)
-  season        Int?
-  member_id     Int?
-  leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "superbowl_ibfk_1")
+  pickid                        Int           @id(map: "idx_18448_primary") @default(autoincrement())
+  uid                           Int
+  winner                        Int
+  loser                         Int
+  score                         Int
+  ts                            DateTime?     @default(now()) @db.Timestamptz(6)
+  season                        Int?
+  member_id                     Int?
+  teams_superbowl_loserToteams  Team          @relation("superbowl_loserToteams", fields: [loser], references: [teamid], onDelete: NoAction, onUpdate: NoAction, map: "fk_loser_team")
+  leaguemembers                 LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_member_id")
+  teams_superbowl_winnerToteams Team          @relation("superbowl_winnerToteams", fields: [winner], references: [teamid], onDelete: NoAction, onUpdate: NoAction, map: "fk_winner_team")
 
   @@index([member_id], map: "idx_18448_member_id")
   @@map("superbowl")
@@ -140,13 +142,15 @@ model SuperbowlSquare {
 }
 
 model Team {
-  teamid                  Int     @id(map: "idx_18460_primary") @default(autoincrement())
-  abbrev                  String? @db.VarChar(50)
-  loc                     String  @db.VarChar(255)
-  name                    String  @db.VarChar(255)
-  conference              String? @db.VarChar(50)
-  games_games_homeToteams Game[]  @relation("games_homeToteams")
-  games_games_awayToteams Game[]  @relation("games_awayToteams")
+  teamid                            Int         @id(map: "idx_18460_primary") @default(autoincrement())
+  abbrev                            String?     @db.VarChar(50)
+  loc                               String      @db.VarChar(255)
+  name                              String      @db.VarChar(255)
+  conference                        String?     @db.VarChar(50)
+  games_games_homeToteams           Game[]      @relation("games_homeToteams")
+  games_games_awayToteams           Game[]      @relation("games_awayToteams")
+  superbowl_superbowl_loserToteams  Superbowl[] @relation("superbowl_loserToteams")
+  superbowl_superbowl_winnerToteams Superbowl[] @relation("superbowl_winnerToteams")
 
   @@map("teams")
 }
