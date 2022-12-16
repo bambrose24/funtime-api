@@ -1,32 +1,23 @@
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
-import { LeagueMember } from "@prisma/client";
+import { League, LeagueMember } from "@prisma/client";
 import datastore from "@shared/datastore";
+import { calculateWinnerFromDonePicks } from "@shared/winner";
 
 @ObjectType()
 class WeekWinner {
-  @Field(() => TypeGraphQL.LeagueMember)
-  user: LeagueMember | null;
+  @Field(() => [TypeGraphQL.LeagueMember])
+  member: Array<LeagueMember> | null;
   @Field(() => Int)
   week: number;
+  @Field(() => Int)
+  correct: number;
+  @Field(() => Int)
+  score: number;
 }
 
-@ObjectType()
-class WeekWinnersResponse {
-  @Field(() => [WeekWinner])
-  winners: Array<WeekWinner>;
-}
-
-@ObjectType()
-class WeekWinnersRequest {
-  @Field(() => Boolean, { nullable: true })
-  league_id?: boolean | null;
-  @Field(() => Int, { nullable: true })
-  week?: number | null;
-}
-
-class FirstNotStartedWeekResolver {
-  @Query(() => WeekWinnersResponse)
+class WeekWinnersResolver {
+  @Query(() => [WeekWinner])
   async weekWinners(
     @Arg("league_id", () => Int)
     league_id: number,
@@ -34,8 +25,8 @@ class FirstNotStartedWeekResolver {
     season?: number | null,
     @Arg("weeks", () => [Int], { nullable: true })
     weeks?: Array<number> | null
-  ): Promise<WeekWinnersResponse> {
-    const people = await datastore.leagueMember.findMany({
+  ): Promise<Array<WeekWinner>> {
+    const members = await datastore.leagueMember.findMany({
       where: { league_id },
     });
     const picks = await datastore.pick.findMany({
@@ -45,5 +36,31 @@ class FirstNotStartedWeekResolver {
         ...(season ? { season } : {}),
       },
     });
+    const league = await datastore.league.findUnique({ where: { league_id } });
+    const games = await datastore.game.findMany({
+      where: {
+        ...(season
+          ? { season }
+          : league && league.season
+          ? { season: league.season }
+          : {}),
+        ...(weeks ? { week: { in: weeks } } : {}),
+      },
+    });
+
+    const winners = await calculateWinnerFromDonePicks(league_id, picks, games);
+
+    return winners.map((winner) => {
+      return {
+        member: members.filter((m) =>
+          winner.member_ids?.includes(m.membership_id)
+        ),
+        week: winner.week,
+        correct: winner.num_correct || 0,
+        score: winner.score || 0,
+      };
+    });
   }
 }
+
+export default WeekWinnersResolver;

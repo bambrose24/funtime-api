@@ -16,6 +16,7 @@ import PicksByWeekResolver from "./queries/picksByWeek";
 import FirstNotStartedWeekResolver from "./queries/firstNotStartedWeek";
 import MostRecentStartedWeekResolver from "./queries/mostRecentStartedWeek";
 import GameLiveResolver from "./queries/liveStatus";
+import WeekWinnersResolver from "./queries/weekWinners";
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
   Pick: {
@@ -60,6 +61,7 @@ const resolvers = [
   FirstNotStartedWeekResolver,
   MostRecentStartedWeekResolver,
   GameLiveResolver,
+  WeekWinnersResolver,
 ] as const;
 
 export default resolvers;

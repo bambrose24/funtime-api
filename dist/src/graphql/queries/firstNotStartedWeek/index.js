@@ -63,21 +63,6 @@ __decorate([
 FirstNotStartedWeekResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], FirstNotStartedWeekResponse);
-let FirstNotStartedWeekRequest = class FirstNotStartedWeekRequest {
-    override;
-    week;
-};
-__decorate([
-    (0, type_graphql_1.Field)(() => Boolean, { nullable: true }),
-    __metadata("design:type", Object)
-], FirstNotStartedWeekRequest.prototype, "override", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Object)
-], FirstNotStartedWeekRequest.prototype, "week", void 0);
-FirstNotStartedWeekRequest = __decorate([
-    (0, type_graphql_1.ObjectType)()
-], FirstNotStartedWeekRequest);
 class FirstNotStartedWeekResolver {
     async firstNotStartedWeek(override, week) {
         let weekRes;
