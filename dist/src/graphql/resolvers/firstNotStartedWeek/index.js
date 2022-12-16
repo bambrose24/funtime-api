@@ -42,7 +42,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
-const register_1 = require("../register");
+const register_1 = require("../../mutations/register");
 let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
     week;
     season;

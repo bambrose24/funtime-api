@@ -1,5 +1,5 @@
-import MakePicksResolver from "./make-picks";
-import RegisterResolver from "./register";
+import MakePicksResolver from "./mutations/makePicks";
+import RegisterResolver from "./mutations/register";
 import { resolvers as generatedResolvers } from "@generated/type-graphql";
 import { DateTimeResolver } from "graphql-scalars";
 
@@ -12,10 +12,10 @@ import {
   applyModelsEnhanceMap,
 } from "@generated/type-graphql";
 import { Field } from "type-graphql";
-import PicksByWeekResolver from "./picks-by-week";
-import FirstNotStartedWeekResolver from "./first-not-started-week";
-import MostRecentStartedWeekResolver from "./most-recent-started-week";
-import GameLiveResolver from "./live-game";
+import PicksByWeekResolver from "./queries/picksByWeek";
+import FirstNotStartedWeekResolver from "./queries/firstNotStartedWeek";
+import MostRecentStartedWeekResolver from "./queries/mostRecentStartedWeek";
+import GameLiveResolver from "./queries/liveStatus";
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
   Pick: {

@@ -7,7 +7,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const types_1 = require("@shared/mysportsfeeds/types");
 const lodash_1 = __importDefault(require("lodash"));
 const moment_1 = __importDefault(require("moment"));
-const register_1 = require("../graphql/resolvers/register");
+const register_1 = require("../graphql/mutations/register");
 async function updateGamesAndPicks(games) {
     const [dbGames, teams] = await Promise.all([
         datastore_1.default.game.findMany({
@@ -37,6 +37,13 @@ async function updateGamesAndPicks(games) {
             }
             const homeScore = msfGame?.score.homeScoreTotal;
             const awayScore = msfGame?.score.awayScoreTotal;
+            await datastore_1.default.game.update({
+                where: { gid: dbGame.gid },
+                data: {
+                    homescore: homeScore === null || homeScore === undefined ? 0 : homeScore,
+                    awayscore: awayScore === null || awayScore === undefined ? 0 : awayScore,
+                },
+            });
             if (msfGame?.schedule.playedStatus === types_1.MSFGamePlayedStatus.COMPLETED &&
                 homeScore !== null &&
                 awayScore !== null) {
@@ -50,15 +57,11 @@ async function updateGamesAndPicks(games) {
                     where: { gid: dbGame.gid },
                 });
                 console.info(`[cron] setting game ${dbGame.gid} to done`);
-                const awayRecord = getRecord(dbGames, dbGame, dbGame.away);
-                const homeRecord = getRecord(dbGames, dbGame, dbGame.home);
                 const gameUpdateData = {
                     done: true,
                     winner,
                     homescore: homeScore,
                     awayscore: awayScore,
-                    homerecord: homeRecord,
-                    awayrecord: awayRecord,
                     ...(msfGame?.schedule.startTime
                         ? { ts: (0, moment_1.default)(msfGame.schedule.startTime).toDate() }
                         : {}),
@@ -89,15 +92,26 @@ async function updateGamesAndPicks(games) {
                     data: { correct: 0 },
                 });
             }
+            const awayrecord = getRecord(dbGames, dbGame, dbGame.away);
+            const homerecord = getRecord(dbGames, dbGame, dbGame.home);
+            await datastore_1.default.game.update({
+                where: { gid: dbGame.gid },
+                data: {
+                    homerecord,
+                    awayrecord,
+                },
+            });
         });
     }
 }
 exports.default = updateGamesAndPicks;
 function getRecord(dbGames, currGame, teamId) {
-    const prevGamesWithTeam = dbGames.filter((g) => (g.home === teamId || g.away === teamId) && g.week < currGame.week);
-    const wins = prevGamesWithTeam.filter((g) => g.winner === teamId).length;
-    const losses = prevGamesWithTeam.filter((g) => g.winner && g.winner !== teamId).length;
-    const ties = prevGamesWithTeam.filter((g) => !g.winner).length;
+    const prevDoneGamesWithTeam = dbGames.filter((g) => (g.home === teamId || g.away === teamId) &&
+        g.week < currGame.week &&
+        g.done);
+    const wins = prevDoneGamesWithTeam.filter((g) => g.winner === teamId).length;
+    const losses = prevDoneGamesWithTeam.filter((g) => g.winner && g.winner !== teamId).length;
+    const ties = prevDoneGamesWithTeam.filter((g) => !g.winner).length;
     if (ties) {
         return `${wins}-${losses}-${ties}`;
     }

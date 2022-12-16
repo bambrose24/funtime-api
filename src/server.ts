@@ -18,7 +18,7 @@ import { ApolloServer } from "apollo-server-express";
 
 import { buildSchema } from "type-graphql";
 
-import resolvers from "./graphql/resolvers";
+import resolvers from "./graphql";
 import datastore from "@shared/datastore";
 import { ApolloPrismaContext } from "./graphql/server/types";
 import keepThingsUpdated from "./cron/keepThingsUpdated";

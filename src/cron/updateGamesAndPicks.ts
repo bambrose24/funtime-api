@@ -3,7 +3,7 @@ import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import _ from "lodash";
 import moment from "moment";
-import { SEASON } from "../graphql/resolvers/register";
+import { SEASON } from "../graphql/mutations/register";
 
 export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   const [dbGames, teams] = await Promise.all([

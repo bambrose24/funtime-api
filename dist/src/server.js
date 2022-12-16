@@ -17,7 +17,7 @@ const express_http_context_1 = __importDefault(require("express-http-context"));
 const errors_1 = require("./shared/errors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
-const resolvers_1 = __importDefault(require("./graphql/resolvers"));
+const graphql_1 = __importDefault(require("./graphql"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"));
 const cors_1 = __importDefault(require("cors"));
@@ -50,7 +50,7 @@ app.use((err, _, res, __) => {
  ***********************************************************************************/
 async function bootstrap() {
     const schema = await (0, type_graphql_1.buildSchema)({
-        resolvers: resolvers_1.default,
+        resolvers: graphql_1.default,
         dateScalarMode: "isoDate",
     });
     // TODO consider pulling the server into a different file for creation

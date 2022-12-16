@@ -5,7 +5,7 @@ import * as TypeGraphQL from "@generated/type-graphql";
 import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
 import { now } from "@util/time";
 import { PhoneNumberMock } from "graphql-scalars";
-import { SEASON } from "../register";
+import { SEASON } from "../../mutations/register";
 
 @ObjectType()
 class FirstNotStartedWeekResponse {
@@ -15,14 +15,6 @@ class FirstNotStartedWeekResponse {
   season: number | null;
   @Field(() => [TypeGraphQL.Game]!)
   games: Array<Game>;
-}
-
-@ObjectType()
-class FirstNotStartedWeekRequest {
-  @Field(() => Boolean, { nullable: true })
-  override?: boolean | null;
-  @Field(() => Int, { nullable: true })
-  week?: number | null;
 }
 
 class FirstNotStartedWeekResolver {
