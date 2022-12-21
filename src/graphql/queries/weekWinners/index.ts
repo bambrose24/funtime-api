@@ -2,7 +2,7 @@ import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
 import * as TypeGraphQL from "@generated/type-graphql";
 import { League, LeagueMember } from "@prisma/client";
 import datastore from "@shared/datastore";
-import { calculateWinnerFromDonePicks } from "@shared/winner";
+import { calculateWinnersFromDonePicks } from "@shared/winner";
 
 @ObjectType()
 class WeekWinner {
@@ -13,7 +13,7 @@ class WeekWinner {
   @Field(() => Int)
   correct: number;
   @Field(() => Int)
-  score: number;
+  score_diff: number;
 }
 
 class WeekWinnersResolver {
@@ -48,7 +48,11 @@ class WeekWinnersResolver {
       },
     });
 
-    const winners = await calculateWinnerFromDonePicks(league_id, picks, games);
+    const winners = await calculateWinnersFromDonePicks(
+      league_id,
+      picks,
+      games
+    );
 
     return winners.map((winner) => {
       return {
@@ -57,7 +61,7 @@ class WeekWinnersResolver {
         ),
         week: winner.week,
         correct: winner.num_correct || 0,
-        score: winner.score || 0,
+        score_diff: winner.score_diff || 0,
       };
     });
   }

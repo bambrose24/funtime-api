@@ -46,7 +46,7 @@ let WeekWinner = class WeekWinner {
     member;
     week;
     correct;
-    score;
+    score_diff;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => [TypeGraphQL.LeagueMember]),
@@ -63,7 +63,7 @@ __decorate([
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int),
     __metadata("design:type", Number)
-], WeekWinner.prototype, "score", void 0);
+], WeekWinner.prototype, "score_diff", void 0);
 WeekWinner = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], WeekWinner);
@@ -90,13 +90,13 @@ class WeekWinnersResolver {
                 ...(weeks ? { week: { in: weeks } } : {}),
             },
         });
-        const winners = await (0, winner_1.calculateWinnerFromDonePicks)(league_id, picks, games);
+        const winners = await (0, winner_1.calculateWinnersFromDonePicks)(league_id, picks, games);
         return winners.map((winner) => {
             return {
                 member: members.filter((m) => winner.member_ids?.includes(m.membership_id)),
                 week: winner.week,
                 correct: winner.num_correct || 0,
-                score: winner.score || 0,
+                score_diff: winner.score_diff || 0,
             };
         });
     }

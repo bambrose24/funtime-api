@@ -20,103 +20,104 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
     return prev;
   }, {} as Record<number, Team>);
 
-  const gamesChunked = _.chunk(dbGames, 5);
+  const gamesChunked = _.chunk(dbGames, 3);
   for (let dbGamesChunk of gamesChunked) {
-    dbGamesChunk.forEach(async (dbGame) => {
-      // if (dbGame.done) {
-      //   return;
-      // }
-      const homeTeam = teamsMap[dbGame.home];
-      const awayTeam = teamsMap[dbGame.away];
-      const msfGame = games.find(
-        (g) =>
-          g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
-          g.schedule.awayTeam.abbreviation === awayTeam.abbrev
-      );
-      if (!msfGame) {
-        console.log(
-          `[cron] could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
+    await Promise.all(
+      dbGamesChunk.map(async (dbGame) => {
+        // if (dbGame.done) {
+        //   return;
+        // }
+        const homeTeam = teamsMap[dbGame.home];
+        const awayTeam = teamsMap[dbGame.away];
+        const msfGame = games.find(
+          (g) =>
+            g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
+            g.schedule.awayTeam.abbreviation === awayTeam.abbrev
         );
-      }
+        if (!msfGame) {
+          console.log(
+            `[cron] could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
+          );
+        }
 
-      const homeScore = msfGame?.score.homeScoreTotal!;
-      const awayScore = msfGame?.score.awayScoreTotal!;
-
-      await datastore.game.update({
-        where: { gid: dbGame.gid },
-        data: {
-          homescore:
-            homeScore === null || homeScore === undefined ? 0 : homeScore,
-          awayscore:
-            awayScore === null || awayScore === undefined ? 0 : awayScore,
-        },
-      });
-
-      if (
-        msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&
-        homeScore !== null &&
-        awayScore !== null
-      ) {
-        const winner =
-          homeScore === awayScore
-            ? null
-            : homeScore > awayScore
-            ? dbGame.home
-            : dbGame.away;
-        // game is done, time to update picks and dbGame.done = true
-        const picks = await datastore.pick.findMany({
-          where: { gid: dbGame.gid },
-        });
-        console.info(`[cron] setting game ${dbGame.gid} to done`);
-
-        const gameUpdateData = {
-          done: true,
-          winner,
-          homescore: homeScore,
-          awayscore: awayScore,
-          ...(msfGame?.schedule.startTime
-            ? { ts: moment(msfGame.schedule.startTime).toDate() }
-            : {}),
-        };
+        const homeScore = msfGame?.score.homeScoreTotal!;
+        const awayScore = msfGame?.score.awayScoreTotal!;
 
         await datastore.game.update({
           where: { gid: dbGame.gid },
-          data: gameUpdateData,
+          data: {
+            homescore:
+              homeScore === null || homeScore === undefined ? 0 : homeScore,
+            awayscore:
+              awayScore === null || awayScore === undefined ? 0 : awayScore,
+          },
         });
 
-        console.info(`[cron] updating picks for ${dbGame.gid}`);
-        const correctPickIds: number[] = [];
-        const wrongPickIds: number[] = [];
-        picks.forEach(async (p) => {
-          let correct = false;
-          if (winner === null || p.winner === winner) {
-            correct = true;
-            correctPickIds.push(p.pickid);
-          } else {
-            wrongPickIds.push(p.pickid);
-          }
-        });
-        await datastore.pick.updateMany({
-          where: { pickid: { in: correctPickIds } },
-          data: { correct: 1 },
-        });
-        await datastore.pick.updateMany({
-          where: { pickid: { in: wrongPickIds } },
-          data: { correct: 0 },
-        });
-      }
+        if (
+          msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&
+          homeScore !== null &&
+          awayScore !== null
+        ) {
+          const winner =
+            homeScore === awayScore
+              ? null
+              : homeScore > awayScore
+              ? dbGame.home
+              : dbGame.away;
+          // game is done, time to update picks and dbGame.done = true
+          const picks = await datastore.pick.findMany({
+            where: { gid: dbGame.gid },
+          });
+          console.info(`[cron] setting game ${dbGame.gid} to done`);
 
-      const awayrecord = getRecord(dbGames, dbGame, dbGame.away);
-      const homerecord = getRecord(dbGames, dbGame, dbGame.home);
+          const gameUpdateData = {
+            done: true,
+            winner,
+            homescore: homeScore,
+            awayscore: awayScore,
+            ...(msfGame?.schedule.startTime
+              ? { ts: moment(msfGame.schedule.startTime).toDate() }
+              : {}),
+          };
 
-      await datastore.game.update({
-        where: { gid: dbGame.gid },
-        data: {
-          homerecord,
-          awayrecord,
-        },
-      });
-    });
+          const correctPickIds: number[] = [];
+          const wrongPickIds: number[] = [];
+          picks.forEach((p) => {
+            let correct = false;
+            if (winner === null || p.winner === winner) {
+              correct = true;
+              correctPickIds.push(p.pickid);
+            } else {
+              wrongPickIds.push(p.pickid);
+            }
+          });
+
+          console.info(
+            `[cron] updating picks for ${dbGame.gid} - setting ${correctPickIds.length} to correct and ${wrongPickIds.length} to wrong`
+          );
+
+          await datastore.pick.updateMany({
+            where: { pickid: { in: correctPickIds } },
+            data: { correct: 1 },
+          });
+          await datastore.pick.updateMany({
+            where: { pickid: { in: wrongPickIds } },
+            data: { correct: 0 },
+          });
+        }
+
+        const awayrecord = getRecord(dbGames, dbGame, dbGame.away);
+        const homerecord = getRecord(dbGames, dbGame, dbGame.home);
+
+        await datastore.game.update({
+          where: { gid: dbGame.gid },
+          data: {
+            homerecord,
+            awayrecord,
+          },
+        });
+      })
+    );
   }
 }
 

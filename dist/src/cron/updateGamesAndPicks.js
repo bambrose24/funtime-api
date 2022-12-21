@@ -22,9 +22,9 @@ async function updateGamesAndPicks(games) {
         prev[curr.teamid] = curr;
         return prev;
     }, {});
-    const gamesChunked = lodash_1.default.chunk(dbGames, 5);
+    const gamesChunked = lodash_1.default.chunk(dbGames, 3);
     for (let dbGamesChunk of gamesChunked) {
-        dbGamesChunk.forEach(async (dbGame) => {
+        await Promise.all(dbGamesChunk.map(async (dbGame) => {
             // if (dbGame.done) {
             //   return;
             // }
@@ -66,14 +66,9 @@ async function updateGamesAndPicks(games) {
                         ? { ts: (0, moment_1.default)(msfGame.schedule.startTime).toDate() }
                         : {}),
                 };
-                await datastore_1.default.game.update({
-                    where: { gid: dbGame.gid },
-                    data: gameUpdateData,
-                });
-                console.info(`[cron] updating picks for ${dbGame.gid}`);
                 const correctPickIds = [];
                 const wrongPickIds = [];
-                picks.forEach(async (p) => {
+                picks.forEach((p) => {
                     let correct = false;
                     if (winner === null || p.winner === winner) {
                         correct = true;
@@ -83,6 +78,7 @@ async function updateGamesAndPicks(games) {
                         wrongPickIds.push(p.pickid);
                     }
                 });
+                console.info(`[cron] updating picks for ${dbGame.gid} - setting ${correctPickIds.length} to correct and ${wrongPickIds.length} to wrong`);
                 await datastore_1.default.pick.updateMany({
                     where: { pickid: { in: correctPickIds } },
                     data: { correct: 1 },
@@ -101,7 +97,7 @@ async function updateGamesAndPicks(games) {
                     awayrecord,
                 },
             });
-        });
+        }));
     }
 }
 exports.default = updateGamesAndPicks;
