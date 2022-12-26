@@ -66,7 +66,8 @@ async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
                 return prev;
             }
             if (curr.score && curr.score > 0) {
-                prev[member_id] = curr.score;
+                const gameScore = gidToScore[curr.gid] || 0;
+                prev[member_id] = Math.abs(curr.score - gameScore);
             }
             return prev;
         }, {});

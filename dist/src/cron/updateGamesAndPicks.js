@@ -79,6 +79,10 @@ async function updateGamesAndPicks(games) {
                     }
                 });
                 console.info(`[cron] updating picks for ${dbGame.gid} - setting ${correctPickIds.length} to correct and ${wrongPickIds.length} to wrong`);
+                await datastore_1.default.game.update({
+                    where: { gid: dbGame.gid },
+                    data: gameUpdateData,
+                });
                 await datastore_1.default.pick.updateMany({
                     where: { pickid: { in: correctPickIds } },
                     data: { correct: 1 },

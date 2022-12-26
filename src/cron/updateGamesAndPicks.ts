@@ -96,6 +96,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
             `[cron] updating picks for ${dbGame.gid} - setting ${correctPickIds.length} to correct and ${wrongPickIds.length} to wrong`
           );
 
+          await datastore.game.update({
+            where: { gid: dbGame.gid },
+            data: gameUpdateData,
+          });
           await datastore.pick.updateMany({
             where: { pickid: { in: correctPickIds } },
             data: { correct: 1 },
