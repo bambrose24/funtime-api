@@ -5,8 +5,10 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
+# used to be this but trying docker now
 [build]
   builder = "heroku/buildpacks:20"
+
 
 [env]
   PORT = "8080"

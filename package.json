@@ -2,7 +2,7 @@
   "name": "funtime-api",
   "version": "0.0.0",
   "engines": {
-    "node": ">=16.11.x"
+    "node": "16.16.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/ts-node build.ts",
@@ -12,8 +12,7 @@
     "test": "nodemon --config ./spec/nodemon.json",
     "test:no-reloading": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./spec",
     "generate": "graphql-codegen --config codegen.yml",
-    "fly-deploy": "npm run build && npm run start",
-    "postinstall": "npx prisma generate"
+    "fly-deploy": "npm run build && npm run start"
   },
   "nodemonConfig": {
     "watch": [
@@ -72,7 +71,6 @@
     "@apollo/utils.keyvadapter": "^1.1.1",
     "@graphql-codegen/cli": "^2.9.1",
     "@keyv/redis": "^2.4.0",
-    "@prisma/client": "^4.1.0",
     "@sendgrid/mail": "^7.7.0",
     "@supabase/supabase-js": "^2.0.5",
     "@types/graphql-fields": "^1.3.4",
@@ -112,7 +110,7 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.7.7",
-    "prisma-redis-middleware": "4.0.8",
+    "prisma-redis-middleware": "^4.0.8",
     "randomstring": "^1.2.2",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.4.0",
@@ -139,11 +137,10 @@
     "fs-extra": "^10.1.0",
     "jasmine": "^4.2.1",
     "nodemon": "^2.0.20",
-    "prisma": "^4.1.0",
     "supertest": "^6.2.4",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.0.0",
-    "typegraphql-prisma": "^0.21.1",
+    "typegraphql-prisma": "^0.23.2",
     "typescript": "^4.7.4"
   }
 }

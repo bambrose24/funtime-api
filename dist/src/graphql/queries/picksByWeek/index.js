@@ -70,9 +70,11 @@ PicksByWeekResponse = __decorate([
 ], PicksByWeekResponse);
 class PicksByWeekResolver {
     async picksByWeek(league_id, week, override) {
+        console.log("top of resolver...");
         const league = await datastore_1.default.league.findFirst({
             where: { league_id: { equals: league_id } },
         });
+        console.log("league?", league, league?.league_id);
         const season = league?.season;
         if (!season) {
             throw new Error(`could not find season from league_id ${league_id}`);

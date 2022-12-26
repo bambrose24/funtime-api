@@ -4,11 +4,10 @@ import logger from "jet-logger";
 import server from "./server";
 import config from "./config";
 
-// Constants
-const serverStartMsg = "Express server started on port: ",
-  port = config.port || 3000;
+const port = config.port || 3000;
+const serverStartMsg = `Express server started on port: ${port} (node version ${process.version})`;
 
 // Start server
 server.listen(port, () => {
-  logger.info(serverStartMsg + port);
+  logger.info(serverStartMsg);
 });

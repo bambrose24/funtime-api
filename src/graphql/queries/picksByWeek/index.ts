@@ -30,9 +30,11 @@ class PicksByWeekResolver {
     @Arg("override", { nullable: true })
     override: boolean
   ): Promise<PicksByWeekResponse> {
+    console.log("top of resolver...");
     const league = await datastore.league.findFirst({
       where: { league_id: { equals: league_id } },
     });
+    console.log("league?", league, league?.league_id);
 
     const season = league?.season as number;
 

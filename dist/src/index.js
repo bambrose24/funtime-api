@@ -8,9 +8,9 @@ require("reflect-metadata");
 const jet_logger_1 = __importDefault(require("jet-logger"));
 const server_1 = __importDefault(require("./server"));
 const config_1 = __importDefault(require("./config"));
-// Constants
-const serverStartMsg = "Express server started on port: ", port = config_1.default.port || 3000;
+const port = config_1.default.port || 3000;
+const serverStartMsg = `Express server started on port: ${port} (node version ${process.version})`;
 // Start server
 server_1.default.listen(port, () => {
-    jet_logger_1.default.info(serverStartMsg + port);
+    jet_logger_1.default.info(serverStartMsg);
 });
