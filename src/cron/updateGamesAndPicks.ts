@@ -78,7 +78,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
             ...(msfGame?.schedule.startTime
               ? { ts: moment(msfGame.schedule.startTime).toDate() }
               : {}),
-          };
+          } satisfies Parameters<typeof datastore["game"]["update"]>[0]["data"];
 
           const correctPickIds: number[] = [];
           const wrongPickIds: number[] = [];

@@ -46,8 +46,6 @@ const email_1 = require("@shared/email");
 exports.LEAGUE_ID = 7;
 exports.DEFAULT_ROLE = "player";
 let MakePicksResponse = class MakePicksResponse {
-    success;
-    user;
 };
 __decorate([
     (0, type_graphql_1.Field)(),
@@ -61,10 +59,6 @@ MakePicksResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], MakePicksResponse);
 let GamePick = class GamePick {
-    game_id;
-    winner;
-    is_random;
-    score;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int),

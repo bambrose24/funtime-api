@@ -43,10 +43,6 @@ const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const winner_1 = require("@shared/winner");
 let WeekWinner = class WeekWinner {
-    member;
-    week;
-    correct;
-    score_diff;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => [TypeGraphQL.LeagueMember]),

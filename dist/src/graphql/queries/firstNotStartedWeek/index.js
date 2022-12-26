@@ -44,9 +44,6 @@ const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
 const register_1 = require("../../mutations/register");
 let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
-    week;
-    season;
-    games;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),
