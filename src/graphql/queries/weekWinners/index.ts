@@ -54,16 +54,18 @@ class WeekWinnersResolver {
       games
     );
 
-    return winners.map((winner) => {
-      return {
-        member: members.filter((m) =>
-          winner.member_ids?.includes(m.membership_id)
-        ),
-        week: winner.week,
-        correct: winner.num_correct || 0,
-        score_diff: winner.score_diff || 0,
-      };
-    });
+    return winners
+      .filter((winner) => winner.member_ids && winner.member_ids.length > 0)
+      .map((winner) => {
+        return {
+          member: members.filter((m) =>
+            winner.member_ids?.includes(m.membership_id)
+          ),
+          week: winner.week,
+          correct: winner.num_correct || 0,
+          score_diff: winner.score_diff || 0,
+        };
+      });
   }
 }
 

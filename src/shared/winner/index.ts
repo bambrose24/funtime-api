@@ -41,12 +41,10 @@ export async function calculateWinnersFromDonePicks(
   }, {} as Record<number, number>);
 
   return weeks.map((week) => {
-    console.log(`hi it's week ${week}`);
     const weekPicks = picksGroupedByWeek[week] || [];
     const weekGames = gamesGroupedByWeek[week] || [];
     const season = weekGames[0].season;
     const anyNotDone = weekGames.some((p) => !p.done);
-    console.log(`any not done? ${anyNotDone}`);
     if (anyNotDone) {
       return {
         league_id: leagueId,
