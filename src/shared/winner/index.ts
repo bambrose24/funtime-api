@@ -11,7 +11,7 @@ type Winner = {
 };
 
 export async function calculateWinnersFromDonePicks(
-  league_id: number,
+  leagueId: number,
   allPicks: Array<Pick>,
   allGames: Array<Game>
 ): Promise<Array<Winner>> {
@@ -49,7 +49,7 @@ export async function calculateWinnersFromDonePicks(
     console.log(`any not done? ${anyNotDone}`);
     if (anyNotDone) {
       return {
-        league_id,
+        league_id: leagueId,
         week,
         season,
       };
@@ -111,7 +111,7 @@ export async function calculateWinnersFromDonePicks(
     );
 
     return {
-      league_id,
+      league_id: leagueId,
       week,
       season,
       member_ids: winners.map((winner) => winner.member_id),
