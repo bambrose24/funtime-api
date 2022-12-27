@@ -26,8 +26,6 @@ export async function calculateWinnersFromDonePicks(
     return prev;
   }, {} as Record<number, Array<Pick>>);
 
-  console.log(Object.keys(picksGroupedByWeek));
-
   const gamesGroupedByWeek = allGames.reduce((prev, curr) => {
     const { week } = curr;
     if (!(week in prev)) {
@@ -42,7 +40,7 @@ export async function calculateWinnersFromDonePicks(
     return prev;
   }, {} as Record<number, number>);
 
-  const res = weeks.map((week) => {
+  return weeks.map((week) => {
     console.log(`hi it's week ${week}`);
     const weekPicks = picksGroupedByWeek[week] || [];
     const weekGames = gamesGroupedByWeek[week] || [];
@@ -104,9 +102,6 @@ export async function calculateWinnersFromDonePicks(
       }
       return a.score_diff - b.score_diff;
     });
-    if (week === 15) {
-      console.log("membersStats", membersStats);
-    }
 
     const bestCorrect = membersStats.at(-1)?.correct || 0;
     const bestScore = membersStats.at(-1)?.score_diff || 0;
@@ -124,5 +119,4 @@ export async function calculateWinnersFromDonePicks(
       score: bestScore,
     };
   });
-  return res;
 }
