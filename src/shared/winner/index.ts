@@ -63,15 +63,9 @@ export async function calculateWinnersFromDonePicks(
       if (!(member_id in prev)) {
         prev[member_id] = 0;
       }
-      if (week === 15 && member_id === 320) {
-        console.log("member_id and curr", member_id, curr);
-      }
       prev[member_id] = prev[member_id] + (curr.correct === 1 ? 1 : 0);
       return prev;
     }, {} as Record<number, number>);
-    if (week === 15) {
-      console.log("week memberToCorrectCount", week, memberToCorrectCount);
-    }
 
     const memberToScore = weekPicks.reduce((prev, curr) => {
       const { member_id } = curr;
@@ -85,7 +79,7 @@ export async function calculateWinnersFromDonePicks(
       return prev;
     }, {} as Record<number, number>);
 
-    const membersStats = weekMemberIds.map((member_id) => {
+    let membersStats = weekMemberIds.map((member_id) => {
       return {
         member_id: member_id!,
         correct: memberToCorrectCount[member_id!] || 0,
@@ -93,13 +87,15 @@ export async function calculateWinnersFromDonePicks(
       };
     });
 
-    _.orderBy(membersStats, ["score_diff", "correct"], ["desc", "asc"]);
-    membersStats.sort((a, b) => {
-      if (a.correct !== b.correct) {
-        return a.correct - b.correct;
-      }
-      return a.score_diff - b.score_diff;
-    });
+    membersStats = _.orderBy(
+      membersStats,
+      ["correct", "score_diff"],
+      ["asc", "desc"]
+    );
+
+    if (week === 16) {
+      console.log("membersStats", membersStats);
+    }
 
     const bestCorrect = membersStats.at(-1)?.correct || 0;
     const bestScore = membersStats.at(-1)?.score_diff || 0;

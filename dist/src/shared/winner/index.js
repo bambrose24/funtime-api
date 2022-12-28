@@ -48,15 +48,9 @@ async function calculateWinnersFromDonePicks(leagueId, allPicks, allGames) {
             if (!(member_id in prev)) {
                 prev[member_id] = 0;
             }
-            if (week === 15 && member_id === 320) {
-                console.log("member_id and curr", member_id, curr);
-            }
             prev[member_id] = prev[member_id] + (curr.correct === 1 ? 1 : 0);
             return prev;
         }, {});
-        if (week === 15) {
-            console.log("week memberToCorrectCount", week, memberToCorrectCount);
-        }
         const memberToScore = weekPicks.reduce((prev, curr) => {
             const { member_id } = curr;
             if (!member_id) {
@@ -68,20 +62,17 @@ async function calculateWinnersFromDonePicks(leagueId, allPicks, allGames) {
             }
             return prev;
         }, {});
-        const membersStats = weekMemberIds.map((member_id) => {
+        let membersStats = weekMemberIds.map((member_id) => {
             return {
                 member_id: member_id,
                 correct: memberToCorrectCount[member_id] || 0,
                 score_diff: memberToScore[member_id] || 999,
             };
         });
-        lodash_1.default.orderBy(membersStats, ["score_diff", "correct"], ["desc", "asc"]);
-        membersStats.sort((a, b) => {
-            if (a.correct !== b.correct) {
-                return a.correct - b.correct;
-            }
-            return a.score_diff - b.score_diff;
-        });
+        membersStats = lodash_1.default.orderBy(membersStats, ["correct", "score_diff"], ["asc", "desc"]);
+        if (week === 16) {
+            console.log("membersStats", membersStats);
+        }
         const bestCorrect = membersStats.at(-1)?.correct || 0;
         const bestScore = membersStats.at(-1)?.score_diff || 0;
         const winners = membersStats.filter((stats) => stats.score_diff === bestScore && stats.correct === bestCorrect);
