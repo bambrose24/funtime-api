@@ -47,6 +47,9 @@ exports.SEASON = 2022;
 exports.LEAGUE_ID = 7;
 exports.DEFAULT_ROLE = "player";
 let RegisterResponse = class RegisterResponse {
+    success;
+    user;
+    membership;
 };
 __decorate([
     (0, type_graphql_1.Field)(),

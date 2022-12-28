@@ -44,6 +44,10 @@ const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
 const moment_1 = __importDefault(require("moment"));
 let MostRecentStartedWeekResponse = class MostRecentStartedWeekResponse {
+    week;
+    season;
+    picks;
+    games;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),

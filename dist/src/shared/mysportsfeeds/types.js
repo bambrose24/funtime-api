@@ -20,18 +20,33 @@ var MSFGamePlayedStatus;
     description: "Status of the game",
 });
 let MSFGameSchedule = class MSFGameSchedule {
+    id;
+    week;
+    awayTeam;
+    homeTeam;
+    startTime; // ISO string
+    endedTime;
+    venueAllegiance;
+    playedStatus;
 };
 MSFGameSchedule = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], MSFGameSchedule);
 exports.MSFGameSchedule = MSFGameSchedule;
 let MSFGameScore = class MSFGameScore {
+    currentQuarter;
+    currentQuarterSecondsRemaining;
+    currentIntermission;
+    awayScoreTotal;
+    homeScoreTotal;
 };
 MSFGameScore = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], MSFGameScore);
 exports.MSFGameScore = MSFGameScore;
 let MSFGame = class MSFGame {
+    schedule;
+    score;
 };
 MSFGame = __decorate([
     (0, type_graphql_1.ObjectType)()

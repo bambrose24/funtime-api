@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateWinnersFromDonePicks = void 0;
 const lodash_1 = __importDefault(require("lodash"));
-async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
+async function calculateWinnersFromDonePicks(leagueId, allPicks, allGames) {
     const weeks = [...new Set(allGames.map((g) => g.week))];
     const picksGroupedByWeek = allPicks.reduce((prev, curr) => {
         const { week } = curr;
@@ -15,7 +15,6 @@ async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
         prev[week].push(curr);
         return prev;
     }, {});
-    console.log(Object.keys(picksGroupedByWeek));
     const gamesGroupedByWeek = allGames.reduce((prev, curr) => {
         const { week } = curr;
         if (!(week in prev)) {
@@ -28,16 +27,14 @@ async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
         prev[curr.gid] = (curr.homescore || 0) + (curr.awayscore || 0);
         return prev;
     }, {});
-    const res = weeks.map((week) => {
-        console.log(`hi it's week ${week}`);
+    return weeks.map((week) => {
         const weekPicks = picksGroupedByWeek[week] || [];
         const weekGames = gamesGroupedByWeek[week] || [];
         const season = weekGames[0].season;
         const anyNotDone = weekGames.some((p) => !p.done);
-        console.log(`any not done? ${anyNotDone}`);
         if (anyNotDone) {
             return {
-                league_id,
+                league_id: leagueId,
                 week,
                 season,
             };
@@ -85,14 +82,11 @@ async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
             }
             return a.score_diff - b.score_diff;
         });
-        if (week === 15) {
-            console.log("membersStats", membersStats);
-        }
         const bestCorrect = membersStats.at(-1)?.correct || 0;
         const bestScore = membersStats.at(-1)?.score_diff || 0;
         const winners = membersStats.filter((stats) => stats.score_diff === bestScore && stats.correct === bestCorrect);
         return {
-            league_id,
+            league_id: leagueId,
             week,
             season,
             member_ids: winners.map((winner) => winner.member_id),
@@ -100,6 +94,5 @@ async function calculateWinnersFromDonePicks(league_id, allPicks, allGames) {
             score: bestScore,
         };
     });
-    return res;
 }
 exports.calculateWinnersFromDonePicks = calculateWinnersFromDonePicks;

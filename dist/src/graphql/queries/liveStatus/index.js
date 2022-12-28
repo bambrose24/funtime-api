@@ -40,6 +40,9 @@ const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const mysportsfeeds_1 = require("../../../shared/mysportsfeeds");
 const types_1 = require("../../../shared/mysportsfeeds/types");
 let GameLive = class GameLive {
+    currentQuarter;
+    currentQuarterSecondsRemaining;
+    playedStatus;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),

@@ -44,6 +44,11 @@ const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
 let PicksByWeekResponse = class PicksByWeekResponse {
+    week;
+    season;
+    canView;
+    picks;
+    games;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => type_graphql_1.Int, { nullable: true }),

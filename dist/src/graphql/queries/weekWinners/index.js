@@ -43,6 +43,10 @@ const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const winner_1 = require("@shared/winner");
 let WeekWinner = class WeekWinner {
+    member;
+    week;
+    correct;
+    score_diff;
 };
 __decorate([
     (0, type_graphql_1.Field)(() => [TypeGraphQL.LeagueMember]),
@@ -87,7 +91,9 @@ class WeekWinnersResolver {
             },
         });
         const winners = await (0, winner_1.calculateWinnersFromDonePicks)(league_id, picks, games);
-        return winners.map((winner) => {
+        return winners
+            .filter((winner) => winner.member_ids && winner.member_ids.length > 0)
+            .map((winner) => {
             return {
                 member: members.filter((m) => winner.member_ids?.includes(m.membership_id)),
                 week: winner.week,

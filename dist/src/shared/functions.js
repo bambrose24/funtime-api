@@ -23,7 +23,7 @@ exports.pErr = pErr;
  * @returns
  */
 function getRandomInt() {
-    return Math.floor(Math.random() * 1000000000000);
+    return Math.floor(Math.random() * 1_000_000_000_000);
 }
 exports.getRandomInt = getRandomInt;
 ;

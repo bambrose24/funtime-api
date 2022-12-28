@@ -53,17 +53,35 @@ model LeagueMember {
   @@map("leaguemembers")
 }
 
+enum ScoringType {
+  game_winner
+}
+
+enum PickPolicy {
+  choose_winner
+}
+
+enum ReminderPolicy {
+  three_hours_before
+}
+
+enum LatePolicy {
+  allow_late_whole_week
+  close_at_first_game_start
+}
+
 model League {
   league_id          Int            @id(map: "idx_18422_primary") @default(autoincrement())
   created_by_user_id Int
   name               String
-  scoring_type       String?
-  late_policy        String?
-  reminder_policy    String?
   created_time       DateTime       @default(now()) @db.Timestamptz(6)
   season             Int?
   people             User           @relation(fields: [created_by_user_id], references: [uid], onUpdate: Restrict, map: "leagues_ibfk_1")
   leaguemembers      LeagueMember[]
+  scoring_type       ScoringType    @default(game_winner)
+  pick_policy        PickPolicy     @default(choose_winner)
+  reminder_policy    ReminderPolicy @default(three_hours_before)
+  late_policy        LatePolicy     @default(allow_late_whole_week)
 
   @@index([created_by_user_id], map: "idx_18422_created_by_user_id")
   @@map("leagues")
