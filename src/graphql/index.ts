@@ -22,7 +22,7 @@ import WeekWinnersResolver from "./queries/weekWinners";
 import { env } from "src/config";
 import { Role } from "@shared/auth/graphql";
 
-const SHOULD_AUTH_EVERYTHING = env === "development";
+const SHOULD_AUTH_MUTATIONS = true;
 
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {
@@ -60,11 +60,11 @@ const modelsEnhanceMap: ModelsEnhanceMap = {
 
 applyModelsEnhanceMap(modelsEnhanceMap);
 
-const userAuth = SHOULD_AUTH_EVERYTHING ? [Authorized(Role.User)] : [];
-const leagueAdminAuth = SHOULD_AUTH_EVERYTHING
+const userAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.User)] : [];
+const leagueAdminAuth = SHOULD_AUTH_MUTATIONS
   ? [Authorized(Role.LeagueAdmin)]
   : [];
-const sysAdminAuth = SHOULD_AUTH_EVERYTHING
+const sysAdminAuth = SHOULD_AUTH_MUTATIONS
   ? [Authorized(Role.LeagueAdmin)]
   : [];
 
