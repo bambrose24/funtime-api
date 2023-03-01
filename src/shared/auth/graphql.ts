@@ -13,7 +13,6 @@ export const customAuthChecker: AuthChecker<ApolloPrismaContext, Role> = async (
   roles
 ) => {
   // TODO generic auth somehow??
-  const user = getUser();
-  console.log("all the args", user, Object.keys(info));
+  // const _user = getUser();
   return true;
 };
