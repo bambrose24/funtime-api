@@ -70,9 +70,6 @@ async function calculateWinnersFromDonePicks(leagueId, allPicks, allGames) {
             };
         });
         membersStats = lodash_1.default.orderBy(membersStats, ["correct", "score_diff"], ["asc", "desc"]);
-        if (week === 16) {
-            console.log("membersStats", membersStats);
-        }
         const bestCorrect = membersStats.at(-1)?.correct || 0;
         const bestScore = membersStats.at(-1)?.score_diff || 0;
         const winners = membersStats.filter((stats) => stats.score_diff === bestScore && stats.correct === bestCorrect);

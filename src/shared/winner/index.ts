@@ -93,10 +93,6 @@ export async function calculateWinnersFromDonePicks(
       ["asc", "desc"]
     );
 
-    if (week === 16) {
-      console.log("membersStats", membersStats);
-    }
-
     const bestCorrect = membersStats.at(-1)?.correct || 0;
     const bestScore = membersStats.at(-1)?.score_diff || 0;
 

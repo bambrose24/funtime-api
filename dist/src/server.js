@@ -23,6 +23,7 @@ const keepThingsUpdated_1 = __importDefault(require("./cron/keepThingsUpdated"))
 const cors_1 = __importDefault(require("cors"));
 const config_1 = require("./config");
 const auth_1 = require("@shared/auth");
+const graphql_2 = require("@shared/auth/graphql");
 const app = (0, express_1.default)();
 /************************************************************************************
  *                              Set basic express settings
@@ -52,10 +53,12 @@ async function bootstrap() {
     const schema = await (0, type_graphql_1.buildSchema)({
         resolvers: graphql_1.default,
         dateScalarMode: "isoDate",
+        authChecker: graphql_2.customAuthChecker,
     });
     // TODO consider pulling the server into a different file for creation
     const server = new apollo_server_express_1.ApolloServer({
         schema,
+        debug: config_1.env !== "production",
         context: (_req, _res) => {
             return { prisma: datastore_1.default };
         },
@@ -71,8 +74,10 @@ app.use((0, cors_1.default)());
 app.use(express_http_context_1.default.middleware);
 app.use(async (req, res, next) => {
     const bearerToken = req.get("Authorization");
+    console.log("bearerToken??", bearerToken);
     if (bearerToken) {
         const token = bearerToken.split(" ").at(1);
+        console.log("token???", token);
         if (token) {
             await (0, auth_1.authorizeAndSetSupabaseUser)(token);
         }

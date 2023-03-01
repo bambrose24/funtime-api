@@ -17,6 +17,9 @@ const firstNotStartedWeek_1 = __importDefault(require("./queries/firstNotStarted
 const mostRecentStartedWeek_1 = __importDefault(require("./queries/mostRecentStartedWeek"));
 const liveStatus_1 = __importDefault(require("./queries/liveStatus"));
 const weekWinners_1 = __importDefault(require("./queries/weekWinners"));
+const config_1 = require("src/config");
+const graphql_1 = require("@shared/auth/graphql");
+const SHOULD_AUTH_EVERYTHING = config_1.env === "development";
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
     Pick: {
@@ -51,6 +54,89 @@ const modelsEnhanceMap = {
     },
 };
 (0, type_graphql_2.applyModelsEnhanceMap)(modelsEnhanceMap);
+const userAuth = SHOULD_AUTH_EVERYTHING ? [(0, type_graphql_3.Authorized)(graphql_1.Role.User)] : [];
+const leagueAdminAuth = SHOULD_AUTH_EVERYTHING
+    ? [(0, type_graphql_3.Authorized)(graphql_1.Role.LeagueAdmin)]
+    : [];
+const sysAdminAuth = SHOULD_AUTH_EVERYTHING
+    ? [(0, type_graphql_3.Authorized)(graphql_1.Role.LeagueAdmin)]
+    : [];
+const resolversEnhancedMap = {
+    Game: {
+        createManyGame: sysAdminAuth,
+        createOneGame: sysAdminAuth,
+        deleteManyGame: sysAdminAuth,
+        deleteOneGame: sysAdminAuth,
+        updateManyGame: sysAdminAuth,
+        updateOneGame: sysAdminAuth,
+        upsertOneGame: sysAdminAuth,
+    },
+    League: {
+        createManyLeague: sysAdminAuth,
+        createOneLeague: sysAdminAuth,
+        updateManyLeague: sysAdminAuth,
+        updateOneLeague: sysAdminAuth,
+        upsertOneLeague: sysAdminAuth,
+        deleteManyLeague: sysAdminAuth,
+        deleteOneLeague: sysAdminAuth,
+    },
+    LeagueMember: {
+        createManyLeagueMember: sysAdminAuth,
+        createOneLeagueMember: sysAdminAuth,
+        updateManyLeagueMember: sysAdminAuth,
+        updateOneLeagueMember: sysAdminAuth,
+        upsertOneLeagueMember: sysAdminAuth,
+        deleteManyLeagueMember: sysAdminAuth,
+        deleteOneLeagueMember: sysAdminAuth,
+    },
+    Pick: {
+        createManyPick: sysAdminAuth,
+        createOnePick: sysAdminAuth,
+        deleteManyPick: sysAdminAuth,
+        deleteOnePick: sysAdminAuth,
+        updateManyPick: sysAdminAuth,
+        updateOnePick: sysAdminAuth,
+        upsertOnePick: sysAdminAuth,
+    },
+    Superbowl: {
+        createManySuperbowl: sysAdminAuth,
+        createOneSuperbowl: sysAdminAuth,
+        deleteManySuperbowl: sysAdminAuth,
+        deleteOneSuperbowl: sysAdminAuth,
+        updateManySuperbowl: sysAdminAuth,
+        updateOneSuperbowl: sysAdminAuth,
+        upsertOneSuperbowl: sysAdminAuth,
+    },
+    SuperbowlSquare: {
+        createManySuperbowlSquare: sysAdminAuth,
+        createOneSuperbowlSquare: sysAdminAuth,
+        deleteManySuperbowlSquare: sysAdminAuth,
+        deleteOneSuperbowlSquare: sysAdminAuth,
+        updateManySuperbowlSquare: sysAdminAuth,
+        updateOneSuperbowlSquare: sysAdminAuth,
+        upsertOneSuperbowlSquare: sysAdminAuth,
+    },
+    Team: {
+        createManyTeam: sysAdminAuth,
+        createOneTeam: sysAdminAuth,
+        deleteManyTeam: sysAdminAuth,
+        deleteOneTeam: sysAdminAuth,
+        updateManyTeam: sysAdminAuth,
+        updateOneTeam: sysAdminAuth,
+        upsertOneTeam: sysAdminAuth,
+    },
+    User: {
+        findFirstUser: sysAdminAuth,
+        createManyUser: sysAdminAuth,
+        createOneUser: sysAdminAuth,
+        deleteManyUser: sysAdminAuth,
+        deleteOneUser: sysAdminAuth,
+        updateManyUser: sysAdminAuth,
+        updateOneUser: sysAdminAuth,
+        upsertOneUser: sysAdminAuth,
+    },
+};
+(0, type_graphql_2.applyResolversEnhanceMap)(resolversEnhancedMap);
 const resolvers = [
     ...type_graphql_1.resolvers,
     register_1.default,

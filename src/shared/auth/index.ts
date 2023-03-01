@@ -11,13 +11,12 @@ export async function authorizeAndSetSupabaseUser(
   token: string
 ): Promise<void> {
   try {
-    await supabase.auth.setSession({ access_token: token, refresh_token: "" });
-    const user = await supabase.auth.getUser();
+    const user = await supabase.auth.getUser(token);
     setToken(token);
     if (user.data.user) {
       setUser(user.data.user);
     }
   } catch (e) {
-    console.debug("invalid token passed into auth");
+    console.debug("invalid token passed into auth", e);
   }
 }

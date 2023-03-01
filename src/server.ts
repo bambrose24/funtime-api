@@ -25,6 +25,7 @@ import keepThingsUpdated from "./cron/keepThingsUpdated";
 import cors from "cors";
 import { env } from "./config";
 import { authorizeAndSetSupabaseUser } from "@shared/auth";
+import { customAuthChecker } from "@shared/auth/graphql";
 
 const app = express();
 
@@ -65,11 +66,13 @@ async function bootstrap() {
   const schema = await buildSchema({
     resolvers,
     dateScalarMode: "isoDate",
+    authChecker: customAuthChecker,
   });
 
   // TODO consider pulling the server into a different file for creation
   const server = new ApolloServer({
     schema,
+    debug: env !== "production",
     context: (
       _req: express.Request,
       _res: express.Response

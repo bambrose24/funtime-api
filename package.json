@@ -8,7 +8,7 @@
     "build": "./node_modules/.bin/ts-node build.ts",
     "lint": "eslint . --ext .ts",
     "start": "node -r module-alias/register ./dist/src/index.js --env=production",
-    "start:dev": "nodemon ./src/index.ts",
+    "dev": "nodemon ./src/index.ts",
     "test": "nodemon --config ./spec/nodemon.json",
     "test:no-reloading": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./spec",
     "generate": "graphql-codegen --config codegen.yml",
