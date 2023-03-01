@@ -74,10 +74,8 @@ app.use((0, cors_1.default)());
 app.use(express_http_context_1.default.middleware);
 app.use(async (req, res, next) => {
     const bearerToken = req.get("Authorization");
-    console.log("bearerToken??", bearerToken);
     if (bearerToken) {
         const token = bearerToken.split(" ").at(1);
-        console.log("token???", token);
         if (token) {
             await (0, auth_1.authorizeAndSetSupabaseUser)(token);
         }

@@ -9,8 +9,12 @@ var Role;
     Role["SysAdmin"] = "sys_admin";
 })(Role = exports.Role || (exports.Role = {}));
 const customAuthChecker = async ({ args, context, info, root }, roles) => {
+    // TODO generic auth somehow??
     const user = (0, user_1.getUser)();
-    console.log("all the args", user, Object.keys(info));
+    console.log("auth checker", user, roles);
+    if (roles.includes(Role.SysAdmin)) {
+        return user?.email === "bambrose24@gmail.com";
+    }
     return true;
 };
 exports.customAuthChecker = customAuthChecker;

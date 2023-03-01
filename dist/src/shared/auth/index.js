@@ -6,9 +6,7 @@ const user_1 = require("./user");
 exports.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL || "", process.env.SUPABASE_ANON_KEY || "");
 async function authorizeAndSetSupabaseUser(token) {
     try {
-        // await supabase.auth.setSession({ access_token: token, refresh_token: "" });
         const user = await exports.supabase.auth.getUser(token);
-        console.log("supabase user", user);
         (0, user_1.setToken)(token);
         if (user.data.user) {
             (0, user_1.setUser)(user.data.user);

@@ -64,9 +64,7 @@ const userAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.User)] : [];
 const leagueAdminAuth = SHOULD_AUTH_MUTATIONS
   ? [Authorized(Role.LeagueAdmin)]
   : [];
-const sysAdminAuth = SHOULD_AUTH_MUTATIONS
-  ? [Authorized(Role.LeagueAdmin)]
-  : [];
+const sysAdminAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.SysAdmin)] : [];
 
 const resolversEnhancedMap: ResolversEnhanceMap = {
   Game: {

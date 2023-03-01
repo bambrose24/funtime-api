@@ -17,9 +17,8 @@ const firstNotStartedWeek_1 = __importDefault(require("./queries/firstNotStarted
 const mostRecentStartedWeek_1 = __importDefault(require("./queries/mostRecentStartedWeek"));
 const liveStatus_1 = __importDefault(require("./queries/liveStatus"));
 const weekWinners_1 = __importDefault(require("./queries/weekWinners"));
-const config_1 = require("src/config");
 const graphql_1 = require("@shared/auth/graphql");
-const SHOULD_AUTH_EVERYTHING = config_1.env === "development";
+const SHOULD_AUTH_MUTATIONS = true;
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
     Pick: {
@@ -54,11 +53,11 @@ const modelsEnhanceMap = {
     },
 };
 (0, type_graphql_2.applyModelsEnhanceMap)(modelsEnhanceMap);
-const userAuth = SHOULD_AUTH_EVERYTHING ? [(0, type_graphql_3.Authorized)(graphql_1.Role.User)] : [];
-const leagueAdminAuth = SHOULD_AUTH_EVERYTHING
+const userAuth = SHOULD_AUTH_MUTATIONS ? [(0, type_graphql_3.Authorized)(graphql_1.Role.User)] : [];
+const leagueAdminAuth = SHOULD_AUTH_MUTATIONS
     ? [(0, type_graphql_3.Authorized)(graphql_1.Role.LeagueAdmin)]
     : [];
-const sysAdminAuth = SHOULD_AUTH_EVERYTHING
+const sysAdminAuth = SHOULD_AUTH_MUTATIONS
     ? [(0, type_graphql_3.Authorized)(graphql_1.Role.LeagueAdmin)]
     : [];
 const resolversEnhancedMap = {
