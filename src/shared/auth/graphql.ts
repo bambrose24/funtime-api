@@ -13,6 +13,9 @@ export const customAuthChecker: AuthChecker<ApolloPrismaContext, Role> = async (
   roles
 ) => {
   // TODO generic auth somehow??
-  // const _user = getUser();
+  const user = getUser();
+  if (roles.includes(Role.SysAdmin)) {
+    return user?.email === "bambrose24@gmail.com";
+  }
   return true;
 };
