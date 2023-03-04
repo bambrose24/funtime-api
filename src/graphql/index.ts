@@ -13,7 +13,7 @@ import {
   applyModelsEnhanceMap,
   applyResolversEnhanceMap,
 } from "@generated/type-graphql";
-import { Authorized, Field } from "type-graphql";
+import { Authorized, Field, MiddlewareFn } from "type-graphql";
 import PicksByWeekResolver from "./queries/picksByWeek";
 import FirstNotStartedWeekResolver from "./queries/firstNotStartedWeek";
 import MostRecentStartedWeekResolver from "./queries/mostRecentStartedWeek";
@@ -65,6 +65,8 @@ const leagueAdminAuth = SHOULD_AUTH_MUTATIONS
   ? [Authorized(Role.LeagueAdmin)]
   : [];
 const sysAdminAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.SysAdmin)] : [];
+
+const Middlware: MiddlewareFn = async ({ context }, next) => {};
 
 const resolversEnhancedMap: ResolversEnhanceMap = {
   Game: {

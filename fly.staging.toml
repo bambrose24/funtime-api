@@ -1,6 +1,7 @@
 # fly.toml file generated for funtime-api on 2022-09-05T09:59:16-04:00
+# staging is the same as prod but different app
 
-app = "funtime-api"
+app = "funtime-api-staging"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
@@ -12,6 +13,7 @@ processes = []
 
 [env]
   PORT = "8080"
+  FUNTIME_ENV = "staging"
 
 [experimental]
   allowed_public_ports = []
