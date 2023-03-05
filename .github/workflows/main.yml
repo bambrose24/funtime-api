@@ -13,7 +13,7 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --config fly.prod.toml
   deploy-staging:
-    name: Deploy Prod API
+    name: Deploy Staging API
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
