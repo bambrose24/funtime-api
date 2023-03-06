@@ -4,8 +4,6 @@ export type Config = {
   port: number;
 };
 
-console.log("test");
-
 const configMap: Record<Env, Config> = {
   development: {
     port: 3001,
