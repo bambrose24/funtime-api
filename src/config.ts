@@ -25,4 +25,6 @@ if (process.env.FUNTIME_ENV) {
 console.log(`env: ${environment}`);
 
 export const env = environment;
-export default configMap[env];
+const config = configMap[env];
+
+export default config;
