@@ -13,7 +13,9 @@
     "test:no-reloading": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./spec",
     "generate": "graphql-codegen --config codegen.yml",
     "deploy:prod": "fly deploy --config fly.prod.toml",
-    "deploy:staging": "fly deploy --config fly.staging.toml"
+    "deploy:staging": "fly deploy --config fly.staging.toml",
+    "script": "ts-node src/scripts",
+    "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts"
   },
   "nodemonConfig": {
     "watch": [
@@ -142,7 +144,7 @@
     "nodemon": "^2.0.20",
     "supertest": "^6.2.4",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typegraphql-prisma": "^0.23.2",
     "typescript": "^4.7.4"
   }

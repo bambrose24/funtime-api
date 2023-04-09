@@ -92,7 +92,7 @@ model User {
   username         String         @db.VarChar(255)
   fname            String         @db.VarChar(255)
   lname            String         @db.VarChar(255)
-  email            String         @db.VarChar(255)
+  email            String         @unique @db.VarChar(255)
   season           Int
   email2           String?        @db.VarChar(255)
   google_photo_url String?

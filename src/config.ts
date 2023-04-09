@@ -1,4 +1,4 @@
-type Env = "development" | "staging" | "production";
+export type Env = "development" | "staging" | "production";
 
 export type Config = {
   port: number;
