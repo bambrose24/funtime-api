@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Game, Pick, Prisma } from "@prisma/client";
-import datastore from "@shared/datastore";
-import moment from "moment";
-import * as TypeGraphQL from "@generated/type-graphql";
-import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
-import { now } from "@util/time";
+import {Game, Pick, Prisma} from '@prisma/client';
+import datastore from '@shared/datastore';
+import moment from 'moment';
+import * as TypeGraphQL from '@generated/type-graphql';
+import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
+import {now} from '@util/time';
 
 @ObjectType()
 class PicksByWeekResponse {
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {nullable: true})
   week: number | null;
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {nullable: true})
   season: number;
   @Field()
   canView: boolean;
@@ -23,18 +23,18 @@ class PicksByWeekResponse {
 class PicksByWeekResolver {
   @Query(() => PicksByWeekResponse)
   async picksByWeek(
-    @Arg("league_id", () => Int)
+    @Arg('league_id', () => Int)
     league_id: number,
-    @Arg("week", () => Int, { nullable: true })
+    @Arg('week', () => Int, {nullable: true})
     week: number | null,
-    @Arg("override", { nullable: true })
+    @Arg('override', {nullable: true})
     override: boolean
   ): Promise<PicksByWeekResponse> {
-    console.log("top of resolver...");
+    console.log('top of resolver...');
     const league = await datastore.league.findFirst({
-      where: { league_id: { equals: league_id } },
+      where: {league_id: {equals: league_id}},
     });
-    console.log("league?", league, league?.league_id);
+    console.log('league?', league, league?.league_id);
 
     const season = league?.season as number;
 
@@ -45,33 +45,33 @@ class PicksByWeekResolver {
     let games: Array<Game> | undefined;
     const whereInput: Prisma.GameWhereInput = {};
     if (week) {
-      whereInput["week"] = { equals: week };
-      whereInput["season"] = { equals: season };
+      whereInput['week'] = {equals: week};
+      whereInput['season'] = {equals: season};
 
       games = await datastore.game.findMany({
         where: {
-          week: { equals: week },
-          season: { equals: season },
+          week: {equals: week},
+          season: {equals: season},
         },
-        orderBy: { ts: "asc" },
+        orderBy: {ts: 'asc'},
       });
     } else {
       const lastStartedGame = await datastore.game.findFirst({
         where: {
-          ts: { lte: now().toDate() },
-          season: { equals: season },
+          ts: {lte: now().toDate()},
+          season: {equals: season},
         },
-        orderBy: { ts: "desc" },
+        orderBy: {ts: 'desc'},
       });
       if (!lastStartedGame) {
         games = [];
       } else {
         games = await datastore.game.findMany({
           where: {
-            week: { equals: lastStartedGame.week },
-            season: { equals: lastStartedGame.season },
+            week: {equals: lastStartedGame.week},
+            season: {equals: lastStartedGame.season},
           },
-          orderBy: { ts: "asc" },
+          orderBy: {ts: 'asc'},
         });
       }
     }
@@ -86,16 +86,16 @@ class PicksByWeekResolver {
       };
     }
 
-    const { week: realWeek, season: realSeason } = games[0];
+    const {week: realWeek, season: realSeason} = games[0];
 
     const canView = games[0].ts < moment().toDate();
 
     const picks = await datastore.pick.findMany({
       where: {
-        week: { equals: realWeek },
-        season: { equals: realSeason },
+        week: {equals: realWeek},
+        season: {equals: realSeason},
         leaguemembers: {
-          league_id: { equals: league_id },
+          league_id: {equals: league_id},
         },
       },
     });

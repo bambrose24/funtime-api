@@ -1,4 +1,4 @@
-export type Env = "development" | "staging" | "production";
+export type Env = 'development' | 'staging' | 'production';
 
 export type Config = {
   port: number;
@@ -16,7 +16,7 @@ const configMap: Record<Env, Config> = {
   },
 };
 
-let environment: Env = "production";
+let environment: Env = 'production';
 
 if (process.env.FUNTIME_ENV) {
   environment = process.env.FUNTIME_ENV as Env;

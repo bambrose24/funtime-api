@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Game, Pick } from "@prisma/client";
-import datastore from "@shared/datastore";
-import * as TypeGraphQL from "@generated/type-graphql";
-import { Arg, Field, Int, ObjectType, Query } from "type-graphql";
-import { now } from "@util/time";
-import moment from "moment";
+import {Game, Pick} from '@prisma/client';
+import datastore from '@shared/datastore';
+import * as TypeGraphQL from '@generated/type-graphql';
+import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
+import {now} from '@util/time';
+import moment from 'moment';
 
 @ObjectType()
 class MostRecentStartedWeekResponse {
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {nullable: true})
   week: number;
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {nullable: true})
   season: number;
   @Field(() => [TypeGraphQL.Pick]!)
   picks: Array<Pick>;
@@ -21,28 +21,28 @@ class MostRecentStartedWeekResponse {
 class MostRecentStartedWeekResolver {
   @Query(() => MostRecentStartedWeekResponse)
   async mostRecentStartedWeek(
-    @Arg("league_id", () => Int)
+    @Arg('league_id', () => Int)
     league_id: number
   ): Promise<MostRecentStartedWeekResponse> {
     const mostRecentStartedGame = await datastore.game.findFirst({
       where: {
-        ts: { lte: now().toDate() },
+        ts: {lte: now().toDate()},
       },
-      orderBy: { ts: "desc" },
+      orderBy: {ts: 'desc'},
     });
 
     console.log(mostRecentStartedGame, now(), moment());
 
     if (!mostRecentStartedGame) {
-      throw new Error("No games have ts before right now");
+      throw new Error('No games have ts before right now');
     }
 
-    const { week, season } = mostRecentStartedGame;
+    const {week, season} = mostRecentStartedGame;
 
     const [games, picks] = await Promise.all([
-      datastore.game.findMany({ where: { week, season } }),
+      datastore.game.findMany({where: {week, season}}),
       datastore.pick.findMany({
-        where: { week, leaguemembers: { league_id } },
+        where: {week, leaguemembers: {league_id}},
       }),
     ]);
 

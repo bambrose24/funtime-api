@@ -1,5 +1,5 @@
-import datastore from "@shared/datastore";
-import _ from "lodash";
+import datastore from '@shared/datastore';
+import _ from 'lodash';
 
 async function run() {
   // plan: look at all people, group by email. Pick the max uid, and then update picks for the "old" ones to reference the old uids
@@ -32,30 +32,28 @@ async function run() {
 
   const picks = await datastore.pick.findMany({
     include: {
-      leaguemembers: { include: { leagues: true } },
+      leaguemembers: {include: {leagues: true}},
     },
   });
-  const picksGrouped = await Object.values(
-    _.groupBy(picks, (p) => p.leaguemembers?.league_id)
-  );
+  const picksGrouped = await Object.values(_.groupBy(picks, p => p.leaguemembers?.league_id));
 
   const users = await datastore.user.findMany();
 
   // await datastore.user.delete({ where: { uid: 50 } });
 
-  const johnPicks = await datastore.pick.findMany({ where: { uid: 50 } });
-  console.log("johnPicks", johnPicks.length);
-  const usersGroupedByEmail = _.groupBy(users, (u) => u.email);
-  const noEmail = users.filter((u) => !u.email);
-  console.log("noEmail", noEmail);
+  const johnPicks = await datastore.pick.findMany({where: {uid: 50}});
+  console.log('johnPicks', johnPicks.length);
+  const usersGroupedByEmail = _.groupBy(users, u => u.email);
+  const noEmail = users.filter(u => !u.email);
+  console.log('noEmail', noEmail);
   console.log(
-    "duplicateEmails",
-    Object.values(usersGroupedByEmail).filter((x) => x.length > 1)
+    'duplicateEmails',
+    Object.values(usersGroupedByEmail).filter(x => x.length > 1)
   );
 
-  Object.values(usersGroupedByEmail).forEach((userList) => {
+  Object.values(usersGroupedByEmail).forEach(userList => {
     if (userList.length > 1) {
-      console.log("userList", userList.length, userList);
+      console.log('userList', userList.length, userList);
     }
   });
 

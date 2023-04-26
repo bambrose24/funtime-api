@@ -1,27 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  require("dotenv").config();
+  require('dotenv').config();
 }
-import { Game, Team } from "@prisma/client";
-import { AnyKindOfDictionary } from "lodash";
-import datastore from "@shared/datastore";
-import { getGamesBySeason } from "@shared/mysportsfeeds";
+import {Game, Team} from '@prisma/client';
+import {AnyKindOfDictionary} from 'lodash';
+import datastore from '@shared/datastore';
+import {getGamesBySeason} from '@shared/mysportsfeeds';
 
 async function run() {
   const season = 2022;
   const games = await getGamesBySeason(season);
   const teams = await datastore.team.findMany({
-    where: { teamid: { gte: 0 } },
+    where: {teamid: {gte: 0}},
   });
   const teamsMap: Record<string, Team> = {};
-  teams.forEach((t) => {
+  teams.forEach(t => {
     teamsMap[t.abbrev!] = t;
   });
 
-  const dbGames = games.map((g: any) =>
-    convertToDBGameForCreation(season, g, teamsMap)
-  );
+  const dbGames = games.map((g: any) => convertToDBGameForCreation(season, g, teamsMap));
   // const res = await datastore.games.createMany({ data: dbGames });
 }
 
@@ -31,16 +29,16 @@ function convertToDBGameForCreation(
   teamsMap: Record<string, Team>
 ): Pick<
   Game,
-  | "home"
-  | "homescore"
-  | "away"
-  | "awayscore"
-  | "season"
-  | "week"
-  | "ts"
-  | "seconds"
-  | "done"
-  | "winner"
+  | 'home'
+  | 'homescore'
+  | 'away'
+  | 'awayscore'
+  | 'season'
+  | 'week'
+  | 'ts'
+  | 'seconds'
+  | 'done'
+  | 'winner'
 > {
   return {
     home: teamsMap[game.homeTeam.abbreviation].teamid,

@@ -1,11 +1,11 @@
-import datastore from "@shared/datastore";
-import { LeagueMember, User } from "@prisma/client";
-import { Arg, Field, Int, Mutation, ObjectType, Resolver } from "type-graphql";
-import * as TypeGraphQL from "@generated/type-graphql";
-import { sendRegistrationMail } from "@shared/email";
+import datastore from '@shared/datastore';
+import {LeagueMember, User} from '@prisma/client';
+import {Arg, Field, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
+import * as TypeGraphQL from '@generated/type-graphql';
+import {sendRegistrationMail} from '@shared/email';
 export const SEASON = 2022;
 export const LEAGUE_ID = 7;
-export const DEFAULT_ROLE = "player";
+export const DEFAULT_ROLE = 'player';
 
 @ObjectType()
 class RegisterResponse {
@@ -21,41 +21,25 @@ class RegisterResponse {
 class RegisterResolver {
   @Mutation(() => RegisterResponse)
   async register(
-    @Arg("email") email: string,
-    @Arg("username") username: string,
-    @Arg("previousUserId", () => Int, { nullable: true })
+    @Arg('email') email: string,
+    @Arg('username') username: string,
+    @Arg('previousUserId', () => Int, {nullable: true})
     previousUserId: number | null,
-    @Arg("superbowlWinner", () => Int) superbowlWinner: number,
-    @Arg("superbowlLoser", () => Int) superbowlLoser: number,
-    @Arg("superbowlScore", () => Int) superbowlScore: number
+    @Arg('superbowlWinner', () => Int) superbowlWinner: number,
+    @Arg('superbowlLoser', () => Int) superbowlLoser: number,
+    @Arg('superbowlScore', () => Int) superbowlScore: number
   ): Promise<RegisterResponse> {
-    const { user, membership } = await registerUser(
-      email,
-      username,
-      previousUserId
-    );
+    const {user, membership} = await registerUser(email, username, previousUserId);
 
-    await upsertSuperbowlPick(
-      user,
-      membership,
-      superbowlWinner,
-      superbowlLoser,
-      superbowlScore
-    );
+    await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
 
     try {
-      await sendRegistrationMail(
-        user,
-        SEASON,
-        superbowlWinner,
-        superbowlLoser,
-        superbowlScore
-      );
+      await sendRegistrationMail(user, SEASON, superbowlWinner, superbowlLoser, superbowlScore);
     } catch (e) {
-      console.log("email error:", e);
+      console.log('email error:', e);
     }
 
-    return { success: true, user, membership };
+    return {success: true, user, membership};
   }
 }
 
@@ -68,7 +52,7 @@ async function upsertSuperbowlPick(
 ): Promise<void> {
   const currentSuperbowlPick = await datastore.superbowl.findFirst({
     where: {
-      member_id: { equals: membership.membership_id },
+      member_id: {equals: membership.membership_id},
     },
   });
 
@@ -103,31 +87,29 @@ async function registerUser(
   email: string,
   username: string,
   previousUserId: number | null
-): Promise<{ user: User; membership: LeagueMember }> {
+): Promise<{user: User; membership: LeagueMember}> {
   let user: User | null = null;
   let membership: LeagueMember | null = null;
 
   // see if user already exists for this season
   user = await datastore.user.findFirst({
-    where: { email: email, season: { gte: 2021 } },
+    where: {email: email, season: {gte: 2021}},
   });
 
   if (user) {
     membership = await datastore.leagueMember.findFirst({
-      where: { user_id: user.uid, league_id: LEAGUE_ID },
+      where: {user_id: user.uid, league_id: LEAGUE_ID},
     });
     if (membership) {
-      return { user, membership };
+      return {user, membership};
     }
   }
   if (previousUserId) {
     user = await datastore.user.findUnique({
-      where: { uid: previousUserId },
+      where: {uid: previousUserId},
     });
     if (!user) {
-      throw new Error(
-        `Could not find a user with previous ID ${previousUserId}`
-      );
+      throw new Error(`Could not find a user with previous ID ${previousUserId}`);
     }
   } else {
     user = await datastore.user.findFirst({
@@ -142,8 +124,8 @@ async function registerUser(
           username,
           email,
           season: 2022,
-          fname: "",
-          lname: "",
+          fname: '',
+          lname: '',
         },
       });
     }
@@ -154,8 +136,8 @@ async function registerUser(
 
   // if they inputted a different email and we found their user before, these wont match -- let's update just in case
   await datastore.user.update({
-    where: { uid: user.uid },
-    data: { email, username },
+    where: {uid: user.uid},
+    data: {email, username},
   });
 
   membership = await datastore.leagueMember.create({
@@ -166,7 +148,7 @@ async function registerUser(
     },
   });
 
-  return { user, membership };
+  return {user, membership};
 }
 
 export default RegisterResolver;

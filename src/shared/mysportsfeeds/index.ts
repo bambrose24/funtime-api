@@ -1,10 +1,10 @@
-import { memoryCache } from "../caching/memory";
-import { MSFGame, MSFGameSchedule } from "./types";
+import {memoryCache} from '../caching/memory';
+import {MSFGame, MSFGameSchedule} from './types';
 
-var MySportsFeeds = require("mysportsfeeds-node");
+var MySportsFeeds = require('mysportsfeeds-node');
 
-var msf = new MySportsFeeds("2.1", true);
-msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, "MYSPORTSFEEDS");
+var msf = new MySportsFeeds('2.1', true);
+msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, 'MYSPORTSFEEDS');
 
 /*
 
@@ -39,25 +39,23 @@ game.score: {
     quarters: []
   }
 */
-export async function getGamesBySeason(
-  season: number
-): Promise<Array<MSFGame>> {
+export async function getGamesBySeason(season: number): Promise<Array<MSFGame>> {
   try {
     const games = await msf.getData(
-      "nfl",
+      'nfl',
       `${season}-${season + 1}-regular`,
-      "seasonal_games",
-      "json"
+      'seasonal_games',
+      'json'
     );
 
     return games.games.map((g: any) => g as MSFGame);
   } catch (e) {
-    console.log("error getting games by season", e);
+    console.log('error getting games by season', e);
   }
   return [];
 }
 
-function getWeekKey(options: { season: number; week: number }): string {
+function getWeekKey(options: {season: number; week: number}): string {
   return `msf_week_${options.week}_${options.season}`;
 }
 
@@ -67,26 +65,24 @@ export async function getGamesByWeek(
   useRedis: boolean = false
 ): Promise<Array<MSFGame>> {
   try {
-    const memoryCacheResult = memoryCache.get<Array<MSFGame>>(
-      getWeekKey({ season, week })
-    );
+    const memoryCacheResult = memoryCache.get<Array<MSFGame>>(getWeekKey({season, week}));
     if (memoryCacheResult) {
       return memoryCacheResult;
     }
 
     const games = await msf.getData(
-      "nfl",
+      'nfl',
       `${season}-${season + 1}-regular`,
-      "weekly_games",
-      "json",
-      { week }
+      'weekly_games',
+      'json',
+      {week}
     );
 
     const res = games.games.map((g: any) => g as MSFGame);
-    memoryCache.set(getWeekKey({ season, week }), res);
+    memoryCache.set(getWeekKey({season, week}), res);
     return res;
   } catch (e) {
-    console.error("error getting weekly games", e);
+    console.error('error getting weekly games', e);
   }
   return [];
 }

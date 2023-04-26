@@ -1,26 +1,26 @@
-import MakePicksResolver from "./mutations/makePicks";
-import RegisterResolver from "./mutations/register";
-import { resolvers as generatedResolvers } from "@generated/type-graphql";
-import { DateTimeResolver } from "graphql-scalars";
+import MakePicksResolver from './mutations/makePicks';
+import RegisterResolver from './mutations/register';
+import {resolvers as generatedResolvers} from '@generated/type-graphql';
+import {DateTimeResolver} from 'graphql-scalars';
 
 // need to have multiple types for DateTime in our schema's scalars -- this one handles
 // the redis cache better
-DateTimeResolver.name = "DateTimeBetterSerialization";
+DateTimeResolver.name = 'DateTimeBetterSerialization';
 
 import {
   ModelsEnhanceMap,
   ResolversEnhanceMap,
   applyModelsEnhanceMap,
   applyResolversEnhanceMap,
-} from "@generated/type-graphql";
-import { Authorized, Field, MiddlewareFn } from "type-graphql";
-import PicksByWeekResolver from "./queries/picksByWeek";
-import FirstNotStartedWeekResolver from "./queries/firstNotStartedWeek";
-import MostRecentStartedWeekResolver from "./queries/mostRecentStartedWeek";
-import GameLiveResolver from "./queries/liveStatus";
-import WeekWinnersResolver from "./queries/weekWinners";
-import { env } from "src/config";
-import { Role } from "@shared/auth/graphql";
+} from '@generated/type-graphql';
+import {Authorized, Field, MiddlewareFn} from 'type-graphql';
+import PicksByWeekResolver from './queries/picksByWeek';
+import FirstNotStartedWeekResolver from './queries/firstNotStartedWeek';
+import MostRecentStartedWeekResolver from './queries/mostRecentStartedWeek';
+import GameLiveResolver from './queries/liveStatus';
+import WeekWinnersResolver from './queries/weekWinners';
+import {env} from 'src/config';
+import {Role} from '@shared/auth/graphql';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -61,12 +61,10 @@ const modelsEnhanceMap: ModelsEnhanceMap = {
 applyModelsEnhanceMap(modelsEnhanceMap);
 
 const userAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.User)] : [];
-const leagueAdminAuth = SHOULD_AUTH_MUTATIONS
-  ? [Authorized(Role.LeagueAdmin)]
-  : [];
+const leagueAdminAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.LeagueAdmin)] : [];
 const sysAdminAuth = SHOULD_AUTH_MUTATIONS ? [Authorized(Role.SysAdmin)] : [];
 
-const Middlware: MiddlewareFn = async ({ context }, next) => {};
+const Middlware: MiddlewareFn = async ({context}, next) => {};
 
 const resolversEnhancedMap: ResolversEnhanceMap = {
   Game: {

@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { env } from "@src/config";
+import {PrismaClient} from '@prisma/client';
+import {env} from '@src/config';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // This technically would have worked if I figured out the GraphQL Scalar problem
@@ -37,7 +37,7 @@ import { env } from "@src/config";
 
 const datastore = new PrismaClient({
   // log: ["error", "info", "query", "warn"],
-  log: ["error"],
+  log: ['error'],
 });
 
 // datastore.$use(cacheMiddleware);

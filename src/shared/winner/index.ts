@@ -1,5 +1,5 @@
-import { Game, Pick } from "@prisma/client";
-import _ from "lodash";
+import {Game, Pick} from '@prisma/client';
+import _ from 'lodash';
 
 type Winner = {
   league_id: number;
@@ -15,10 +15,10 @@ export async function calculateWinnersFromDonePicks(
   allPicks: Array<Pick>,
   allGames: Array<Game>
 ): Promise<Array<Winner>> {
-  const weeks = [...new Set(allGames.map((g) => g.week))];
+  const weeks = [...new Set(allGames.map(g => g.week))];
 
   const picksGroupedByWeek = allPicks.reduce((prev, curr) => {
-    const { week } = curr;
+    const {week} = curr;
     if (!(week in prev)) {
       prev[week] = [];
     }
@@ -27,7 +27,7 @@ export async function calculateWinnersFromDonePicks(
   }, {} as Record<number, Array<Pick>>);
 
   const gamesGroupedByWeek = allGames.reduce((prev, curr) => {
-    const { week } = curr;
+    const {week} = curr;
     if (!(week in prev)) {
       prev[week] = [];
     }
@@ -40,11 +40,11 @@ export async function calculateWinnersFromDonePicks(
     return prev;
   }, {} as Record<number, number>);
 
-  return weeks.map((week) => {
+  return weeks.map(week => {
     const weekPicks = picksGroupedByWeek[week] || [];
     const weekGames = gamesGroupedByWeek[week] || [];
     const season = weekGames[0].season;
-    const anyNotDone = weekGames.some((p) => !p.done);
+    const anyNotDone = weekGames.some(p => !p.done);
     if (anyNotDone) {
       return {
         league_id: leagueId,
@@ -53,10 +53,10 @@ export async function calculateWinnersFromDonePicks(
       };
     }
 
-    const weekMemberIds = [...new Set(weekPicks.map((p) => p.member_id))];
+    const weekMemberIds = [...new Set(weekPicks.map(p => p.member_id))];
 
     const memberToCorrectCount = weekPicks.reduce((prev, curr) => {
-      const { member_id } = curr;
+      const {member_id} = curr;
       if (!member_id) {
         return prev;
       }
@@ -68,7 +68,7 @@ export async function calculateWinnersFromDonePicks(
     }, {} as Record<number, number>);
 
     const memberToScore = weekPicks.reduce((prev, curr) => {
-      const { member_id } = curr;
+      const {member_id} = curr;
       if (!member_id) {
         return prev;
       }
@@ -79,7 +79,7 @@ export async function calculateWinnersFromDonePicks(
       return prev;
     }, {} as Record<number, number>);
 
-    let membersStats = weekMemberIds.map((member_id) => {
+    let membersStats = weekMemberIds.map(member_id => {
       return {
         member_id: member_id!,
         correct: memberToCorrectCount[member_id!] || 0,
@@ -87,24 +87,20 @@ export async function calculateWinnersFromDonePicks(
       };
     });
 
-    membersStats = _.orderBy(
-      membersStats,
-      ["correct", "score_diff"],
-      ["asc", "desc"]
-    );
+    membersStats = _.orderBy(membersStats, ['correct', 'score_diff'], ['asc', 'desc']);
 
     const bestCorrect = membersStats.at(-1)?.correct || 0;
     const bestScore = membersStats.at(-1)?.score_diff || 0;
 
     const winners = membersStats.filter(
-      (stats) => stats.score_diff === bestScore && stats.correct === bestCorrect
+      stats => stats.score_diff === bestScore && stats.correct === bestCorrect
     );
 
     return {
       league_id: leagueId,
       week,
       season,
-      member_ids: winners.map((winner) => winner.member_id),
+      member_ids: winners.map(winner => winner.member_id),
       num_correct: bestCorrect,
       score: bestScore,
     };
