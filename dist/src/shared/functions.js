@@ -1,21 +1,19 @@
-'use strict';
-var __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : {default: mod};
-  };
-Object.defineProperty(exports, '__esModule', {value: true});
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRandomInt = exports.pErr = void 0;
-const jet_logger_1 = __importDefault(require('jet-logger'));
+const jet_logger_1 = __importDefault(require("jet-logger"));
 /**
  * Print an error object if it's truthy. Useful for testing.
  *
  * @param err
  */
 function pErr(err) {
-  if (!!err) {
-    jet_logger_1.default.err(err);
-  }
+    if (!!err) {
+        jet_logger_1.default.err(err);
+    }
 }
 exports.pErr = pErr;
 /**
@@ -24,6 +22,6 @@ exports.pErr = pErr;
  * @returns
  */
 function getRandomInt() {
-  return Math.floor(Math.random() * 1_000_000_000_000);
+    return Math.floor(Math.random() * 1_000_000_000_000);
 }
 exports.getRandomInt = getRandomInt;
