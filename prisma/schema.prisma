@@ -38,15 +38,16 @@ model Game {
 }
 
 model LeagueMember {
-  membership_id Int         @id(map: "idx_18414_primary") @default(autoincrement())
+  membership_id Int           @id(map: "idx_18414_primary") @default(autoincrement())
   league_id     Int
   user_id       Int
   role          String
-  ts            DateTime    @default(now()) @db.Timestamptz(6)
-  people        User        @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1")
-  leagues       League      @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "leaguemembers_ibfk_2")
+  ts            DateTime      @default(now()) @db.Timestamptz(6)
+  people        User          @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1")
+  leagues       League        @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "leaguemembers_ibfk_2")
   picks         Pick[]
   superbowl     Superbowl[]
+  WeekWinners   WeekWinners[]
 
   @@index([league_id], map: "idx_18414_league_id")
   @@index([user_id], map: "idx_18414_user_id")
@@ -82,6 +83,7 @@ model League {
   pick_policy        PickPolicy?     @default(choose_winner)
   reminder_policy    ReminderPolicy? @default(three_hours_before)
   late_policy        LatePolicy?     @default(allow_late_whole_week)
+  WeekWinners        WeekWinners[]
 
   @@index([created_by_user_id], map: "idx_18422_created_by_user_id")
   @@map("leagues")
@@ -171,4 +173,19 @@ model Team {
   superbowl_superbowl_winnerToteams Superbowl[] @relation("superbowl_winnerToteams")
 
   @@map("teams")
+}
+
+model WeekWinners {
+  id            Int          @id(map: "idx_184XX_primary") @default(autoincrement())
+  league_id     Int
+  membership_id Int
+  week          Int
+  correct_count Int
+  score_diff    Int
+  league        League       @relation(fields: [league_id], references: [league_id])
+  member        LeagueMember @relation(fields: [membership_id], references: [membership_id])
+
+  @@index([league_id], map: "idx_184XX_league_id")
+  @@index([membership_id], map: "idx_184XX_membership_id")
+  @@index([league_id, membership_id], map: "idx_184XX_league_and_membership")
 }
