@@ -16,7 +16,6 @@ const picksByWeek_1 = __importDefault(require("./queries/picksByWeek"));
 const firstNotStartedWeek_1 = __importDefault(require("./queries/firstNotStartedWeek"));
 const mostRecentStartedWeek_1 = __importDefault(require("./queries/mostRecentStartedWeek"));
 const liveStatus_1 = __importDefault(require("./queries/liveStatus"));
-const weekWinners_1 = __importDefault(require("./queries/weekWinners"));
 const graphql_1 = require("@shared/auth/graphql");
 const SHOULD_AUTH_MUTATIONS = true;
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
@@ -141,6 +140,5 @@ const resolvers = [
     firstNotStartedWeek_1.default,
     mostRecentStartedWeek_1.default,
     liveStatus_1.default,
-    weekWinners_1.default,
 ];
 exports.default = resolvers;

@@ -18,7 +18,6 @@ import PicksByWeekResolver from './queries/picksByWeek';
 import FirstNotStartedWeekResolver from './queries/firstNotStartedWeek';
 import MostRecentStartedWeekResolver from './queries/mostRecentStartedWeek';
 import GameLiveResolver from './queries/liveStatus';
-import WeekWinnersResolver from './queries/weekWinners';
 import {env} from 'src/config';
 import {Role} from '@shared/auth/graphql';
 
@@ -152,7 +151,6 @@ const resolvers = [
   FirstNotStartedWeekResolver,
   MostRecentStartedWeekResolver,
   GameLiveResolver,
-  WeekWinnersResolver,
 ] as const;
 
 export default resolvers;

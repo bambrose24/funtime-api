@@ -11,10 +11,12 @@ async function markWinners(season) {
         datastore_1.default.league.findMany({ where: { season } }),
         datastore_1.default.game.findMany({ where: { season }, select: { gid: true, week: true } }),
     ]);
+    console.log(`going to mark winners for season ${season} (${leaguesForSeason.length} leagues)`);
     const seasonWeeks = Array.from(new Set(games.map(g => g.week)));
     for (const league of leaguesForSeason) {
         const { league_id } = league;
         const existingWinnersForSeason = await datastore_1.default.weekWinners.findMany({ where: { league_id } });
+        console.log(`existing winners for season ${existingWinnersForSeason.length}`);
         const weeksWithWinners = Array.from(new Set(existingWinnersForSeason.map(w => w.week)));
         const weeksToCheck = seasonWeeks.filter(w => !weeksWithWinners.includes(w));
         for (const week of weeksToCheck) {
@@ -22,6 +24,7 @@ async function markWinners(season) {
             if (winners && winners.length) {
                 for (const winner of winners) {
                     for (const member of winner.member) {
+                        console.log(`creating winner for ${week} ${season} for league ${league_id} - ${member.membership_id}`);
                         await datastore_1.default.weekWinners.create({
                             data: {
                                 league_id,
@@ -39,6 +42,7 @@ async function markWinners(season) {
 }
 exports.markWinners = markWinners;
 async function getWinners({ league_id, season, week, }) {
+    console.log(`getting winners for ${league_id} ${season} ${week}`);
     const members = await datastore_1.default.leagueMember.findMany({
         where: { league_id },
     });
@@ -55,6 +59,7 @@ async function getWinners({ league_id, season, week, }) {
             week,
         },
     });
+    console.log(`found ${members.length} members, ${picks.length} picks, ${games.length} games`);
     const winners = await (0, winner_1.calculateWinnersFromDonePicks)(league_id, picks, games);
     return winners
         .filter(winner => winner.member_ids && winner.member_ids.length > 0)
