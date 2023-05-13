@@ -1,46 +1,44 @@
-# fly.toml file generated for funtime-api on 2022-09-05T09:59:16-04:00
-# staging is the same as prod but different app
+# fly.toml app configuration file generated for funtime-api-staging on 2023-05-13T00:22:29-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "funtime-api-staging"
+primary_region = "bos"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+kill_timeout = "5s"
 
-# used to be this but trying docker now
+[experimental]
+  auto_rollback = true
+
 [build]
   builder = "heroku/buildpacks:20"
 
-
 [env]
-  PORT = "8080"
   FUNTIME_ENV = "staging"
-
-[experimental]
-  allowed_public_ports = []
-  auto_rollback = true
+  PORT = "8080"
 
 [[services]]
-  http_checks = []
-  internal_port = 8080
-  processes = ["app"]
   protocol = "tcp"
-  script_checks = []
+  internal_port = 8080
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
 
   [[services.tcp_checks]]
-    grace_period = "1s"
     interval = "15s"
-    restart_limit = 0
     timeout = "2s"
+    grace_period = "1s"
+    restart_limit = 0
