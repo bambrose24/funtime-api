@@ -1,9 +1,9 @@
 import { Game, Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
+import { SEASON } from "@util/const";
 import _ from "lodash";
 import moment from "moment";
-import { SEASON } from "../graphql/mutations/register";
 
 export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   const [dbGames, teams] = await Promise.all([
@@ -83,9 +83,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           const correctPickIds: number[] = [];
           const wrongPickIds: number[] = [];
           picks.forEach((p) => {
-            let correct = false;
             if (winner === null || p.winner === winner) {
-              correct = true;
               correctPickIds.push(p.pickid);
             } else {
               wrongPickIds.push(p.pickid);

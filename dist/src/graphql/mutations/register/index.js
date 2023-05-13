@@ -38,12 +38,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_ROLE = exports.LEAGUE_ID = exports.SEASON = void 0;
+exports.DEFAULT_ROLE = exports.LEAGUE_ID = void 0;
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const email_1 = require("@shared/email");
-exports.SEASON = 2022;
+const const_1 = require("@util/const");
 exports.LEAGUE_ID = 7;
 exports.DEFAULT_ROLE = 'player';
 let RegisterResponse = class RegisterResponse {
@@ -71,7 +71,7 @@ let RegisterResolver = class RegisterResolver {
         const { user, membership } = await registerUser(email, username, previousUserId);
         await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
         try {
-            await (0, email_1.sendRegistrationMail)(user, exports.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
+            await (0, email_1.sendRegistrationMail)(user, const_1.SEASON, superbowlWinner, superbowlLoser, superbowlScore);
         }
         catch (e) {
             console.log('email error:', e);

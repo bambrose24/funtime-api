@@ -4,13 +4,12 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 import {Game, Team} from '@prisma/client';
-import {AnyKindOfDictionary} from 'lodash';
 import datastore from '@shared/datastore';
 import {getGamesBySeason} from '@shared/mysportsfeeds';
+import {SEASON} from '@util/const';
 
 async function run() {
-  const season = 2022;
-  const games = await getGamesBySeason(season);
+  const games = await getGamesBySeason(SEASON);
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
   });
@@ -19,7 +18,7 @@ async function run() {
     teamsMap[t.abbrev!] = t;
   });
 
-  const dbGames = games.map((g: any) => convertToDBGameForCreation(season, g, teamsMap));
+  const dbGames = games.map((g: any) => convertToDBGameForCreation(SEASON, g, teamsMap));
   // const res = await datastore.games.createMany({ data: dbGames });
 }
 

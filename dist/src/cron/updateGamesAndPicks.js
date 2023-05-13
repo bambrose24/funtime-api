@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const types_1 = require("@shared/mysportsfeeds/types");
+const const_1 = require("@util/const");
 const lodash_1 = __importDefault(require("lodash"));
 const moment_1 = __importDefault(require("moment"));
-const register_1 = require("../graphql/mutations/register");
 async function updateGamesAndPicks(games) {
     const [dbGames, teams] = await Promise.all([
         datastore_1.default.game.findMany({
             where: {
-                season: { equals: register_1.SEASON },
+                season: { equals: const_1.SEASON },
                 week: { in: games.map((g) => g.schedule.week) },
             },
         }),
@@ -69,9 +69,7 @@ async function updateGamesAndPicks(games) {
                 const correctPickIds = [];
                 const wrongPickIds = [];
                 picks.forEach((p) => {
-                    let correct = false;
                     if (winner === null || p.winner === winner) {
-                        correct = true;
                         correctPickIds.push(p.pickid);
                     }
                     else {

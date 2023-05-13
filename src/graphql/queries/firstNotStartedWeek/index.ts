@@ -5,7 +5,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import {PhoneNumberMock} from 'graphql-scalars';
-import {SEASON} from '../../mutations/register';
+import {SEASON} from '@util/const';
 
 @ObjectType()
 class FirstNotStartedWeekResponse {
@@ -59,8 +59,12 @@ async function findWeekForPicks(): Promise<{
   const gamesWithinMonth = await datastore.game.findMany({
     where: {
       ts: {
-        gte: now().subtract({months: 1}).toDate(),
-        lte: now().add({months: 1}).toDate(),
+        gte: now()
+          .subtract({months: 1})
+          .toDate(),
+        lte: now()
+          .add({months: 1})
+          .toDate(),
       },
     },
     orderBy: {ts: 'asc'},

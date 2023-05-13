@@ -10,9 +10,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const mysportsfeeds_1 = require("@shared/mysportsfeeds");
+const const_1 = require("@util/const");
 async function run() {
-    const season = 2022;
-    const games = await (0, mysportsfeeds_1.getGamesBySeason)(season);
+    const games = await (0, mysportsfeeds_1.getGamesBySeason)(const_1.SEASON);
     const teams = await datastore_1.default.team.findMany({
         where: { teamid: { gte: 0 } },
     });
@@ -20,7 +20,7 @@ async function run() {
     teams.forEach(t => {
         teamsMap[t.abbrev] = t;
     });
-    const dbGames = games.map((g) => convertToDBGameForCreation(season, g, teamsMap));
+    const dbGames = games.map((g) => convertToDBGameForCreation(const_1.SEASON, g, teamsMap));
     // const res = await datastore.games.createMany({ data: dbGames });
 }
 function convertToDBGameForCreation(season, game, teamsMap) {

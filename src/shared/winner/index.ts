@@ -1,7 +1,7 @@
 import {Game, Pick} from '@prisma/client';
 import _ from 'lodash';
 
-type Winner = {
+export type Winner = {
   league_id: number;
   week: number;
   season: number;

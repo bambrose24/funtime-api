@@ -15,7 +15,9 @@
     "deploy:prod": "fly deploy --config fly.prod.toml",
     "deploy:staging": "fly deploy --config fly.staging.toml",
     "script": "ts-node src/scripts",
-    "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts"
+    "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts",
+    "tsc": "tsc",
+    "tsc:watch": "tsc -w"
   },
   "nodemonConfig": {
     "watch": [

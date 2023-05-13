@@ -42,7 +42,7 @@ const datastore_1 = __importDefault(require("@shared/datastore"));
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const type_graphql_1 = require("type-graphql");
 const time_1 = require("@util/time");
-const register_1 = require("../../mutations/register");
+const const_1 = require("@util/const");
 let FirstNotStartedWeekResponse = class FirstNotStartedWeekResponse {
     week;
     season;
@@ -69,7 +69,7 @@ class FirstNotStartedWeekResolver {
         let season;
         if (week && override) {
             weekRes = week;
-            season = register_1.SEASON;
+            season = const_1.SEASON;
         }
         else {
             const res = await findWeekForPicks();
@@ -101,8 +101,12 @@ async function findWeekForPicks() {
     const gamesWithinMonth = await datastore_1.default.game.findMany({
         where: {
             ts: {
-                gte: (0, time_1.now)().subtract({ months: 1 }).toDate(),
-                lte: (0, time_1.now)().add({ months: 1 }).toDate(),
+                gte: (0, time_1.now)()
+                    .subtract({ months: 1 })
+                    .toDate(),
+                lte: (0, time_1.now)()
+                    .add({ months: 1 })
+                    .toDate(),
             },
         },
         orderBy: { ts: 'asc' },
