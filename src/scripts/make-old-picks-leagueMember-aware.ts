@@ -1,7 +1,7 @@
 import datastore from '@shared/datastore';
 
 async function run() {
-  const picksWithoutMember = await datastore.pick.findMany({where: {member_id: {equals: null}}});
+  const picksWithoutMember = await datastore.pick.findMany({});
   const [people, members, leagues] = await Promise.all([
     datastore.user.findMany({}),
     datastore.leagueMember.findMany({}),
@@ -9,15 +9,13 @@ async function run() {
   ]);
 
   const pickUpdates = [];
-  const solvedUids = new Set<number>();
+  const solvedMembershipIds = new Set<number>();
 
   for (let i = 0; i < picksWithoutMember.length; i++) {
     console.log(`updating pick ${i} of ${picksWithoutMember.length}`);
 
     const pick = picksWithoutMember[i];
-    if (solvedUids.has(pick.uid)) {
-      continue;
-    }
+
     const league = leagues.find(l => l.season === pick.season)!;
     const member = members.find(m => m.league_id === league.league_id && m.user_id === pick.uid);
 
@@ -25,11 +23,20 @@ async function run() {
       continue;
     }
 
-    await datastore.pick.updateMany({
-      where: {uid: {equals: pick.uid}},
-      data: {member_id: member.membership_id},
-    });
-    solvedUids.add(pick.uid);
+    if (pick.member_id !== member.membership_id) {
+      console.log(
+        `  [doing real update pickid ${pick.pickid} to member_id ${member.membership_id} from ${pick.member_id}]`
+      );
+
+      await datastore.pick.update({
+        where: {pickid: pick.pickid},
+        data: {member_id: member.membership_id},
+      });
+    } else {
+      console.log(`  [skipping update for pickid ${pick.pickid} because already equal members]`);
+    }
+
+    solvedMembershipIds.add(member.membership_id);
   }
 }
 
