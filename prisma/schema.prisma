@@ -76,7 +76,7 @@ model League {
   created_by_user_id Int
   name               String
   created_time       DateTime        @default(now()) @db.Timestamptz(6)
-  season             Int?
+  season             Int
   people             User            @relation(fields: [created_by_user_id], references: [uid], onUpdate: Restrict, map: "leagues_ibfk_1")
   leaguemembers      LeagueMember[]
   scoring_type       ScoringType?    @default(game_winner)
