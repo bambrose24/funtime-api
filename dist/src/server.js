@@ -84,7 +84,7 @@ app.use(async (req, res, next) => {
 });
 // keepThingsUpdated();
 // Run the 3 minute cron
-if (config_1.env !== 'production') {
+if (config_1.env === 'production') {
     node_cron_1.default.schedule('*/3 * * * *', async () => {
         await (0, keepThingsUpdated_1.default)();
     });

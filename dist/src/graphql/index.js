@@ -17,6 +17,7 @@ const firstNotStartedWeek_1 = __importDefault(require("./queries/firstNotStarted
 const mostRecentStartedWeek_1 = __importDefault(require("./queries/mostRecentStartedWeek"));
 const liveStatus_1 = __importDefault(require("./queries/liveStatus"));
 const graphql_1 = require("@shared/auth/graphql");
+const leagueMemberPickAggregate_1 = __importDefault(require("./queries/leagueMember/leagueMemberPickAggregate"));
 const SHOULD_AUTH_MUTATIONS = true;
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
@@ -140,5 +141,6 @@ const resolvers = [
     firstNotStartedWeek_1.default,
     mostRecentStartedWeek_1.default,
     liveStatus_1.default,
+    leagueMemberPickAggregate_1.default,
 ];
 exports.default = resolvers;
