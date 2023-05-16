@@ -18,8 +18,8 @@ import PicksByWeekResolver from './queries/picksByWeek';
 import FirstNotStartedWeekResolver from './queries/firstNotStartedWeek';
 import MostRecentStartedWeekResolver from './queries/mostRecentStartedWeek';
 import GameLiveResolver from './queries/liveStatus';
-import {env} from 'src/config';
 import {Role} from '@shared/auth/graphql';
+import LeagueMemberPickAggregateResolver from './queries/leagueMember/leagueMemberPickAggregate';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -151,6 +151,7 @@ const resolvers = [
   FirstNotStartedWeekResolver,
   MostRecentStartedWeekResolver,
   GameLiveResolver,
+  LeagueMemberPickAggregateResolver,
 ] as const;
 
 export default resolvers;
