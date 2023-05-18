@@ -21,6 +21,7 @@ import GameLiveResolver from './queries/liveStatus';
 import {Role} from '@shared/auth/graphql';
 import LeagueMemberPickAggregateResolver from './queries/leagueMember/leagueMemberPickAggregate';
 import MeQuery from './queries/me';
+import LeagueGames from './queries/leagueGames';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -153,6 +154,7 @@ const resolvers = [
   MostRecentStartedWeekResolver,
   GameLiveResolver,
   LeagueMemberPickAggregateResolver,
+  LeagueGames,
   MeQuery,
 ] as const;
 
