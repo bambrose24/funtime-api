@@ -47,7 +47,6 @@ export async function getGamesBySeason(season: number): Promise<Array<MSFGame>> 
       'seasonal_games',
       'json'
     );
-
     return games.games.map((g: any) => g as MSFGame);
   } catch (e) {
     console.log('error getting games by season', e);
