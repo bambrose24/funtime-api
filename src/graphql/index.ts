@@ -21,7 +21,15 @@ import GameLiveResolver from './queries/liveStatus';
 import {Role} from '@shared/auth/graphql';
 import LeagueMemberPickAggregateResolver from './queries/leagueMember/leagueMemberPickAggregate';
 import MeQuery from './queries/me';
-import LeagueGames from './queries/leagueGames';
+import LeagueGames from './queries/league/games';
+import LeagueID from './queries/league/id';
+import GameID from './queries/game/id';
+import PickID from './queries/pick/id';
+import LeagueMemberID from './queries/leagueMember/id';
+import SuperbowlID from './queries/superbowl/id';
+import SuperbowlSquareID from './queries/superbowlSquare/id';
+import TeamID from './queries/team/id';
+import UserID from './queries/user/id';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -145,8 +153,20 @@ const resolversEnhancedMap: ResolversEnhanceMap = {
 
 applyResolversEnhanceMap(resolversEnhancedMap);
 
+const idResolvers = [
+  LeagueID,
+  GameID,
+  PickID,
+  LeagueMemberID,
+  SuperbowlID,
+  SuperbowlSquareID,
+  TeamID,
+  UserID,
+];
+
 const resolvers = [
   ...generatedResolvers,
+  ...idResolvers,
   RegisterResolver,
   MakePicksResolver,
   PicksByWeekResolver,
@@ -156,6 +176,7 @@ const resolvers = [
   LeagueMemberPickAggregateResolver,
   LeagueGames,
   MeQuery,
+  // CreateLeagueMutation,
 ] as const;
 
 export default resolvers;
