@@ -28,12 +28,14 @@ model Game {
   is_tiebreaker           Boolean?
   homerecord              String?  @db.VarChar(10)
   awayrecord              String?  @db.VarChar(10)
+  msf_id                  String?
   teams_games_homeToteams Team     @relation("games_homeToteams", fields: [home], references: [teamid], onUpdate: Restrict, map: "games_ibfk_1")
   teams_games_awayToteams Team     @relation("games_awayToteams", fields: [away], references: [teamid], onUpdate: Restrict, map: "games_ibfk_2")
   picks                   Pick[]
 
   @@index([away], map: "idx_18403_away")
   @@index([home], map: "idx_18403_home")
+  @@index([msf_id], map: "idx_18403_msf_id")
   @@map("games")
 }
 
