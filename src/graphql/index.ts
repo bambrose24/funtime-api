@@ -20,6 +20,7 @@ import MostRecentStartedWeekResolver from './queries/mostRecentStartedWeek';
 import GameLiveResolver from './queries/liveStatus';
 import {Role} from '@shared/auth/graphql';
 import LeagueMemberPickAggregateResolver from './queries/leagueMember/leagueMemberPickAggregate';
+import MeQuery from './queries/me';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -152,6 +153,7 @@ const resolvers = [
   MostRecentStartedWeekResolver,
   GameLiveResolver,
   LeagueMemberPickAggregateResolver,
+  MeQuery,
 ] as const;
 
 export default resolvers;
