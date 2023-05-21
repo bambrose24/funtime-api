@@ -1,5 +1,4 @@
 import {PrismaClient} from '@prisma/client';
-import {env} from '@src/config';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // This technically would have worked if I figured out the GraphQL Scalar problem

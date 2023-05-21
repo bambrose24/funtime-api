@@ -41,7 +41,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
+const aggregateResponse_1 = require("@graphql/util/aggregateResponse");
 var LeagueStatus;
 (function (LeagueStatus) {
     LeagueStatus["NOT_STARTED"] = "not_started";

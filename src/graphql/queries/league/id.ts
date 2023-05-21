@@ -2,8 +2,8 @@ import {FieldResolver, Resolver, Root, ID, registerEnumType, Ctx, Arg} from 'typ
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League} from '@prisma/client';
 import datastore from '@shared/datastore';
-import {AggregateResponse} from '@src/graphql/util/aggregateResponse';
-import {ApolloPrismaContext} from '@src/graphql/server/types';
+import {AggregateResponse} from '@graphql/util/aggregateResponse';
+import {ApolloPrismaContext} from '@graphql/server/types';
 
 enum LeagueStatus {
   NOT_STARTED = 'not_started',

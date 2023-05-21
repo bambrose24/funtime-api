@@ -1,4 +1,4 @@
-import {ApolloPrismaContext} from '@src/graphql/server/types';
+import {ApolloPrismaContext} from '@graphql/server/types';
 import {AuthChecker} from 'type-graphql';
 import {getUser} from './user';
 

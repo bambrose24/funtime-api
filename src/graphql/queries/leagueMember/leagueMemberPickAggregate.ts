@@ -1,8 +1,8 @@
-import {Arg, Ctx, Field, Int, FieldResolver, ObjectType, Resolver, Root} from 'type-graphql';
+import {Arg, Ctx, FieldResolver, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloPrismaContext} from 'src/graphql/server/types';
 import {LeagueMember} from '@prisma/client';
-import {AggregateResponse} from '@src/graphql/util/aggregateResponse';
+import {AggregateResponse} from '@graphql/util/aggregateResponse';
 
 @Resolver(() => TypeGraphQL.LeagueMember)
 export default class LeagueMemberPickAggregateResolver {

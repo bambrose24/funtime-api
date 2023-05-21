@@ -37,7 +37,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
+const aggregateResponse_1 = require("@graphql/util/aggregateResponse");
 let LeagueMemberPickAggregateResolver = class LeagueMemberPickAggregateResolver {
     async aggregatePick(member, { prisma: datastore }, where) {
         const res = await datastore.pick.aggregate({
