@@ -12,7 +12,6 @@ async function getNextGame(overrideTs) {
         orderBy: { ts: 'asc' },
         take: 1,
     });
-    console.log('games?', games);
     if (games && games.length > 0) {
         return games[0];
     }

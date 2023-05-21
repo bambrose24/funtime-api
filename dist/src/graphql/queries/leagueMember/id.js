@@ -34,16 +34,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const getNextGame_1 = require("@shared/queries/getNextGame");
+const datastore_1 = __importDefault(require("@shared/datastore"));
 let LeagueMemberID = class LeagueMemberID {
     async id(leagueMember) {
         return leagueMember.membership_id.toString();
     }
     async nextGame(_leagueMember) {
         return await (0, getNextGame_1.getNextGame)();
+    }
+    async hasPickedNextGame(leagueMember) {
+        const nextGame = await (0, getNextGame_1.getNextGame)();
+        if (!nextGame) {
+            return true;
+        }
+        const pick = await datastore_1.default.pick.findFirst({
+            where: { member_id: leagueMember.membership_id, gid: nextGame.gid },
+        });
+        return Boolean(pick);
     }
 };
 __decorate([
@@ -60,6 +74,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], LeagueMemberID.prototype, "nextGame", null);
+__decorate([
+    (0, type_graphql_1.FieldResolver)(_type => Boolean),
+    __param(0, (0, type_graphql_1.Root)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], LeagueMemberID.prototype, "hasPickedNextGame", null);
 LeagueMemberID = __decorate([
     (0, type_graphql_1.Resolver)(() => TypeGraphQL.LeagueMember)
 ], LeagueMemberID);
