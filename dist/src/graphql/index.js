@@ -18,6 +18,17 @@ const mostRecentStartedWeek_1 = __importDefault(require("./queries/mostRecentSta
 const liveStatus_1 = __importDefault(require("./queries/liveStatus"));
 const graphql_1 = require("@shared/auth/graphql");
 const leagueMemberPickAggregate_1 = __importDefault(require("./queries/leagueMember/leagueMemberPickAggregate"));
+const me_1 = __importDefault(require("./queries/me"));
+const games_1 = __importDefault(require("./queries/league/games"));
+const id_1 = __importDefault(require("./queries/league/id"));
+const id_2 = __importDefault(require("./queries/game/id"));
+const id_3 = __importDefault(require("./queries/pick/id"));
+const id_4 = __importDefault(require("./queries/leagueMember/id"));
+const id_5 = __importDefault(require("./queries/superbowl/id"));
+const id_6 = __importDefault(require("./queries/superbowlSquare/id"));
+const id_7 = __importDefault(require("./queries/team/id"));
+const id_8 = __importDefault(require("./queries/user/id"));
+const createLeague_1 = require("./mutations/createLeague");
 const SHOULD_AUTH_MUTATIONS = true;
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap = {
@@ -133,8 +144,19 @@ const resolversEnhancedMap = {
     },
 };
 (0, type_graphql_2.applyResolversEnhanceMap)(resolversEnhancedMap);
+const idResolvers = [
+    id_1.default,
+    id_2.default,
+    id_3.default,
+    id_4.default,
+    id_5.default,
+    id_6.default,
+    id_7.default,
+    id_8.default,
+];
 const resolvers = [
     ...type_graphql_1.resolvers,
+    ...idResolvers,
     register_1.default,
     makePicks_1.default,
     picksByWeek_1.default,
@@ -142,5 +164,8 @@ const resolvers = [
     mostRecentStartedWeek_1.default,
     liveStatus_1.default,
     leagueMemberPickAggregate_1.default,
+    games_1.default,
+    me_1.default,
+    createLeague_1.CreateLeagueMutation,
 ];
 exports.default = resolvers;

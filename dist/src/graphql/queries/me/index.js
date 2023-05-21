@@ -31,32 +31,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
-let LeagueMemberPickAggregateResolver = class LeagueMemberPickAggregateResolver {
-    async aggregatePick(member, { prisma: datastore }, where) {
-        const res = await datastore.pick.aggregate({
-            _count: { pickid: true },
-            where: { ...where, member_id: member.membership_id },
-        });
-        return { count: res._count.pickid };
+const datastore_1 = __importDefault(require("@shared/datastore"));
+const user_1 = require("@shared/auth/user");
+class MeQuery {
+    async me() {
+        const user = (0, user_1.getUser)();
+        if (!user) {
+            return null;
+        }
+        return await datastore_1.default.user.findFirst({ where: { email: user.email } });
     }
-};
+}
 __decorate([
-    (0, type_graphql_1.FieldResolver)(_type => aggregateResponse_1.AggregateResponse),
-    __param(0, (0, type_graphql_1.Root)()),
-    __param(1, (0, type_graphql_1.Ctx)()),
-    __param(2, (0, type_graphql_1.Arg)('where', _type => TypeGraphQL.PickWhereInput, { nullable: true })),
+    (0, type_graphql_1.Query)(() => TypeGraphQL.User, { nullable: true }),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], LeagueMemberPickAggregateResolver.prototype, "aggregatePick", null);
-LeagueMemberPickAggregateResolver = __decorate([
-    (0, type_graphql_1.Resolver)(() => TypeGraphQL.LeagueMember)
-], LeagueMemberPickAggregateResolver);
-exports.default = LeagueMemberPickAggregateResolver;
+], MeQuery.prototype, "me", null);
+exports.default = MeQuery;

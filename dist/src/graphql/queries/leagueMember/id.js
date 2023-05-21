@@ -37,26 +37,30 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
-let LeagueMemberPickAggregateResolver = class LeagueMemberPickAggregateResolver {
-    async aggregatePick(member, { prisma: datastore }, where) {
-        const res = await datastore.pick.aggregate({
-            _count: { pickid: true },
-            where: { ...where, member_id: member.membership_id },
-        });
-        return { count: res._count.pickid };
+const getNextGame_1 = require("@shared/queries/getNextGame");
+let LeagueMemberID = class LeagueMemberID {
+    async id(leagueMember) {
+        return leagueMember.membership_id.toString();
+    }
+    async nextGame(_leagueMember) {
+        return await (0, getNextGame_1.getNextGame)();
     }
 };
 __decorate([
-    (0, type_graphql_1.FieldResolver)(_type => aggregateResponse_1.AggregateResponse),
+    (0, type_graphql_1.FieldResolver)(_type => type_graphql_1.ID),
     __param(0, (0, type_graphql_1.Root)()),
-    __param(1, (0, type_graphql_1.Ctx)()),
-    __param(2, (0, type_graphql_1.Arg)('where', _type => TypeGraphQL.PickWhereInput, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], LeagueMemberPickAggregateResolver.prototype, "aggregatePick", null);
-LeagueMemberPickAggregateResolver = __decorate([
+], LeagueMemberID.prototype, "id", null);
+__decorate([
+    (0, type_graphql_1.FieldResolver)(_type => TypeGraphQL.Game, { nullable: true }),
+    __param(0, (0, type_graphql_1.Root)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], LeagueMemberID.prototype, "nextGame", null);
+LeagueMemberID = __decorate([
     (0, type_graphql_1.Resolver)(() => TypeGraphQL.LeagueMember)
-], LeagueMemberPickAggregateResolver);
-exports.default = LeagueMemberPickAggregateResolver;
+], LeagueMemberID);
+exports.default = LeagueMemberID;

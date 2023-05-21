@@ -37,26 +37,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
-let LeagueMemberPickAggregateResolver = class LeagueMemberPickAggregateResolver {
-    async aggregatePick(member, { prisma: datastore }, where) {
-        const res = await datastore.pick.aggregate({
-            _count: { pickid: true },
-            where: { ...where, member_id: member.membership_id },
-        });
-        return { count: res._count.pickid };
+let LeagueGames = class LeagueGames {
+    async games(league, { prisma: datastore }, where) {
+        return await datastore.game.findMany({ where: { ...where, season: league.season } });
     }
 };
 __decorate([
-    (0, type_graphql_1.FieldResolver)(_type => aggregateResponse_1.AggregateResponse),
+    (0, type_graphql_1.FieldResolver)(_type => [TypeGraphQL.Game]),
     __param(0, (0, type_graphql_1.Root)()),
     __param(1, (0, type_graphql_1.Ctx)()),
-    __param(2, (0, type_graphql_1.Arg)('where', _type => TypeGraphQL.PickWhereInput, { nullable: true })),
+    __param(2, (0, type_graphql_1.Arg)('where', _type => TypeGraphQL.GameWhereInput, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, TypeGraphQL.GameWhereInput]),
     __metadata("design:returntype", Promise)
-], LeagueMemberPickAggregateResolver.prototype, "aggregatePick", null);
-LeagueMemberPickAggregateResolver = __decorate([
-    (0, type_graphql_1.Resolver)(() => TypeGraphQL.LeagueMember)
-], LeagueMemberPickAggregateResolver);
-exports.default = LeagueMemberPickAggregateResolver;
+], LeagueGames.prototype, "games", null);
+LeagueGames = __decorate([
+    (0, type_graphql_1.Resolver)(() => TypeGraphQL.League)
+], LeagueGames);
+exports.default = LeagueGames;

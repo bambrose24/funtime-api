@@ -34,29 +34,57 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateLeagueMutation = void 0;
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const aggregateResponse_1 = require("@src/graphql/util/aggregateResponse");
-let LeagueMemberPickAggregateResolver = class LeagueMemberPickAggregateResolver {
-    async aggregatePick(member, { prisma: datastore }, where) {
-        const res = await datastore.pick.aggregate({
-            _count: { pickid: true },
-            where: { ...where, member_id: member.membership_id },
+const types_1 = require("./types");
+const datastore_1 = __importDefault(require("@shared/datastore"));
+const const_1 = require("@util/const");
+const user_1 = require("@shared/auth/user");
+const nanoid_1 = require("nanoid");
+let CreateLeagueMutation = class CreateLeagueMutation {
+    async createLeague(data) {
+        const user = (0, user_1.getUser)();
+        if (!user) {
+            throw new Error(`Must be logged in to create a league`);
+        }
+        const dbUser = await datastore_1.default.user.findFirstOrThrow({ where: { email: user.email } });
+        const uid = dbUser.uid;
+        const league = await datastore_1.default.league.create({
+            data: {
+                name: data.leagueName,
+                season: const_1.SEASON,
+                created_by_user_id: uid,
+                share_code: (0, nanoid_1.nanoid)(),
+                superbowl_competition: data.superbowlCompetition,
+                late_policy: data.latePolicy,
+                pick_policy: data.pickPolicy,
+                reminder_policy: data.reminderPolicy,
+                scoring_type: data.scoringType,
+            },
         });
-        return { count: res._count.pickid };
+        const _membership = await datastore_1.default.leagueMember.create({
+            data: {
+                role: 'admin',
+                league_id: league.league_id,
+                user_id: uid,
+            },
+        });
+        return league;
     }
 };
 __decorate([
-    (0, type_graphql_1.FieldResolver)(_type => aggregateResponse_1.AggregateResponse),
-    __param(0, (0, type_graphql_1.Root)()),
-    __param(1, (0, type_graphql_1.Ctx)()),
-    __param(2, (0, type_graphql_1.Arg)('where', _type => TypeGraphQL.PickWhereInput, { nullable: true })),
+    (0, type_graphql_1.Mutation)(() => TypeGraphQL.League),
+    __param(0, (0, type_graphql_1.Arg)('data', () => types_1.CreateLeagueInput)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", [types_1.CreateLeagueInput]),
     __metadata("design:returntype", Promise)
-], LeagueMemberPickAggregateResolver.prototype, "aggregatePick", null);
-LeagueMemberPickAggregateResolver = __decorate([
-    (0, type_graphql_1.Resolver)(() => TypeGraphQL.LeagueMember)
-], LeagueMemberPickAggregateResolver);
-exports.default = LeagueMemberPickAggregateResolver;
+], CreateLeagueMutation.prototype, "createLeague", null);
+CreateLeagueMutation = __decorate([
+    (0, type_graphql_1.Resolver)()
+], CreateLeagueMutation);
+exports.CreateLeagueMutation = CreateLeagueMutation;
