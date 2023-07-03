@@ -3,3 +3,4 @@ node_modules
 results/*
 supabase/*
 !supabase/config.toml
+prod.pgsql

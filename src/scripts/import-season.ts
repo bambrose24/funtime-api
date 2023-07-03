@@ -22,8 +22,8 @@ async function run() {
 
   const dbGames = games.map((g: MSFGame) => convertToDBGameForCreation(SEASON, g, teamsMap));
   console.log(`prepped ${dbGames.length} games to input`);
-  // const res = await datastore.game.createMany({data: dbGames});
-  // console.log(`created ${res.count} games for ${SEASON}`);
+  const res = await datastore.game.createMany({data: dbGames});
+  console.log(`created ${res.count} games for ${SEASON}`);
 
   const newGames = await datastore.game.findMany({where: {season: SEASON}});
 

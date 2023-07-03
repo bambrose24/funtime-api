@@ -23,8 +23,8 @@ async function run() {
     });
     const dbGames = games.map((g) => convertToDBGameForCreation(const_1.SEASON, g, teamsMap));
     console.log(`prepped ${dbGames.length} games to input`);
-    // const res = await datastore.game.createMany({data: dbGames});
-    // console.log(`created ${res.count} games for ${SEASON}`);
+    const res = await datastore_1.default.game.createMany({ data: dbGames });
+    console.log(`created ${res.count} games for ${const_1.SEASON}`);
     const newGames = await datastore_1.default.game.findMany({ where: { season: const_1.SEASON } });
     const weeks = new Set(newGames.map(g => g.week));
     for (const week of [...weeks]) {
