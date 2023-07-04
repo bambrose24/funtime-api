@@ -12,11 +12,10 @@ export class CreateLeagueMutation {
   async createLeague(
     @Arg('data', () => CreateLeagueInput) data: CreateLeagueInput
   ): Promise<TypeGraphQL.League> {
-    const user = getUser();
-    if (!user) {
+    const {dbUser} = getUser() ?? {};
+    if (!dbUser) {
       throw new Error(`Must be logged in to create a league`);
     }
-    const dbUser = await datastore.user.findFirstOrThrow({where: {email: user.email}});
     const uid = dbUser.uid;
     const league = await datastore.league.create({
       data: {

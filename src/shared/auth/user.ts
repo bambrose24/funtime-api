@@ -1,5 +1,11 @@
 import httpContext from 'express-http-context';
-import {User, UserResponse} from '@supabase/supabase-js';
+import {User as SupabaseUser, UserResponse} from '@supabase/supabase-js';
+import {User as DBUser} from '@prisma/client';
+
+type User = {
+  supabase: SupabaseUser;
+  dbUser: DBUser;
+};
 
 const USER_CONTEXT_KEY = 'funtime_user';
 const TOKEN_CONTEXT_KEY = 'funtime_token';

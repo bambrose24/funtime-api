@@ -4,6 +4,7 @@ import {League} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
 import {ApolloPrismaContext} from '@graphql/server/types';
+import {getUser} from '@shared/auth/user';
 
 enum LeagueStatus {
   NOT_STARTED = 'not_started',
@@ -20,6 +21,17 @@ export default class LeagueID {
   @FieldResolver(_type => ID)
   async id(@Root() league: League): Promise<string> {
     return league.league_id.toString();
+  }
+
+  @FieldResolver(_type => Boolean)
+  async isViewerMember(@Root() league: League): Promise<boolean> {
+    const {dbUser} = getUser() ?? {};
+    if (!dbUser) return false;
+
+    const membership = await datastore.leagueMember.findFirst({
+      where: {league_id: league.league_id, user_id: dbUser.uid},
+    });
+    return membership !== undefined;
   }
 
   @FieldResolver(() => LeagueStatus)
