@@ -10,6 +10,7 @@ export default class MeQuery {
     if (!dbUser) {
       return null;
     }
+    // we already get it from setting up the httpContext in middleware
     return dbUser;
   }
 }
