@@ -4,9 +4,6 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npx prisma generate
-
-
 # Bundle app source
 COPY . .
 
