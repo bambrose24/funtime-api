@@ -2,6 +2,7 @@ import {Game} from '@prisma/client';
 import datastore from '@shared/datastore';
 
 export async function getNextGame(overrideTs?: Date): Promise<Game | null> {
+  console.log('');
   const now = overrideTs ?? new Date();
   const games = await datastore.game.findMany({
     where: {ts: {gt: now}},
