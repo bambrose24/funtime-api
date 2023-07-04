@@ -11,6 +11,7 @@ export default class MeQuery {
       return null;
     }
     // we already get it from setting up the httpContext in middleware
+    // so we don't need to refetch or anything
     return dbUser;
   }
 }
