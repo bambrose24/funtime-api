@@ -48,11 +48,10 @@ const user_1 = require("@shared/auth/user");
 const nanoid_1 = require("nanoid");
 let CreateLeagueMutation = class CreateLeagueMutation {
     async createLeague(data) {
-        const user = (0, user_1.getUser)();
-        if (!user) {
+        const { dbUser } = (0, user_1.getUser)() ?? {};
+        if (!dbUser) {
             throw new Error(`Must be logged in to create a league`);
         }
-        const dbUser = await datastore_1.default.user.findFirstOrThrow({ where: { email: user.email } });
         const uid = dbUser.uid;
         const league = await datastore_1.default.league.create({
             data: {

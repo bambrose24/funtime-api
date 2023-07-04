@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNextGame = void 0;
 const datastore_1 = __importDefault(require("@shared/datastore"));
 async function getNextGame(overrideTs) {
+    console.log('');
     const now = overrideTs ?? new Date();
     const games = await datastore_1.default.game.findMany({
         where: { ts: { gt: now } },

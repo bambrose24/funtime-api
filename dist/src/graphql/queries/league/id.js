@@ -42,6 +42,7 @@ const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
 const datastore_1 = __importDefault(require("@shared/datastore"));
 const aggregateResponse_1 = require("@graphql/util/aggregateResponse");
+const user_1 = require("@shared/auth/user");
 var LeagueStatus;
 (function (LeagueStatus) {
     LeagueStatus["NOT_STARTED"] = "not_started";
@@ -54,6 +55,15 @@ var LeagueStatus;
 let LeagueID = class LeagueID {
     async id(league) {
         return league.league_id.toString();
+    }
+    async isViewerMember(league) {
+        const { dbUser } = (0, user_1.getUser)() ?? {};
+        if (!dbUser)
+            return false;
+        const membership = await datastore_1.default.leagueMember.findFirst({
+            where: { league_id: league.league_id, user_id: dbUser.uid },
+        });
+        return membership !== undefined;
     }
     async status(league) {
         const now = new Date();
@@ -84,6 +94,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], LeagueID.prototype, "id", null);
+__decorate([
+    (0, type_graphql_1.FieldResolver)(_type => Boolean),
+    __param(0, (0, type_graphql_1.Root)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], LeagueID.prototype, "isViewerMember", null);
 __decorate([
     (0, type_graphql_1.FieldResolver)(() => LeagueStatus),
     __param(0, (0, type_graphql_1.Root)()),

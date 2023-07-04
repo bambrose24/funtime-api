@@ -13,7 +13,7 @@ const customAuthChecker = async ({ args, context, info, root }, roles) => {
     const user = (0, user_1.getUser)();
     console.log('auth checker', user, roles);
     if (roles.includes(Role.SysAdmin)) {
-        return user?.email === 'bambrose24@gmail.com';
+        return user?.dbUser?.email === 'bambrose24@gmail.com';
     }
     return true;
 };

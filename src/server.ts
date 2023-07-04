@@ -6,6 +6,8 @@ import helmet from 'helmet';
 import StatusCodes from 'http-status-codes';
 import express, {NextFunction, Request, Response} from 'express';
 
+import {json} from 'body-parser';
+
 import cron from 'node-cron';
 
 import 'express-async-errors';
@@ -14,18 +16,19 @@ import logger from 'jet-logger';
 import httpContext from 'express-http-context';
 
 import {CustomError} from './shared/errors';
-import {ApolloServer} from 'apollo-server-express';
+import {ApolloServer} from '@apollo/server';
+import {expressMiddleware} from '@apollo/server/express4';
 
 import {buildSchema} from 'type-graphql';
 
 import resolvers from './graphql';
-import datastore from '@shared/datastore';
-import {ApolloPrismaContext} from './graphql/server/types';
 import keepThingsUpdated from './cron/keepThingsUpdated';
 import cors from 'cors';
 import {env} from './config';
 import {authorizeAndSetSupabaseUser} from '@shared/auth';
 import {customAuthChecker} from '@shared/auth/graphql';
+import {ApolloPrismaContext} from '@graphql/server/types';
+import datastore from '@shared/datastore';
 
 const app = express();
 
@@ -59,30 +62,6 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
  *                              Serve front-end content
  ***********************************************************************************/
 
-async function bootstrap() {
-  const schema = await buildSchema({
-    resolvers,
-    dateScalarMode: 'isoDate',
-    authChecker: customAuthChecker,
-  });
-
-  // TODO consider pulling the server into a different file for creation
-  const server = new ApolloServer({
-    schema,
-    debug: env !== 'production',
-    context: (_req: express.Request, _res: express.Response): ApolloPrismaContext => {
-      return {prisma: datastore};
-    },
-    // Need to figure out how to clear the cache after mutations
-    // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
-  });
-  server.start().then(() => {
-    server.applyMiddleware({app, path: '/graphql'});
-  });
-}
-
-bootstrap();
-
 app.use(cors());
 
 app.use(httpContext.middleware);
@@ -106,6 +85,36 @@ if (env === 'production') {
     await keepThingsUpdated();
   });
 }
+
+async function bootstrap() {
+  const schema = await buildSchema({
+    resolvers,
+    dateScalarMode: 'isoDate',
+    authChecker: customAuthChecker,
+  });
+
+  // TODO consider pulling the server into a different file for creation
+  const server = new ApolloServer({
+    schema,
+    introspection: env !== 'production',
+    // Need to figure out how to clear the cache after mutations
+    // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
+  });
+
+  await server.start();
+
+  app.use(
+    '/graphql',
+    cors<cors.CorsRequest>(),
+    json(),
+    expressMiddleware(server, {
+      context: async ({req: _req}): Promise<ApolloPrismaContext> => {
+        return {prisma: datastore};
+      },
+    })
+  );
+}
+bootstrap();
 
 /************************************************************************************
  *                              Export Server

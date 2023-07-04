@@ -15,7 +15,7 @@ export async function authorizeAndSetSupabaseUser(token: string): Promise<void> 
     if (user.data.user) {
       const dbUser = await datastore.user.findFirst({where: {email: user.data.user.email}});
       if (dbUser) {
-        setUser({supabase: user.data.user, db: dbUser});
+        setUser({supabase: user.data.user, dbUser});
       }
     }
   } catch (e) {

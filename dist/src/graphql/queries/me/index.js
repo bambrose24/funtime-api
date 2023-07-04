@@ -31,21 +31,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const type_graphql_1 = require("type-graphql");
 const TypeGraphQL = __importStar(require("@generated/type-graphql"));
-const datastore_1 = __importDefault(require("@shared/datastore"));
 const user_1 = require("@shared/auth/user");
 class MeQuery {
     async me() {
-        const user = (0, user_1.getUser)();
-        if (!user) {
+        const { dbUser } = (0, user_1.getUser)() ?? {};
+        if (!dbUser) {
             return null;
         }
-        return await datastore_1.default.user.findFirst({ where: { email: user.email } });
+        // we already get it from setting up the httpContext in middleware
+        // so we don't need to refetch or anything
+        return dbUser;
     }
 }
 __decorate([
