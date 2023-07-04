@@ -2,7 +2,7 @@
   "name": "funtime-api",
   "version": "0.0.0",
   "engines": {
-    "node": "18.x.x"
+    "node": "18.16.1"
   },
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 npx prisma generate && ./node_modules/.bin/ts-node build.ts",
