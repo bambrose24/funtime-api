@@ -84,7 +84,7 @@ model League {
   name                  String
   created_time          DateTime        @default(now()) @db.Timestamptz(6)
   season                Int
-  share_code            String?         @default(cuid())
+  share_code            String?         @unique @default(cuid())
   superbowl_competition Boolean?        @default(true)
   people                User            @relation(fields: [created_by_user_id], references: [uid], onUpdate: Restrict, map: "leagues_ibfk_1")
   leaguemembers         LeagueMember[]
