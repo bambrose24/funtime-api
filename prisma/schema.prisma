@@ -93,6 +93,9 @@ model League {
   reminder_policy       ReminderPolicy? @default(three_hours_before)
   late_policy           LatePolicy?     @default(allow_late_whole_week)
   WeekWinners           WeekWinners[]
+  prior_league_id       Int?            @unique @map("prior_league_id")
+  priorLeague           League?         @relation("prior_leagues", fields: [prior_league_id], references: [league_id])
+  nextLeague            League?         @relation("prior_leagues")
 
   @@index([share_code], map: "idx_share_code") // Added index on shareCode
   @@index([created_by_user_id], map: "idx_18422_created_by_user_id")
