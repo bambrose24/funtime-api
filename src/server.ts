@@ -96,7 +96,8 @@ async function bootstrap() {
   // TODO consider pulling the server into a different file for creation
   const server = new ApolloServer({
     schema,
-    introspection: env !== 'production',
+    // introspection: env !== 'production',
+    introspection: true,
     // Need to figure out how to clear the cache after mutations
     // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
   });
