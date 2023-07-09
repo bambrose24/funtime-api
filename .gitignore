@@ -4,3 +4,4 @@ results/*
 supabase/*
 !supabase/config.toml
 prod.pgsql
+dist/
