@@ -31,6 +31,7 @@ import SuperbowlSquareID from './queries/superbowlSquare/id';
 import TeamID from './queries/team/id';
 import UserID from './queries/user/id';
 import {CreateLeagueMutation} from './mutations/createLeague';
+import LeagueRulesResolver from './queries/league/rules';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -178,6 +179,7 @@ const resolvers = [
   LeagueGames,
   MeQuery,
   CreateLeagueMutation,
+  LeagueRulesResolver,
 ] as const;
 
 export default resolvers;
