@@ -7,19 +7,10 @@ export class LeagueRuleWithExplanation {
   id: string;
 
   @Field(() => String)
-  rule: string;
+  name: string;
 
   @Field(() => String)
   description: string;
-}
-
-@ObjectType('LeagueRules')
-export class LeagueRules {
-  @Field(() => ID)
-  id: string;
-
-  @Field(() => [LeagueRuleWithExplanation])
-  rules: LeagueRuleWithExplanation[];
 }
 
 export function getLatePickPolicyDescription(policy: LatePolicy): string {
