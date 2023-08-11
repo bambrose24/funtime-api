@@ -9,8 +9,17 @@ import {getGamesBySeason} from '@shared/mysportsfeeds';
 import {MSFGame} from '@shared/mysportsfeeds/types';
 import {SEASON} from '@util/const';
 import _ from 'lodash';
+import {env} from 'src/config';
 
 async function run() {
+  const existingGames = await datastore.game.findMany({where: {season: SEASON}});
+  if (existingGames.length > 0) {
+    console.log(
+      `not importing season because ${existingGames.length} games exist for season ${SEASON} in env ${env}`
+    );
+    return;
+  }
+
   const games = await getGamesBySeason(SEASON);
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
