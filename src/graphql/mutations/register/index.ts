@@ -28,11 +28,24 @@ class RegisterResolver {
     @Arg('superbowlLoser', () => Int) superbowlLoser: number,
     @Arg('superbowlScore', () => Int) superbowlScore: number
   ): Promise<RegisterResponse> {
-    const {dbUser: user} = getUser() ?? {};
-    if (!user) {
+    const league = await datastore.league.findFirstOrThrow({where: {share_code: leagueCode}});
+    const {dbUser: authDbUser, supabase} = getUser() ?? {};
+    if (!supabase || !supabase.email) {
       throw new Error('Cannot register without being logged in');
     }
-    const league = await datastore.league.findFirstOrThrow({where: {share_code: leagueCode}});
+    let user = authDbUser;
+    if (!user) {
+      user = await datastore.user.create({
+        data: {
+          email: supabase.email,
+          username,
+          fname: '',
+          lname: '',
+          season: league.season,
+        },
+      });
+    }
+
     const existingMembership = await datastore.leagueMember.findFirst({
       where: {user_id: user.uid, league_id: league.league_id},
     });
