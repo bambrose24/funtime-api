@@ -5,7 +5,7 @@
     "node": "18.16.1"
   },
   "scripts": {
-    "build": "npx prisma generate && ./node_modules/.bin/ts-node build.ts",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 npx prisma generate && ./node_modules/.bin/ts-node build.ts",
     "build-local": "./node_modules/.bin/ts-node build.ts",
     "lint": "eslint . --ext .ts",
     "start": "node -r module-alias/register ./dist/src/index.js --env=production",
