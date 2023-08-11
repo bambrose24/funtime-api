@@ -4,7 +4,7 @@ import {User as DBUser} from '@prisma/client';
 
 type User = {
   supabase: SupabaseUser;
-  dbUser: DBUser;
+  dbUser: DBUser | null;
 };
 
 const USER_CONTEXT_KEY = 'funtime_user';

@@ -14,9 +14,7 @@ export async function authorizeAndSetSupabaseUser(token: string): Promise<void> 
     setToken(token);
     if (user.data.user) {
       const dbUser = await datastore.user.findFirst({where: {email: user.data.user.email}});
-      if (dbUser) {
-        setUser({supabase: user.data.user, dbUser});
-      }
+      setUser({supabase: user.data.user, dbUser});
     }
   } catch (e) {
     console.debug('invalid token passed into auth', e);
