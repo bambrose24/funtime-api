@@ -57,7 +57,7 @@ export async function getRulesForLeague(league_id: number): Promise<LeagueRuleWi
       ? [
           {
             id: `${league.league_id}-scoring_type`,
-            name: 'Scoring Type',
+            name: 'Weekly Scoring Type',
             description: getScoringTypeDescription(league.scoring_type),
           },
         ]
