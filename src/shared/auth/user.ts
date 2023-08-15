@@ -18,6 +18,14 @@ export function getUser(): User | undefined {
   return httpContext.get(USER_CONTEXT_KEY) as User | undefined;
 }
 
+export function getUserEnforced(): User {
+  const user = getUser();
+  if (!user) {
+    throw new Error('Could not get user in getUserEnforced');
+  }
+  return user;
+}
+
 export function setToken(token: string): void {
   httpContext.set(TOKEN_CONTEXT_KEY, token);
 }
