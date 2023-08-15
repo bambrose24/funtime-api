@@ -3,6 +3,7 @@ import {User} from '@prisma/client';
 import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
+import {getUser} from '@shared/auth/user';
 export const LEAGUE_ID = 7;
 export const DEFAULT_ROLE = 'player';
 
@@ -30,14 +31,20 @@ class GamePick {
 class MakePicksResolver {
   @Mutation(() => MakePicksResponse)
   async makePicks(
-    @Arg('member_id', () => Int) member_id: number,
+    @Arg('league_id', () => Int) league_id: number,
     @Arg('picks', () => [GamePick]) picks: GamePick[]
   ): Promise<MakePicksResponse> {
-    const user = await datastore.leagueMember
-      .findFirstOrThrow({where: {membership_id: {equals: member_id}}})
-      .people();
+    const auth = getUser();
+    if (!auth || !auth.dbUser) {
+      throw new Error('Need a user to make picks');
+    }
+    const dbUser = auth.dbUser;
+
+    const member = await datastore.leagueMember.findFirstOrThrow({
+      where: {league_id, people: {uid: dbUser.uid}},
+    });
     if (picks.length === 0) {
-      return {success: false, user};
+      return {success: false, user: dbUser};
     }
 
     const startedGamesForWeek = await datastore.game.findMany({
@@ -51,15 +58,15 @@ class MakePicksResolver {
     const startedGids = new Set(startedGamesForWeek.map(g => g.gid));
     const filteredPicks = picks.filter(p => !startedGids.has(p.game_id));
 
-    const {week, season} = await upsertWeekPicksForMember(member_id, filteredPicks);
+    const {week, season} = await upsertWeekPicksForMember(member.membership_id, filteredPicks);
 
     try {
-      await sendPickSuccessEmail(member_id, week, season);
+      await sendPickSuccessEmail(member.membership_id, week, season);
     } catch (e) {
       console.log('email error', e);
     }
 
-    return {success: true, user};
+    return {success: true, user: dbUser};
   }
 }
 
