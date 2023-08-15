@@ -1,58 +1,68 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Game} from '@prisma/client';
+import {Game, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
-import {PhoneNumberMock} from 'graphql-scalars';
 import {SEASON} from '@util/const';
 
 @ObjectType()
-class FirstNotFinishedWeekResponse {
+class WeekForPicksResponse {
   @Field(() => Int, {nullable: true})
   week: number | null;
   @Field(() => Int, {nullable: true})
   season: number | null;
   @Field(() => [TypeGraphQL.Game]!)
   games: Array<Game>;
+  @Field(() => [TypeGraphQL.Pick]!)
+  existingPicks: Array<Pick>;
 }
 
-export class FirstNotFinishedWeekResolver {
-  @Query(() => FirstNotFinishedWeekResponse)
-  async firstNotFinishedWeek(
+export class WeekForPicksResolver {
+  @Query(() => WeekForPicksResponse)
+  async weekForPicks(
+    @Arg('leagueId', () => Int)
+    league_id: number,
     @Arg('override', () => Boolean, {nullable: true})
     override?: boolean | null,
     @Arg('week', () => Int, {nullable: true})
     week?: number | null
-  ): Promise<FirstNotFinishedWeekResponse> {
+  ): Promise<WeekForPicksResponse> {
     let weekRes: number;
     let season: number;
     if (week && override) {
       weekRes = week;
       season = SEASON;
     } else {
-      const res = await findWeekForPicks();
+      const res = await findWeekForPicks({league_id});
       if (res === null) {
-        return {week: null, season: null, games: []};
+        return {week: null, season: null, games: [], existingPicks: []};
       }
 
       weekRes = res.week;
       season = res.season;
     }
 
-    const games = await datastore.game.findMany({
-      where: {week: weekRes, season},
-    });
+    const [games, existingPicks] = await Promise.all([
+      datastore.game.findMany({
+        where: {week: weekRes, season},
+      }),
+      datastore.pick.findMany({where: {leaguemembers: {league_id}}}),
+    ]);
 
     return {
       week: weekRes,
       season,
       games,
+      existingPicks,
     };
   }
 }
 
-async function findWeekForPicks(): Promise<{
+async function findWeekForPicks({
+  league_id,
+}: {
+  league_id: number;
+}): Promise<{
   week: number;
   season: number;
 } | null> {

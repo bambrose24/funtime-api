@@ -15,7 +15,7 @@ import {
 } from '@generated/type-graphql';
 import {Authorized, Field, MiddlewareFn} from 'type-graphql';
 import PicksByWeekResolver from './queries/picksByWeek';
-import {FirstNotFinishedWeekResolver} from './queries/firstNotFinishedWeek';
+import {WeekForPicksResolver} from './queries/weekForPicks';
 import MostRecentStartedWeekResolver from './queries/mostRecentStartedWeek';
 import GameLiveResolver from './queries/liveStatus';
 import {Role} from '@shared/auth/graphql';
@@ -172,7 +172,7 @@ const resolvers = [
   RegisterResolver,
   MakePicksResolver,
   PicksByWeekResolver,
-  FirstNotFinishedWeekResolver,
+  WeekForPicksResolver,
   MostRecentStartedWeekResolver,
   GameLiveResolver,
   LeagueMemberPickAggregateResolver,
