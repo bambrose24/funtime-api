@@ -4,7 +4,7 @@ import {League, LeagueMember} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
 import {ApolloPrismaContext} from '@graphql/server/types';
-import {getUser, getUserEnforced} from '@shared/auth/user';
+import {getUserEnforced} from '@shared/auth/user';
 
 enum LeagueStatus {
   NOT_STARTED = 'not_started',
