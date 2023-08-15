@@ -23,17 +23,6 @@ export default class LeagueID {
     return league.league_id.toString();
   }
 
-  @FieldResolver(_type => Boolean)
-  async isViewerMember(@Root() league: League): Promise<boolean> {
-    const {dbUser} = getUser() ?? {};
-    if (!dbUser) return false;
-
-    const membership = await datastore.leagueMember.findFirst({
-      where: {league_id: league.league_id, user_id: dbUser.uid},
-    });
-    return membership !== undefined;
-  }
-
   @FieldResolver(() => LeagueStatus)
   async status(@Root() league: League): Promise<LeagueStatus> {
     const now = new Date();
