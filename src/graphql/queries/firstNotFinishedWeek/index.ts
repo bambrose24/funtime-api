@@ -8,7 +8,7 @@ import {PhoneNumberMock} from 'graphql-scalars';
 import {SEASON} from '@util/const';
 
 @ObjectType()
-class FirstNotStartedWeekResponse {
+class FirstNotFinishedWeekResponse {
   @Field(() => Int, {nullable: true})
   week: number | null;
   @Field(() => Int, {nullable: true})
@@ -17,14 +17,14 @@ class FirstNotStartedWeekResponse {
   games: Array<Game>;
 }
 
-class FirstNotStartedWeekResolver {
-  @Query(() => FirstNotStartedWeekResponse)
-  async firstNotStartedWeek(
+export class FirstNotFinishedWeekResolver {
+  @Query(() => FirstNotFinishedWeekResponse)
+  async firstNotFinishedWeek(
     @Arg('override', () => Boolean, {nullable: true})
     override?: boolean | null,
     @Arg('week', () => Int, {nullable: true})
     week?: number | null
-  ): Promise<FirstNotStartedWeekResponse> {
+  ): Promise<FirstNotFinishedWeekResponse> {
     let weekRes: number;
     let season: number;
     if (week && override) {
@@ -72,19 +72,11 @@ async function findWeekForPicks(): Promise<{
 
   const startedWeeks = new Set<string>();
 
-  gamesWithinMonth.forEach(game => {
-    if (game.ts < now().toDate()) {
-      startedWeeks.add(`${game.week},${game.season}`);
-    }
-  });
-
-  for (let i = 0; i < gamesWithinMonth.length; i++) {
-    const {week, season} = gamesWithinMonth[i];
-    if (!startedWeeks.has(`${week},${season}`)) {
-      return {week, season};
+  for (const game of gamesWithinMonth) {
+    if (game.ts > now().toDate()) {
+      return {week: game.week, season: game.season};
     }
   }
+
   return null;
 }
-
-export default FirstNotStartedWeekResolver;
