@@ -33,7 +33,25 @@ class MakePicksResolver {
     @Arg('member_id', () => Int) member_id: number,
     @Arg('picks', () => [GamePick]) picks: GamePick[]
   ): Promise<MakePicksResponse> {
-    const {week, season} = await upsertWeekPicksForMember(member_id, picks);
+    const user = await datastore.leagueMember
+      .findFirstOrThrow({where: {membership_id: {equals: member_id}}})
+      .people();
+    if (picks.length === 0) {
+      return {success: false, user};
+    }
+
+    const startedGamesForWeek = await datastore.game.findMany({
+      where: {
+        gid: {in: picks.map(p => p.game_id)},
+        ts: {
+          lt: new Date(),
+        },
+      },
+    });
+    const startedGids = new Set(startedGamesForWeek.map(g => g.gid));
+    const filteredPicks = picks.filter(p => !startedGids.has(p.game_id));
+
+    const {week, season} = await upsertWeekPicksForMember(member_id, filteredPicks);
 
     try {
       await sendPickSuccessEmail(member_id, week, season);
@@ -41,11 +59,7 @@ class MakePicksResolver {
       console.log('email error', e);
     }
 
-    const user = await datastore.leagueMember
-      .findFirstOrThrow({where: {membership_id: {equals: member_id}}})
-      .people();
-
-    return {success: true, user: user as User};
+    return {success: true, user};
   }
 }
 
