@@ -66,27 +66,55 @@ async function findWeekForPicks({
   week: number;
   season: number;
 } | null> {
-  const gamesWithinMonth = await datastore.game.findMany({
-    where: {
-      ts: {
-        gte: now()
-          .subtract({months: 1})
-          .toDate(),
-        lte: now()
-          .add({months: 1})
-          .toDate(),
+  const [gamesWithinMonth, league] = await Promise.all([
+    datastore.game.findMany({
+      where: {
+        ts: {
+          gte: now()
+            .subtract({months: 1})
+            .toDate(),
+          lte: now()
+            .add({months: 1})
+            .toDate(),
+        },
       },
-    },
-    orderBy: {ts: 'asc'},
-  });
+      orderBy: {ts: 'asc'},
+    }),
+    datastore.league.findFirstOrThrow({where: {league_id}}),
+  ]);
 
-  const startedWeeks = new Set<string>();
+  switch (league.late_policy) {
+    case 'allow_late_whole_week':
+      return firstNotStartedGame(gamesWithinMonth);
+    case 'close_at_first_game_start':
+      return firstNotStartedWeek(gamesWithinMonth);
+  }
 
-  for (const game of gamesWithinMonth) {
-    if (game.ts > now().toDate()) {
+  return null;
+}
+
+function firstNotStartedGame(gamesSorted: Array<Game>) {
+  const now = new Date();
+  for (const game of gamesSorted) {
+    if (game.ts > now) {
       return {week: game.week, season: game.season};
     }
   }
+  return null;
+}
 
+function firstNotStartedWeek(gamesSorted: Array<Game>) {
+  const now = new Date();
+  const startedWeekSeasons = new Set();
+  for (const game of gamesSorted) {
+    if (game.ts > now) {
+      startedWeekSeasons.add(`${game.week},${game.season}`);
+    }
+  }
+  for (const game of gamesSorted) {
+    if (!startedWeekSeasons.has(`${game.week},${game.season}`)) {
+      return {week: game.week, season: game.season};
+    }
+  }
   return null;
 }
