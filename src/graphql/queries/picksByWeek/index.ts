@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Game, Pick, Prisma} from '@prisma/client';
+import {Game, MemberRole, Pick, Prisma} from '@prisma/client';
 import datastore from '@shared/datastore';
 import moment from 'moment';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
+import {getUserEnforced} from '@shared/auth/user';
 
 @ObjectType()
 class PicksByWeekResponse {
@@ -26,17 +27,26 @@ class PicksByWeekResolver {
     @Arg('league_id', () => Int)
     league_id: number,
     @Arg('week', () => Int, {nullable: true})
-    week: number | null,
-    @Arg('override', {nullable: true})
-    override: boolean
+    week: number | null
   ): Promise<PicksByWeekResponse> {
-    console.log('top of resolver...');
-    const league = await datastore.league.findFirst({
-      where: {league_id: {equals: league_id}},
-    });
-    console.log('league?', league, league?.league_id);
+    const {dbUser} = getUserEnforced();
+    const [league, member] = await Promise.all([
+      datastore.league.findFirst({
+        where: {league_id: {equals: league_id}},
+      }),
+      dbUser?.uid
+        ? datastore.leagueMember.findFirst({
+            where: {
+              league_id,
+              user_id: dbUser.uid,
+            },
+          })
+        : null,
+    ]);
 
-    const season = league?.season as number;
+    const override = member?.role === MemberRole.admin;
+
+    const season = league?.season;
 
     if (!season) {
       throw new Error(`could not find season from league_id ${league_id}`);
@@ -44,15 +54,13 @@ class PicksByWeekResolver {
 
     let games: Array<Game> | undefined;
     const whereInput: Prisma.GameWhereInput = {};
+
     if (week) {
       whereInput['week'] = {equals: week};
       whereInput['season'] = {equals: season};
 
       games = await datastore.game.findMany({
-        where: {
-          week: {equals: week},
-          season: {equals: season},
-        },
+        where: whereInput,
         orderBy: {ts: 'asc'},
       });
     } else {
