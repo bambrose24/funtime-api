@@ -53,7 +53,7 @@ export async function sendRegistrationMail(
       ),
     });
   } catch (e) {
-    console.log('got a sendgrid error', JSON.stringify(e));
+    console.error('got a email send error', JSON.stringify(e));
   }
 }
 
