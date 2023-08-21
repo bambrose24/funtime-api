@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {League, User} from '@prisma/client';
 import datastore from '../datastore';
-import {mailClient, resend} from './client';
+import {resend} from './client';
 import {RegistrationEmail} from './react/registration/RegistrationEmail';
 
-import {getDefaultSendParams, getRegistrationText, getWeekPicksContent} from './util';
+import {getDefaultSendParams, getWeekPicksContent} from './util';
 
 // const OAuth2Client = new google.auth.OAuth2(
 //   process.env.SYSTEM_EMAIL_CLIENT_ID,
