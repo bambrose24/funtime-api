@@ -1,6 +1,8 @@
-import {User} from '@prisma/client';
-import datastore from '@shared/datastore';
-import mailClient from './client';
+import * as React from 'react';
+import {League, User} from '@prisma/client';
+import datastore from '../datastore';
+import {mailClient, resend} from './client';
+import {RegistrationEmail} from './react/registration/RegistrationEmail';
 
 import {getDefaultSendParams, getRegistrationText, getWeekPicksContent} from './util';
 
@@ -15,7 +17,7 @@ import {getDefaultSendParams, getRegistrationText, getWeekPicksContent} from './
 
 export async function sendRegistrationMail(
   user: User,
-  season: number,
+  league: League,
   superbowlWinner: number,
   superbowlLoser: number,
   superbowlScore: number
@@ -28,12 +30,27 @@ export async function sendRegistrationMail(
   const loser = teams.find(t => t.teamid === superbowlLoser)!;
 
   try {
-    await mailClient.send({
+    await resend.sendEmail({
       ...getDefaultSendParams(user.email),
       to: user.email,
-      from: 'bob.ambrose.funtime@gmail.com',
-      subject: 'Welcome to Funtime 2022!',
-      html: getRegistrationText(user.username, season, winner, loser, superbowlScore),
+      from: 'team@play-funtime.com',
+      subject: `Welcome to ${league.name}!`,
+      react: (
+        <RegistrationEmail
+          email={user.email}
+          leagueName={league.name}
+          superbowl={
+            loser && winner
+              ? {
+                  superBowlLoser: loser.abbrev || '',
+                  superBowlScore: superbowlScore,
+                  superBowlWinner: winner.abbrev || '',
+                }
+              : undefined
+          }
+          username={user.username}
+        />
+      ),
     });
   } catch (e) {
     console.log('got a sendgrid error', JSON.stringify(e));

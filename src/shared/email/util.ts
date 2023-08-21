@@ -1,7 +1,6 @@
-import {MailDataRequired} from '@sendgrid/mail';
 import {Game, User, Pick as DBPick, Team} from '@prisma/client';
 
-export function getDefaultSendParams(email: string): Pick<MailDataRequired, 'cc' | 'replyToList'> {
+export function getDefaultSendParams(email: string) {
   return {
     replyToList: [
       {name: 'Bob Ambrose', email: 'bambrose24@gmail.com'},

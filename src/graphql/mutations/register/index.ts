@@ -72,13 +72,7 @@ class RegisterResolver {
     await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
 
     try {
-      await sendRegistrationMail(
-        user,
-        league.season,
-        superbowlWinner,
-        superbowlLoser,
-        superbowlScore
-      );
+      await sendRegistrationMail(user, league, superbowlWinner, superbowlLoser, superbowlScore);
     } catch (e) {
       console.log('email error:', e);
     }

@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "sourceMap": false
+    "sourceMap": false,
+    "jsx": "react"
   },
   "exclude": ["spec", "src/**/*.mock.ts", "src/public/"]
 }
