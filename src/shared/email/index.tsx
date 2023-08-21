@@ -86,10 +86,9 @@ export async function sendPickSuccessEmail(
   const {email} = user;
 
   try {
-    await mailClient.send({
+    await resend.sendEmail({
       ...getDefaultSendParams(email),
       to: user.email,
-      from: 'bob.ambrose.funtime@gmail.com',
       subject: `Your Funtime Picks for Week ${week}, ${season}`,
       html: getWeekPicksContent({
         week,
