@@ -4,6 +4,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import {SEASON} from '@util/const';
+import {getUser} from '@shared/auth/user';
 
 @ObjectType()
 class WeekForPicksResponse {
@@ -22,6 +23,8 @@ export class WeekForPicksResolver {
   async weekForPicks(
     @Arg('leagueId', () => Int)
     league_id: number,
+    @Arg('memberId', () => Int, {nullable: true})
+    member_id: number | null,
     @Arg('override', () => Boolean, {nullable: true})
     override?: boolean | null,
     @Arg('week', () => Int, {nullable: true})
@@ -42,11 +45,26 @@ export class WeekForPicksResolver {
       season = res.season;
     }
 
+    const user = getUser();
+    if (!user || !user.dbUser) {
+      throw new Error('Need registered authd user to make picks');
+    }
+    const viewerMember = await datastore.leagueMember.findFirstOrThrow({
+      where: {user_id: user.dbUser.uid},
+    });
+
+    if (member_id) {
+      if (viewerMember.role !== 'admin') {
+        throw new Error('Cannot try to make picks on someones behalf if youre not an admin');
+      }
+    }
+    const memberId = member_id ?? viewerMember.membership_id;
+
     const [games, existingPicks] = await Promise.all([
       datastore.game.findMany({
         where: {week: weekRes, season},
       }),
-      datastore.pick.findMany({where: {leaguemembers: {league_id}}}),
+      datastore.pick.findMany({where: {leaguemembers: {league_id, membership_id: memberId}}}),
     ]);
 
     return {
