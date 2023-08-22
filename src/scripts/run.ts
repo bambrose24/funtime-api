@@ -1,5 +1,5 @@
 // run a script like
-// npm run run-script -- make-email-unique.ts
+// npm run run-script -- make-email-unique
 // with package.json entry of
 // "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts"
 // REMINDER TO CHANGE THE DB URL
@@ -22,7 +22,7 @@ import {execSync} from 'child_process';
 
 const scriptPath = resolve(__dirname, scriptName);
 
-console.log(`Running script: ${scriptPath}`);
-execSync(`npx ts-node -r tsconfig-paths/register ${scriptPath}`, {
+console.log(`Running script: ${scriptPath}.ts`);
+execSync(`npx ts-node -r tsconfig-paths/register ${scriptPath}.ts`, {
   stdio: 'inherit',
 });
