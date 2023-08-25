@@ -12,13 +12,13 @@ export default class LeagueMemberID {
   }
 
   @FieldResolver(_type => TypeGraphQL.Game, {nullable: true})
-  async nextGame(@Root() _leagueMember: LeagueMember): Promise<TypeGraphQL.Game | null> {
-    return await getNextGame();
+  async nextGame(@Root() leagueMember: LeagueMember): Promise<TypeGraphQL.Game | null> {
+    return await getNextGame({leagueId: leagueMember.league_id});
   }
 
   @FieldResolver(_type => Boolean)
   async hasPickedNextGame(@Root() leagueMember: LeagueMember): Promise<boolean> {
-    const nextGame = await getNextGame();
+    const nextGame = await getNextGame({leagueId: leagueMember.league_id});
     if (!nextGame) {
       return true;
     }
