@@ -1,4 +1,4 @@
-import {Game, Pick} from '@prisma/client';
+import {Game, LeagueMember, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
@@ -16,6 +16,8 @@ class WeekForPicksResponse {
   games: Array<Game>;
   @Field(() => [TypeGraphQL.Pick]!)
   existingPicks: Array<Pick>;
+  @Field(() => TypeGraphQL.LeagueMember, {nullable: true})
+  leagueMember: LeagueMember | null;
 }
 
 export class WeekForPicksResolver {
@@ -38,7 +40,7 @@ export class WeekForPicksResolver {
     } else {
       const res = await findWeekForPicks({league_id});
       if (res === null) {
-        return {week: null, season: null, games: [], existingPicks: []};
+        return {week: null, season: null, games: [], existingPicks: [], leagueMember: null};
       }
 
       weekRes = res.week;
@@ -49,22 +51,33 @@ export class WeekForPicksResolver {
     if (!user || !user.dbUser) {
       throw new Error('Need registered authd user to make picks');
     }
+
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
-      where: {user_id: user.dbUser.uid},
+      where: {league_id, people: {uid: user.dbUser.uid}},
     });
 
     if (member_id) {
+      const otherMember = await datastore.leagueMember.findFirst({
+        where: {
+          league_id,
+          membership_id: member_id,
+        },
+      });
+      if (!otherMember) {
+        throw new Error(`Could not find member ${member_id} to make picks on behalf of`);
+      }
       if (viewerMember.role !== 'admin') {
         throw new Error('Cannot try to make picks on someones behalf if youre not an admin');
       }
     }
     const memberId = member_id ?? viewerMember.membership_id;
 
-    const [games, existingPicks] = await Promise.all([
+    const [games, existingPicks, leagueMember] = await Promise.all([
       datastore.game.findMany({
         where: {week: weekRes, season},
       }),
       datastore.pick.findMany({where: {leaguemembers: {league_id, membership_id: memberId}}}),
+      datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
     ]);
 
     return {
@@ -72,6 +85,7 @@ export class WeekForPicksResolver {
       season,
       games,
       existingPicks,
+      leagueMember,
     };
   }
 }

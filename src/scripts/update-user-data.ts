@@ -7,7 +7,7 @@ async function run() {
     where: {leaguemembers: {some: {membership_id: {in: memberIds}}}},
   });
 
-  await datastore.leagueMember.update({where: {membership_id: 382}, data: {role: 'admin'}});
+  await datastore.leagueMember.update({where: {membership_id: 378}, data: {role: 'admin'}});
 }
 
 run();

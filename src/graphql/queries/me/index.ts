@@ -1,4 +1,4 @@
-import {Query, Resolver} from 'type-graphql';
+import {Arg, Query, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import datastore from '@shared/datastore';
 import {getUser} from '@shared/auth/user';
