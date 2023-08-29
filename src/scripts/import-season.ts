@@ -17,7 +17,6 @@ async function run() {
     console.log(
       `not importing season because ${existingGames.length} games exist for season ${SEASON} in env ${env}`
     );
-    console.log('dummy log for redeploy');
     return;
   }
 
