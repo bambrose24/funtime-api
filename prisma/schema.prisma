@@ -48,6 +48,7 @@ model LeagueMember {
   membership_id Int           @id(map: "idx_18414_primary") @default(autoincrement())
   league_id     Int
   user_id       Int
+  paid          Boolean?      @default(false)
   role          MemberRole?   @default(player)
   ts            DateTime      @default(now()) @db.Timestamptz(6)
   people        User          @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1")
