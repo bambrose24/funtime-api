@@ -3,6 +3,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {LeagueMember} from '@prisma/client';
 import {getNextGame} from '@shared/queries/getNextGame';
 import datastore from '@shared/datastore';
+import {RequestContext} from '@util/request-context';
 
 @Resolver(() => TypeGraphQL.LeagueMember)
 export default class LeagueMemberID {
@@ -13,12 +14,13 @@ export default class LeagueMemberID {
 
   @FieldResolver(_type => TypeGraphQL.Game, {nullable: true})
   async nextGame(@Root() leagueMember: LeagueMember): Promise<TypeGraphQL.Game | null> {
-    return await getNextGame({leagueId: leagueMember.league_id});
+    const game = await RequestContext.get('getNextGame', {leagueId: leagueMember.league_id});
+    return game ?? null;
   }
 
   @FieldResolver(_type => Boolean)
   async hasPickedNextGame(@Root() leagueMember: LeagueMember): Promise<boolean> {
-    const nextGame = await getNextGame({leagueId: leagueMember.league_id});
+    const nextGame = await RequestContext.get('getNextGame', {leagueId: leagueMember.league_id});
     if (!nextGame) {
       return true;
     }
