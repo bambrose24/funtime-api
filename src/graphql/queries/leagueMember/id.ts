@@ -21,6 +21,7 @@ export default class LeagueMemberID {
   @FieldResolver(_type => Boolean)
   async hasPickedNextGame(@Root() leagueMember: LeagueMember): Promise<boolean> {
     const nextGame = await RequestContext.get('getNextGame', {leagueId: leagueMember.league_id});
+    console.log('nextGame', nextGame);
     if (!nextGame) {
       return true;
     }
