@@ -80,11 +80,11 @@ app.use(async (req, res, next) => {
 // keepThingsUpdated();
 
 // Run the 3 minute cron
-// if (env === 'production') {
-//   cron.schedule('*/3 * * * *', async () => {
-//     await keepThingsUpdated();
-//   });
-// }
+if (env === 'production') {
+  cron.schedule('*/3 * * * *', async () => {
+    // await keepThingsUpdated();
+  });
+}
 
 async function bootstrap() {
   const schema = await buildSchema({
