@@ -1,6 +1,10 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
+
+import * as Sentry from '@sentry/node';
+import {ProfilingIntegration} from '@sentry/profiling-node';
+
 import morgan from 'morgan';
 import helmet from 'helmet';
 import StatusCodes from 'http-status-codes';
@@ -32,6 +36,32 @@ import datastore from '@shared/datastore';
 
 const app = express();
 
+Sentry.init({
+  dsn:
+    'https://8d484c4b5caa42fb1c88d9bff9f13fd5@o4505802352754688.ingest.sentry.io/4505802354196480',
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({
+      tracing: true,
+    }),
+    // enable Express.js middleware tracing
+    new Sentry.Integrations.Express({
+      app,
+    }),
+    new ProfilingIntegration(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+  // Set sampling rate for profiling - this is relative to tracesSampleRate
+  profilesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+});
+
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
+
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler());
+
 /************************************************************************************
  *                              Set basic express settings
  ***********************************************************************************/
@@ -57,10 +87,6 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
     error: err.message,
   });
 });
-
-/************************************************************************************
- *                              Serve front-end content
- ***********************************************************************************/
 
 app.use(cors());
 
@@ -115,15 +141,11 @@ async function bootstrap() {
     })
   );
 }
-bootstrap();
 
-var swStats = require('swagger-stats');
-
-// Load your swagger specification
-var apiSpec = require('./swagger.json');
-
-// Enable swagger-stats middleware in express app, passing swagger specification as option
-app.use(swStats.getMiddleware({swaggerSpec: apiSpec}));
+bootstrap().then(() => {
+  // The error handler must be registered before any other error middleware and after all controllers
+  app.use(Sentry.Handlers.errorHandler());
+});
 
 /************************************************************************************
  *                              Export Server
