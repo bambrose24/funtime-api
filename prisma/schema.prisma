@@ -158,6 +158,9 @@ model Pick {
   @@index([ts], map: "idx_18437_ts")
   @@index([gid], map: "idx_18437_gid")
   @@index([member_id], map: "idx_18437_picks_ibfk_3")
+  @@index([week, season], name: "idx_week_season")
+  @@index([week, member_id], name: "idx_week_member")
+  @@index([week, season, member_id], name: "idx_week_season_member")
   @@index([uid], map: "idx_18437_uid")
   @@map("picks")
 }
