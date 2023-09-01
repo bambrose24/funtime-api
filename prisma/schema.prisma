@@ -33,6 +33,9 @@ model Game {
   teams_games_awayToteams Team     @relation("games_awayToteams", fields: [away], references: [teamid], onUpdate: Restrict, map: "games_ibfk_2")
   picks                   Pick[]
 
+  @@index([season], map: "idx_18403_season")
+  @@index([week], map: "idx_18403_week")
+  @@index([ts], map: "idx_18403_ts")
   @@index([away], map: "idx_18403_away")
   @@index([home], map: "idx_18403_home")
   @@index([msf_id], map: "idx_18403_msf_id")
@@ -57,6 +60,9 @@ model LeagueMember {
   superbowl     Superbowl[]
   WeekWinners   WeekWinners[]
 
+  @@index([paid], map: "idx_18414_paid")
+  @@index([role], map: "idx_18414_role")
+  @@index([ts], map: "idx_18414_ts")
   @@index([league_id], map: "idx_18414_league_id")
   @@index([user_id], map: "idx_18414_user_id")
   @@map("leaguemembers")
@@ -98,6 +104,9 @@ model League {
   priorLeague           League?         @relation("prior_leagues", fields: [prior_league_id], references: [league_id])
   nextLeague            League?         @relation("prior_leagues")
 
+  @@index([season], map: "idx_18422_season")
+  @@index([name], map: "idx_18422_name")
+  @@index([created_time], map: "idx_18422_created_time")
   @@index([share_code], map: "idx_share_code") // Added index on shareCode
   @@index([created_by_user_id], map: "idx_18422_created_by_user_id")
   @@map("leagues")
@@ -120,6 +129,8 @@ model User {
   leagues       League[]
   picks         Pick[]
 
+  @@index([season], map: "idx_18430_season")
+  @@index([supabase_id], map: "idx_18430_supabase_id")
   @@index([email], map: "idx_18430_email_index")
   @@map("people")
 }
@@ -142,6 +153,9 @@ model Pick {
   people        User          @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "picks_ibfk_2")
   leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "picks_ibfk_3")
 
+  @@index([season], map: "idx_18437_season")
+  @@index([week], map: "idx_18437_week")
+  @@index([ts], map: "idx_18437_ts")
   @@index([gid], map: "idx_18437_gid")
   @@index([member_id], map: "idx_18437_picks_ibfk_3")
   @@index([uid], map: "idx_18437_uid")
@@ -161,6 +175,8 @@ model Superbowl {
   leaguemembers                 LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_member_id")
   teams_superbowl_winnerToteams Team          @relation("superbowl_winnerToteams", fields: [winner], references: [teamid], onDelete: NoAction, onUpdate: NoAction, map: "fk_winner_team")
 
+  @@index([season], map: "idx_18448_season")
+  @@index([ts], map: "idx_18448_ts")
   @@index([member_id], map: "idx_18448_member_id")
   @@map("superbowl")
 }
@@ -174,6 +190,7 @@ model SuperbowlSquare {
   correct         Boolean
   ts              DateTime @default(now()) @db.Timestamptz(6)
 
+  @@index([ts], map: "idx_18454_ts")
   @@map("superbowlsquares")
 }
 
@@ -188,6 +205,9 @@ model Team {
   superbowl_superbowl_loserToteams  Superbowl[] @relation("superbowl_loserToteams")
   superbowl_superbowl_winnerToteams Superbowl[] @relation("superbowl_winnerToteams")
 
+  @@index([abbrev], map: "idx_18460_abbrev")
+  @@index([loc], map: "idx_18460_loc")
+  @@index([conference], map: "idx_18460_conference")
   @@map("teams")
 }
 
