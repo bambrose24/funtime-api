@@ -109,7 +109,7 @@ app.use(async (req, res, next) => {
 // Run the 3 minute cron
 if (env === 'production') {
   cron.schedule('*/3 * * * *', async () => {
-    // await keepThingsUpdated();
+    await keepThingsUpdated();
   });
 }
 

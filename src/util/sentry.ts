@@ -1,6 +1,7 @@
 import {ApolloServerPlugin} from '@apollo/server';
 import {ApolloContext} from '@graphql/server/types';
 
+// https://blog.sentry.io/guest-post-performance-monitoring-in-graphql/
 export const sentryPlugin: ApolloServerPlugin<ApolloContext> = {
   requestDidStart({request, contextValue}) {
     return new Promise(resolve => {
