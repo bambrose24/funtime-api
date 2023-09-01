@@ -1,6 +1,6 @@
 import {Arg, Ctx, FieldResolver, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {ApolloPrismaContext} from 'src/graphql/server/types';
+import {ApolloContext} from 'src/graphql/server/types';
 import {LeagueMember} from '@prisma/client';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
 
@@ -9,7 +9,7 @@ export default class LeagueMemberPickAggregateResolver {
   @FieldResolver(_type => AggregateResponse)
   async aggregatePick(
     @Root() member: LeagueMember,
-    @Ctx() {prisma: datastore}: ApolloPrismaContext,
+    @Ctx() {prisma: datastore}: ApolloContext,
     @Arg('where', _type => TypeGraphQL.PickWhereInput, {nullable: true})
     where: Parameters<typeof datastore.pick.aggregate>[0]['where']
   ): Promise<AggregateResponse> {

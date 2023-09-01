@@ -1,5 +1,7 @@
 import datastore from '@shared/datastore';
+import {Transaction} from '@sentry/types';
 
-export type ApolloPrismaContext = {
+export type ApolloContext = {
   prisma: typeof datastore;
+  transaction: Transaction;
 };

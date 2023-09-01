@@ -1,14 +1,14 @@
-import {Arg, Ctx, Field, Int, FieldResolver, ObjectType, Resolver, Root} from 'type-graphql';
+import {Arg, Ctx, FieldResolver, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {ApolloPrismaContext} from 'src/graphql/server/types';
-import {Game, League, LeagueMember} from '@prisma/client';
+import {ApolloContext} from 'src/graphql/server/types';
+import {Game, League} from '@prisma/client';
 
 @Resolver(() => TypeGraphQL.League)
 export default class LeagueGames {
   @FieldResolver(_type => [TypeGraphQL.Game])
   async games(
     @Root() league: League,
-    @Ctx() {prisma: datastore}: ApolloPrismaContext,
+    @Ctx() {prisma: datastore}: ApolloContext,
     @Arg('where', _type => TypeGraphQL.GameWhereInput, {nullable: true})
     where: TypeGraphQL.GameWhereInput
   ): Promise<Game[]> {

@@ -1,7 +1,7 @@
 import {FieldResolver, Resolver, Root, Ctx} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League} from '@prisma/client';
-import {ApolloPrismaContext} from '@graphql/server/types';
+import {ApolloContext} from '@graphql/server/types';
 import {
   getLatePickPolicyDescription,
   getPickPolicyDescription,
@@ -17,7 +17,7 @@ export default class LeagueRulesResolver {
   @FieldResolver(_type => [LeagueRuleWithExplanation])
   async rules(
     @Root() league: League,
-    @Ctx() {prisma: _datastore}: ApolloPrismaContext
+    @Ctx() {prisma: _datastore}: ApolloContext
   ): Promise<LeagueRuleWithExplanation[]> {
     return await getRulesForLeague(league.league_id);
   }

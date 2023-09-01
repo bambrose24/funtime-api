@@ -1,6 +1,6 @@
 import {Ctx, Field, FieldResolver, Int, ObjectType, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {ApolloPrismaContext} from 'src/graphql/server/types';
+import {ApolloContext} from 'src/graphql/server/types';
 import {getGamesByWeek} from '../../../shared/mysportsfeeds';
 import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
 import {Game} from '@prisma/client';
@@ -20,7 +20,7 @@ export default class GameLiveResolver {
   @FieldResolver(_type => GameLive, {nullable: true})
   async liveStatus(
     @Root() game: Game,
-    @Ctx() {prisma: datastore}: ApolloPrismaContext
+    @Ctx() {prisma: datastore}: ApolloContext
   ): Promise<GameLive | undefined | null> {
     const [teams, msfGames] = await Promise.all([
       datastore.team.findMany({where: {teamid: {gt: 0}}}),

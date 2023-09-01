@@ -31,8 +31,9 @@ import cors from 'cors';
 import {env} from './config';
 import {authorizeAndSetSupabaseUser} from '@shared/auth';
 import {customAuthChecker} from '@shared/auth/graphql';
-import {ApolloPrismaContext} from '@graphql/server/types';
+import {ApolloContext} from '@graphql/server/types';
 import datastore from '@shared/datastore';
+import {sentryPlugin} from '@util/sentry';
 
 const app = express();
 
@@ -126,6 +127,7 @@ async function bootstrap() {
     introspection: true,
     // Need to figure out how to clear the cache after mutations
     // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
+    plugins: [sentryPlugin],
   });
 
   await server.start();
@@ -135,8 +137,12 @@ async function bootstrap() {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
-      context: async ({req: _req}): Promise<ApolloPrismaContext> => {
-        return {prisma: datastore};
+      context: async ({req: _req}): Promise<ApolloContext> => {
+        const transaction = Sentry.startTransaction({
+          op: 'gql',
+          name: 'GraphQLTransaction', // this will be the default name, unless the gql query has a name
+        });
+        return {prisma: datastore, transaction};
       },
     })
   );

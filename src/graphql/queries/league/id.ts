@@ -3,7 +3,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {League, LeagueMember} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
-import {ApolloPrismaContext} from '@graphql/server/types';
+import {ApolloContext} from '@graphql/server/types';
 import {getUser, getUserEnforced} from '@shared/auth/user';
 
 enum LeagueStatus {
@@ -43,7 +43,7 @@ export default class LeagueID {
   @FieldResolver(_type => AggregateResponse)
   async aggregateLeagueMember(
     @Root() league: League,
-    @Ctx() {prisma: datastore}: ApolloPrismaContext,
+    @Ctx() {prisma: datastore}: ApolloContext,
     @Arg('where', _type => TypeGraphQL.LeagueMemberWhereInput, {nullable: true})
     where: Parameters<typeof datastore.pick.aggregate>[0]['where']
   ): Promise<AggregateResponse> {
@@ -58,7 +58,7 @@ export default class LeagueID {
   @FieldResolver(_type => TypeGraphQL.LeagueMember, {nullable: true})
   async viewer(
     @Root() league: League,
-    @Ctx() {prisma: datastore}: ApolloPrismaContext
+    @Ctx() {prisma: datastore}: ApolloContext
   ): Promise<LeagueMember | null> {
     const {dbUser} = getUser() ?? {};
     if (!dbUser) {

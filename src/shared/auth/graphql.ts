@@ -1,4 +1,4 @@
-import {ApolloPrismaContext} from '@graphql/server/types';
+import {ApolloContext} from '@graphql/server/types';
 import {AuthChecker} from 'type-graphql';
 import {getUser} from './user';
 
@@ -8,7 +8,7 @@ export enum Role {
   SysAdmin = 'sys_admin',
 }
 
-export const customAuthChecker: AuthChecker<ApolloPrismaContext, Role> = async (
+export const customAuthChecker: AuthChecker<ApolloContext, Role> = async (
   {args, context, info, root},
   roles
 ) => {
