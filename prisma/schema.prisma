@@ -104,19 +104,21 @@ model League {
 }
 
 model User {
-  uid              Int            @id(map: "idx_18430_primary") @default(autoincrement())
-  username         String         @db.VarChar(255)
-  fname            String         @db.VarChar(255)
-  lname            String         @db.VarChar(255)
-  email            String         @unique @db.VarChar(255)
+  uid              Int     @id(map: "idx_18430_primary") @default(autoincrement())
+  username         String  @db.VarChar(255)
+  fname            String  @db.VarChar(255)
+  lname            String  @db.VarChar(255)
+  email            String  @unique @db.VarChar(255)
   season           Int
-  email2           String?        @db.VarChar(255)
+  email2           String? @db.VarChar(255)
   google_photo_url String?
   google_email     String?
   google_userid    String?
-  leaguemembers    LeagueMember[]
-  leagues          League[]
-  picks            Pick[]
+  supabase_id      String? @unique @db.VarChar(255)
+
+  leaguemembers LeagueMember[]
+  leagues       League[]
+  picks         Pick[]
 
   @@index([email], map: "idx_18430_email_index")
   @@map("people")
