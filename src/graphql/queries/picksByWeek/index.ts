@@ -98,13 +98,13 @@ class PicksByWeekResolver {
 
     const canView = games[0].ts < moment().toDate();
 
+    const members = await datastore.leagueMember.findMany({where: {league_id}});
+
     const picks = await datastore.pick.findMany({
       where: {
         week: {equals: realWeek},
         season: {equals: realSeason},
-        leaguemembers: {
-          league_id: {equals: league_id},
-        },
+        member_id: {in: members.map(m => m.membership_id)},
       },
     });
 
