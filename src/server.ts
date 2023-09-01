@@ -117,6 +117,14 @@ async function bootstrap() {
 }
 bootstrap();
 
+var swStats = require('swagger-stats');
+
+// Load your swagger specification
+var apiSpec = require('./swagger.json');
+
+// Enable swagger-stats middleware in express app, passing swagger specification as option
+app.use(swStats.getMiddleware({swaggerSpec: apiSpec}));
+
 /************************************************************************************
  *                              Export Server
  ***********************************************************************************/
