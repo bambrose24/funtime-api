@@ -30,7 +30,7 @@ class PicksByWeekResolver {
     week: number | null
   ): Promise<PicksByWeekResponse> {
     const {dbUser} = getUserEnforced();
-    const [league, member] = await Promise.all([
+    const [league, member, members] = await Promise.all([
       datastore.league.findFirst({
         where: {league_id: {equals: league_id}},
       }),
@@ -42,6 +42,7 @@ class PicksByWeekResolver {
             },
           })
         : null,
+      datastore.leagueMember.findMany({where: {league_id}}),
     ]);
 
     const override = member?.role === MemberRole.admin;
@@ -97,8 +98,6 @@ class PicksByWeekResolver {
     const {week: realWeek, season: realSeason} = games[0];
 
     const canView = games[0].ts < moment().toDate();
-
-    const members = await datastore.leagueMember.findMany({where: {league_id}});
 
     const picks = await datastore.pick.findMany({
       where: {
