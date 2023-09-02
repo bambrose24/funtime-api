@@ -35,7 +35,7 @@ async function run() {
       leaguemembers: {include: {leagues: true}},
     },
   });
-  const picksGrouped = await Object.values(_.groupBy(picks, p => p.leaguemembers?.league_id));
+  // const picksGrouped = await Object.values(_.groupBy(picks, p => p.leaguemembers?.league_id));
 
   const users = await datastore.user.findMany();
 
