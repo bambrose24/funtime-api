@@ -120,7 +120,7 @@ const resolversEnhancedMap: ResolversEnhanceMap = {
     deleteManySuperbowl: sysAdminAuth,
     deleteOneSuperbowl: sysAdminAuth,
     updateManySuperbowl: sysAdminAuth,
-    updateOneSuperbowl: sysAdminAuth,
+    updateOneSuperbowl: userAuth,
     upsertOneSuperbowl: sysAdminAuth,
   },
   SuperbowlSquare: {
