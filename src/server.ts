@@ -112,6 +112,7 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
   });
 }
 
+console.log('hi');
 async function bootstrap() {
   const schema = await buildSchema({
     resolvers,
