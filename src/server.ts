@@ -104,17 +104,12 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// keepThingsUpdated();
-
-async function singleCronRun() {
-  console.log('Starting cron');
-  await keepThingsUpdated();
-  process.exit();
-}
-
 // Run the 3 minute cron
 if (process.env.FUNTIME_RUN_CRON === 'true') {
-  singleCronRun();
+  console.log('Starting cron');
+  cron.schedule('*/3 * * * *', async () => {
+    await keepThingsUpdated();
+  });
 }
 
 async function bootstrap() {
