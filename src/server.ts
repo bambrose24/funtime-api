@@ -107,7 +107,8 @@ app.use(async (req, res, next) => {
 // keepThingsUpdated();
 
 // Run the 3 minute cron
-if (env === 'production') {
+if (process.env.FUNTIME_RUN_CRON === 'true') {
+  console.log('Starting cron');
   cron.schedule('*/3 * * * *', async () => {
     await keepThingsUpdated();
   });

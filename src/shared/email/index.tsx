@@ -6,15 +6,6 @@ import {RegistrationEmail} from './react/registration/RegistrationEmail';
 
 import {getDefaultSendParams, getWeekPicksContent} from './util';
 
-// const OAuth2Client = new google.auth.OAuth2(
-//   process.env.SYSTEM_EMAIL_CLIENT_ID,
-//   process.env.SYSTEM_EMAIL_CLIENT_SECRET,
-//   "https://developers.google.com/oauthplayground"
-// );
-// OAuth2Client.setCredentials({
-//   refresh_token: process.env.SYSTEM_EMAIL_REFRESH_TOKEN,
-// });
-
 export async function sendRegistrationMail(
   user: User,
   league: League,

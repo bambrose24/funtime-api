@@ -8,6 +8,8 @@ const port = process.env.PORT || config.port || 3000;
 const serverStartMsg = `🚀 Express server started on port: ${port} (node version ${process.version})`;
 
 // Start server
-server.listen(typeof port === 'string' ? parseInt(port) : port, '0.0.0.0', () => {
-  logger.info(serverStartMsg);
-});
+if (process.env.FUNTIME_RUN_SERVER === 'true') {
+  server.listen(typeof port === 'string' ? parseInt(port) : port, '0.0.0.0', () => {
+    logger.info(serverStartMsg);
+  });
+}
