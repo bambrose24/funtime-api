@@ -79,10 +79,12 @@ export function PicksSummary({week, league, picks, teams, games, user}: PicksSum
                     <div>{homeTeam.abbrev}</div>
                   </div>
                 </div>
-                {pick.score !== null && pick.score !== undefined && pick.score > 0 && (
+                {pick.score !== null && pick.score !== undefined && pick.score > 0 ? (
                   <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <div>Total Score: {pick.score}</div>
                   </div>
+                ) : (
+                  <div />
                 )}
                 {/* {i !== picks.length - 1 && <Hr style={{width: '100%'}} />} */}
               </div>
