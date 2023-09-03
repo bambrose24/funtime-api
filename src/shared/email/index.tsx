@@ -6,6 +6,7 @@ import {RegistrationEmail} from './react/registration/RegistrationEmail';
 import {WeekPicksReminder} from './react/reminders/WeekPicksReminder';
 
 import {getDefaultSendParams, getWeekPicksContent} from './util';
+import {PicksSummary} from './react/picks/PicksSummary';
 
 export async function sendRegistrationMail(
   user: User,
@@ -53,7 +54,7 @@ export async function sendPickSuccessEmail(
   week: number,
   season: number
 ): Promise<boolean> {
-  const [games, picks, user, teams] = await Promise.all([
+  const [games, picks, user, teams, league] = await Promise.all([
     datastore.game.findMany({
       where: {week: {equals: week}, season: {equals: season}},
     }),
@@ -66,6 +67,10 @@ export async function sendPickSuccessEmail(
     }),
     datastore.leagueMember.findFirstOrThrow({where: {membership_id: member_id}}).people(),
     datastore.team.findMany({where: {teamid: {gt: 0}}}),
+    datastore.leagueMember.findFirstOrThrow({
+      where: {membership_id: member_id},
+      select: {leagues: true},
+    }),
   ]);
 
   if (!user) {
@@ -81,14 +86,16 @@ export async function sendPickSuccessEmail(
       ...getDefaultSendParams(email),
       to: user.email,
       subject: `Your Funtime Picks for Week ${week}, ${season}`,
-      html: getWeekPicksContent({
-        week,
-        season,
-        user,
-        games,
-        picks,
-        teams,
-      }),
+      react: (
+        <PicksSummary
+          week={week}
+          league={league.leagues}
+          user={user}
+          games={games}
+          picks={picks}
+          teams={teams}
+        />
+      ),
     });
     console.log(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
   } catch (e) {
