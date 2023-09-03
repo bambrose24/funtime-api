@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {League, User} from '@prisma/client';
+import {EmailType, League, User} from '@prisma/client';
 import datastore from '../datastore';
 import {resend} from './client';
 import {RegistrationEmail} from './react/registration/RegistrationEmail';
@@ -82,7 +82,7 @@ export async function sendPickSuccessEmail(
   const {email} = user;
 
   try {
-    await resend.sendEmail({
+    const response = await resend.sendEmail({
       ...getDefaultSendParams(email),
       to: user.email,
       subject: `Your Funtime Picks for Week ${week}, ${season}`,
@@ -96,6 +96,15 @@ export async function sendPickSuccessEmail(
           teams={teams}
         />
       ),
+    });
+    await datastore.emailLogs.create({
+      data: {
+        email_type: EmailType.week_picks,
+        resend_id: response.id,
+        week: week,
+        league_id: league.leagues.league_id,
+        member_id: member_id,
+      },
     });
     console.log(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
   } catch (e) {
@@ -124,7 +133,7 @@ export async function sendWeekReminderEmail({
     return;
   }
   console.info(`Sending week pick reminder to ${email} for week ${week}`);
-  await resend.sendEmail({
+  return await resend.sendEmail({
     ...getDefaultSendParams(email),
     to: email,
     subject: `REMINDER: Make your Funtime picks for week ${week}`,

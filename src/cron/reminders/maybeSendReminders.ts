@@ -56,7 +56,7 @@ export async function maybeSendReminders() {
         return;
       }
       // time to send a reminder to this person
-      sendWeekReminderEmail({
+      const response = await sendWeekReminderEmail({
         leagueName: league.name,
         leagueId: league.league_id,
         email: member.people.email,
@@ -64,14 +64,17 @@ export async function maybeSendReminders() {
         week: game.week,
         weekStartTime: game.ts,
       });
-      await datastore.emailLogs.create({
-        data: {
-          email_type: EmailType.week_reminder,
-          member_id: member.membership_id,
-          league_id: member.league_id,
-          week: game.week,
-        },
-      });
+      if (response) {
+        await datastore.emailLogs.create({
+          data: {
+            email_type: EmailType.week_reminder,
+            resend_id: response.id,
+            member_id: member.membership_id,
+            league_id: member.league_id,
+            week: game.week,
+          },
+        });
+      }
     }
   }
 }

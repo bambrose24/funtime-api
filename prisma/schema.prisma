@@ -232,15 +232,17 @@ model WeekWinners {
 }
 
 enum EmailType {
+  week_picks
   week_reminder
   week_summary
 }
 
 model EmailLogs {
   email_log_id String    @id @default(cuid())
+  resend_id    String
   league_id    Int
   member_id    Int
-  week         Int
+  week         Int?
   email_type   EmailType
   ts           DateTime  @default(now()) @db.Timestamptz(6)
 
@@ -248,6 +250,7 @@ model EmailLogs {
   member LeagueMember @relation(fields: [member_id], references: [membership_id], onUpdate: Restrict)
 
   @@index([league_id], map: "idx_emaillogs_league_id")
+  @@index([resend_id], map: "idx_emaillogs_resend_id")
   @@index([member_id], map: "idx_emaillogs_member_id")
   @@index([week], map: "idx_emaillogs_week")
   @@index([league_id, member_id], map: "idx_emaillogs_league_member")
