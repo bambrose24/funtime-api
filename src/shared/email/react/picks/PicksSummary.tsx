@@ -41,7 +41,10 @@ export function PicksSummary({week, league, picks, teams, games, user}: PicksSum
               borderRadius: '4px',
             };
             return (
-              <div style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
+              <div
+                key={`pick_${i}`}
+                style={{width: '100%', display: 'flex', flexDirection: 'column'}}
+              >
                 <div
                   style={{
                     display: 'flex',
