@@ -48,13 +48,18 @@ export default class EmailLogsFields {
 
   @FieldResolver(_type => ResendEmail, {nullable: true})
   async email(@Root() emailLog: EmailLogs): Promise<ResendEmail | null> {
-    if (!emailLog.resend_id) {
+    try {
+      if (!emailLog.resend_id) {
+        return null;
+      }
+      const response = await resend.emails.get(emailLog.resend_id);
+      if (!response) {
+        return null;
+      }
+      return response;
+    } catch (e) {
+      console.error(`Error trying to read resend email ${emailLog.resend_id}: ${e}`);
       return null;
     }
-    const response = await resend.emails.get(emailLog.resend_id);
-    if (!response) {
-      return null;
-    }
-    return response;
   }
 }
