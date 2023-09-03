@@ -1,10 +1,9 @@
 import React from 'react';
-import {Html} from '@react-email/html';
-import {Text} from '@react-email/text';
+import {Html, Text} from '@react-email/components';
+
 import {Container} from '@react-email/container';
-import {Button} from '@react-email/button';
+import {FuntimeButton} from '../components/FuntimeButton';
 import moment from 'moment';
-import {League} from '@prisma/client';
 
 type WeekPicksReminderProps = {
   week: number;
@@ -24,15 +23,23 @@ export function WeekPicksReminder({
   const diffString = moment(weekStartTime).fromNow();
   return (
     <Html>
-      <Container style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+      <Container
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          paddingTop: '10px',
+          paddingBottom: '10px',
+        }}
+      >
         <Text>Hi {username},</Text>
         <Text>
           This is a reminder to get your picks in for week {week} for {leagueName}. The week starts
           in {diffString}.
         </Text>
-        <Button href={`https://www.play-funtime.com/league/${leagueId}/pick`}>
+        <FuntimeButton href={`https://www.play-funtime.com/league/${leagueId}/pick`}>
           Make Your Picks
-        </Button>
+        </FuntimeButton>
       </Container>
     </Html>
   );
