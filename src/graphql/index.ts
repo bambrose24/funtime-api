@@ -32,6 +32,7 @@ import TeamID from './queries/team/id';
 import UserID from './queries/user/id';
 import {CreateLeagueMutation} from './mutations/createLeague';
 import LeagueRulesResolver from './queries/league/rules';
+import EmailLogsFields from './queries/emailLogs/fields';
 
 const SHOULD_AUTH_MUTATIONS = true;
 
@@ -180,6 +181,7 @@ const resolvers = [
   MeQuery,
   CreateLeagueMutation,
   LeagueRulesResolver,
+  EmailLogsFields,
 ] as const;
 
 export default resolvers;
