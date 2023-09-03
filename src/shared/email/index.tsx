@@ -3,6 +3,7 @@ import {League, User} from '@prisma/client';
 import datastore from '../datastore';
 import {resend} from './client';
 import {RegistrationEmail} from './react/registration/RegistrationEmail';
+import {WeekPicksReminder} from './react/reminders/WeekPicksReminder';
 
 import {getDefaultSendParams, getWeekPicksContent} from './util';
 
@@ -24,7 +25,6 @@ export async function sendRegistrationMail(
     await resend.sendEmail({
       ...getDefaultSendParams(user.email),
       to: user.email,
-      from: 'team@play-funtime.com',
       subject: `Welcome to ${league.name}!`,
       react: (
         <RegistrationEmail
@@ -96,4 +96,38 @@ export async function sendPickSuccessEmail(
   }
 
   return false;
+}
+
+export async function sendWeekReminderEmail({
+  leagueName,
+  leagueId,
+  username,
+  week,
+  email,
+  weekStartTime,
+}: {
+  leagueName: string;
+  leagueId: number;
+  username: string;
+  email: string;
+  week: number;
+  weekStartTime: Date;
+}) {
+  if (email !== 'bambrose24@gmail.com') {
+    return;
+  }
+  await resend.sendEmail({
+    ...getDefaultSendParams(email),
+    to: email,
+    subject: `REMINDER: Make your Funtime picks for week ${week}`,
+    react: (
+      <WeekPicksReminder
+        week={week}
+        username={username}
+        leagueId={leagueId}
+        leagueName={leagueName}
+        weekStartTime={weekStartTime}
+      />
+    ),
+  });
 }

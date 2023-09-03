@@ -59,6 +59,7 @@ model LeagueMember {
   picks         Pick[]
   superbowl     Superbowl[]
   WeekWinners   WeekWinners[]
+  EmailLogs     EmailLogs[]
 
   @@index([paid], map: "idx_18414_paid")
   @@index([role], map: "idx_18414_role")
@@ -103,6 +104,7 @@ model League {
   prior_league_id       Int?            @unique @map("prior_league_id")
   priorLeague           League?         @relation("prior_leagues", fields: [prior_league_id], references: [league_id])
   nextLeague            League?         @relation("prior_leagues")
+  EmailLogs             EmailLogs[]
 
   @@index([season], map: "idx_18422_season")
   @@index([name], map: "idx_18422_name")
@@ -227,4 +229,29 @@ model WeekWinners {
   @@index([league_id], map: "idx_184XX_league_id")
   @@index([membership_id], map: "idx_184XX_membership_id")
   @@index([league_id, membership_id], map: "idx_184XX_league_and_membership")
+}
+
+enum EmailType {
+  week_reminder
+  week_summary
+}
+
+model EmailLogs {
+  email_log_id String    @id @default(cuid())
+  league_id    Int
+  member_id    Int
+  week         Int
+  email_type   EmailType
+  ts           DateTime  @default(now()) @db.Timestamptz(6)
+
+  league League       @relation(fields: [league_id], references: [league_id], onUpdate: Restrict)
+  member LeagueMember @relation(fields: [member_id], references: [membership_id], onUpdate: Restrict)
+
+  @@index([league_id], map: "idx_emaillogs_league_id")
+  @@index([member_id], map: "idx_emaillogs_member_id")
+  @@index([week], map: "idx_emaillogs_week")
+  @@index([league_id, member_id], map: "idx_emaillogs_league_member")
+  @@index([league_id, week], map: "idx_emaillogs_league_week")
+  @@index([member_id, week], map: "idx_emaillogs_member_week")
+  @@index([league_id, member_id, week], map: "idx_emaillogs_league_member_week")
 }

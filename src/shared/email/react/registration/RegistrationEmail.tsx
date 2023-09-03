@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Html} from '@react-email/html';
-import {Button} from '@react-email/button';
 import {Text} from '@react-email/text';
 import {Container} from '@react-email/container';
 

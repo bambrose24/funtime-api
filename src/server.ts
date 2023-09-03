@@ -34,6 +34,7 @@ import {customAuthChecker} from '@shared/auth/graphql';
 import {ApolloContext} from '@graphql/server/types';
 import datastore from '@shared/datastore';
 import {sentryPlugin} from '@util/sentry';
+import {maybeSendReminders} from '@cron/reminders/maybeSendReminders';
 
 const app = express();
 
@@ -107,8 +108,14 @@ app.use(async (req, res, next) => {
 // Run the 3 minute cron
 if (process.env.FUNTIME_RUN_CRON === 'true') {
   console.log(`Starting cron in ${env}`);
+
+  // 3 mins to keep games updated
   cron.schedule('*/3 * * * *', async () => {
     await keepThingsUpdated();
+  });
+
+  cron.schedule('0 * * * *', async () => {
+    await maybeSendReminders();
   });
 }
 

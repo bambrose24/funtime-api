@@ -1,12 +1,14 @@
 import {Game, User, Pick as DBPick, Team} from '@prisma/client';
 import {CreateEmailOptions} from 'resend/build/src/emails/interfaces';
 
+const FROM_EMAIL = 'team@play-funtime.com';
+
 export function getDefaultSendParams(
   email: string
 ): Pick<CreateEmailOptions, 'reply_to' | 'from' | 'cc'> {
   return {
     reply_to: ['bambrose24@gmail.com', 'erica0ambrose@gmail.com'],
-    from: 'team@play-funtime.com',
+    from: FROM_EMAIL,
     cc: email !== 'bambrose24@gmail.com' ? 'bambrose24@gmail.com' : undefined,
   };
 }
