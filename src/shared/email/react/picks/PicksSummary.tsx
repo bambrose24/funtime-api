@@ -1,5 +1,5 @@
 import {Game, League, Pick, Team, User} from '@prisma/client';
-import {Container, Hr, Html, Section, SectionProps, Text} from '@react-email/components';
+import {Container, Hr, Html, Section, SectionProps} from '@react-email/components';
 import React from 'react';
 import {FuntimeButton} from '../components/FuntimeButton';
 import {TeamLogo} from '../components/TeamLogo';
@@ -19,10 +19,10 @@ export function PicksSummary({week, league, picks, teams, games, user}: PicksSum
     <Html style={{paddingBottom: '20px'}}>
       <Container>
         <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-          <Text>
+          <div>
             Contgrats, {user.username}! Your picks are in for week {week}, {league.season}! See your
             summary below.
-          </Text>
+          </div>
           {picks.map((pick, i) => {
             const game = games.find(g => pick.gid === g.gid);
 
@@ -63,9 +63,9 @@ export function PicksSummary({week, league, picks, teams, games, user}: PicksSum
                     }}
                   >
                     <TeamLogo abbrev={awayTeam.abbrev!} height="40px" width="40px" />
-                    <Text>{awayTeam.abbrev}</Text>
+                    <div>{awayTeam.abbrev}</div>
                   </div>
-                  <Text>@</Text>
+                  <div>@</div>
                   <div
                     style={{
                       display: 'flex',
@@ -76,12 +76,12 @@ export function PicksSummary({week, league, picks, teams, games, user}: PicksSum
                     }}
                   >
                     <TeamLogo abbrev={homeTeam.abbrev!} height="40px" width="40px" />
-                    <Text>{homeTeam.abbrev}</Text>
+                    <div>{homeTeam.abbrev}</div>
                   </div>
                 </div>
                 {pick.score !== null && pick.score !== undefined && pick.score > 0 && (
                   <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                    <Text>Total Score: {pick.score}</Text>
+                    <div>Total Score: {pick.score}</div>
                   </div>
                 )}
                 {/* {i !== picks.length - 1 && <Hr style={{width: '100%'}} />} */}
