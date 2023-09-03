@@ -1,4 +1,4 @@
-import {LatePolicy, ReminderPolicy} from '@prisma/client';
+import {EmailType, LatePolicy, ReminderPolicy} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {sendWeekReminderEmail} from '@shared/email';
 import {SEASON} from '@util/const';
@@ -63,6 +63,14 @@ export async function maybeSendReminders() {
         username: member.people.username,
         week: game.week,
         weekStartTime: game.ts,
+      });
+      await datastore.emailLogs.create({
+        data: {
+          email_type: EmailType.week_reminder,
+          member_id: member.membership_id,
+          league_id: member.league_id,
+          week: game.week,
+        },
       });
     }
   }

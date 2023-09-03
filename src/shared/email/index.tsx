@@ -116,6 +116,7 @@ export async function sendWeekReminderEmail({
   if (email !== 'bambrose24@gmail.com') {
     return;
   }
+  console.info(`Sending week pick reminder to ${email} for week ${week}`);
   await resend.sendEmail({
     ...getDefaultSendParams(email),
     to: email,
