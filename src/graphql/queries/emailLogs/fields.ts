@@ -5,42 +5,42 @@ import {resend} from '@shared/email/client';
 
 @ObjectType()
 class ResendEmail {
-  @Field()
+  @Field(_type => [String!], {nullable: true})
   bcc: string[] | null;
 
-  @Field()
+  @Field(_type => [String!], {nullable: true})
   cc: string[] | null;
 
-  @Field()
+  @Field(_type => String)
   created_at: string;
 
-  @Field()
+  @Field(_type => String)
   from: string;
 
-  @Field()
+  @Field(_type => String, {nullable: true})
   html: string | null;
 
-  @Field()
+  @Field(_type => String)
   id: string;
 
-  @Field()
+  @Field(_type => String)
   last_event: string;
 
-  @Field()
+  @Field(_type => [String!], {nullable: true})
   reply_to: string[] | null;
 
-  @Field()
+  @Field(_type => String)
   subject: string;
 
-  @Field()
+  @Field(_type => String, {nullable: true})
   text: string | null;
 
-  @Field()
+  @Field(_type => [String!])
   to: string[];
 }
 
 @Resolver(() => TypeGraphQL.EmailLogs)
-export default class GameID {
+export default class EmailLogsFields {
   @FieldResolver(_type => ID)
   async id(@Root() emailLog: EmailLogs): Promise<string> {
     return emailLog.email_log_id;
