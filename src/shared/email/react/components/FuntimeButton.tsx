@@ -17,6 +17,7 @@ export function FuntimeButton({variant = 'primary', ...props}: ButtonProps) {
         paddingRight: '12px',
         paddingTop: '8px',
         paddingBottom: '8px',
+        textAlign: 'center',
         ...(variantStyle ?? {}),
         ...(props.style ?? {}),
       }}
