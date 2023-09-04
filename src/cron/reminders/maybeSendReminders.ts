@@ -68,7 +68,7 @@ export async function maybeSendReminders() {
       // }
       console.log(`Pondering sending reminder to ${JSON.stringify(member)}`);
       if (member.people.email !== 'bambrose24@gmail.com') {
-        return;
+        continue;
       }
       console.info(
         `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
