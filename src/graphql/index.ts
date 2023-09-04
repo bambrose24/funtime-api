@@ -101,7 +101,7 @@ const resolversEnhancedMap: ResolversEnhanceMap = {
     createManyLeagueMember: sysAdminAuth,
     createOneLeagueMember: sysAdminAuth,
     updateManyLeagueMember: sysAdminAuth,
-    updateOneLeagueMember: sysAdminAuth,
+    updateOneLeagueMember: leagueAdminAuth,
     upsertOneLeagueMember: sysAdminAuth,
     deleteManyLeagueMember: sysAdminAuth,
     deleteOneLeagueMember: sysAdminAuth,
