@@ -29,11 +29,11 @@ export async function maybeSendReminders() {
   }
 
   console.info(
-    `Going to attempt to send reminders for ${
-      leaguesForSeason.length
-    } leagues ${leaguesForSeason.map(l => {
-      return {league_id: l.league_id};
-    })}`
+    `Going to attempt to send reminders for ${leaguesForSeason.length} leagues ${JSON.stringify(
+      leaguesForSeason.map(l => {
+        return {league_id: l.league_id};
+      })
+    )}`
   );
   for (const league of leaguesForSeason) {
     const reminderPolicy = league.reminder_policy;
