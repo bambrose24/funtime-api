@@ -67,31 +67,30 @@ export async function maybeSendReminders() {
       //   continue;
       // }
       console.log(`Pondering sending reminder to ${JSON.stringify(member)}`);
-      if (member.people.email !== 'bambrose24@gmail.com') {
-        continue;
-      }
-      console.info(
-        `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
-      );
-      // time to send a reminder to this person
-      const response = await sendWeekReminderEmail({
-        leagueName: league.name,
-        leagueId: league.league_id,
-        email: member.people.email,
-        username: member.people.username,
-        week: game.week,
-        weekStartTime: game.ts,
-      });
-      if (response) {
-        await datastore.emailLogs.create({
-          data: {
-            email_type: EmailType.week_reminder,
-            resend_id: response.id,
-            member_id: member.membership_id,
-            league_id: member.league_id,
-            week: game.week,
-          },
+      if (member.people.email === 'bambrose24@gmail.com') {
+        console.info(
+          `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
+        );
+        // time to send a reminder to this person
+        const response = await sendWeekReminderEmail({
+          leagueName: league.name,
+          leagueId: league.league_id,
+          email: member.people.email,
+          username: member.people.username,
+          week: game.week,
+          weekStartTime: game.ts,
         });
+        if (response) {
+          await datastore.emailLogs.create({
+            data: {
+              email_type: EmailType.week_reminder,
+              resend_id: response.id,
+              member_id: member.membership_id,
+              league_id: member.league_id,
+              week: game.week,
+            },
+          });
+        }
       }
     }
   }
