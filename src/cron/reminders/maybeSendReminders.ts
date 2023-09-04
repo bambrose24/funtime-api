@@ -24,9 +24,17 @@ export async function maybeSendReminders() {
   ]);
   const game = await nextNotStartedGame();
   if (!game) {
+    console.info(`No game found for nextNotStartedGame, not sending reminders`);
     return;
   }
 
+  console.info(
+    `Going to attempt to send reminders for ${
+      leaguesForSeason.length
+    } leagues ${leaguesForSeason.map(l => {
+      return {league_id: l.league_id};
+    })}`
+  );
   for (const league of leaguesForSeason) {
     const reminderPolicy = league.reminder_policy;
     if (!reminderPolicy) {
@@ -36,6 +44,9 @@ export async function maybeSendReminders() {
 
     const sendReminders = shouldSendReminders(reminderPolicy, game.ts);
     if (!sendReminders) {
+      console.info(
+        `Not sending reminders for league ${league.league_id} because no reminder policy`
+      );
       continue;
     }
 
@@ -55,6 +66,9 @@ export async function maybeSendReminders() {
       if (member.people.email !== 'bambrose24@gmail.com') {
         return;
       }
+      console.info(
+        `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
+      );
       // time to send a reminder to this person
       const response = await sendWeekReminderEmail({
         leagueName: league.name,
