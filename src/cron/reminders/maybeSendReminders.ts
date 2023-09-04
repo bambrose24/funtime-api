@@ -59,6 +59,9 @@ export async function maybeSendReminders() {
       },
     });
     const pickedMembers = new Set(membersPicksForWeek.map(p => p.member_id));
+    console.log(
+      `All the members to ponder reminders to ${JSON.stringify(members.map(m => m.membership_id))}`
+    );
     for (const member of members) {
       // if (pickedMembers.has(member.membership_id)) {
       //   continue;
