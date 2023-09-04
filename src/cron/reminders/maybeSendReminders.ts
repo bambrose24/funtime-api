@@ -63,6 +63,7 @@ export async function maybeSendReminders() {
       // if (pickedMembers.has(member.membership_id)) {
       //   continue;
       // }
+      console.log(`Pondering sending reminder to ${JSON.stringify(member)}`);
       if (member.people.email !== 'bambrose24@gmail.com') {
         return;
       }
