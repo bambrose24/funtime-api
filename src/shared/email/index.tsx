@@ -14,7 +14,7 @@ export async function sendRegistrationMail(
   superbowlWinner: number,
   superbowlLoser: number,
   superbowlScore: number
-): Promise<void> {
+) {
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
   });
@@ -23,7 +23,7 @@ export async function sendRegistrationMail(
   const loser = teams.find(t => t.teamid === superbowlLoser)!;
 
   try {
-    await resend.sendEmail({
+    return await resend.sendEmail({
       ...getDefaultSendParams(user.email),
       to: user.email,
       subject: `Welcome to ${league.name}!`,
@@ -47,6 +47,7 @@ export async function sendRegistrationMail(
   } catch (e) {
     console.error('got a email send error', JSON.stringify(e));
   }
+  return null;
 }
 
 export async function sendPickSuccessEmail(
@@ -130,7 +131,7 @@ export async function sendWeekReminderEmail({
   weekStartTime: Date;
 }) {
   if (email !== 'bambrose24@gmail.com') {
-    return;
+    return null;
   }
   console.info(`Sending week pick reminder to ${email} for week ${week}`);
   return await resend.sendEmail({

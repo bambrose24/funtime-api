@@ -232,6 +232,7 @@ model WeekWinners {
 }
 
 enum EmailType {
+  league_registration
   week_picks
   week_reminder
   week_summary

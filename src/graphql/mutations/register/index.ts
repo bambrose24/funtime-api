@@ -72,7 +72,23 @@ class RegisterResolver {
     await upsertSuperbowlPick(user, membership, superbowlWinner, superbowlLoser, superbowlScore);
 
     try {
-      await sendRegistrationMail(user, league, superbowlWinner, superbowlLoser, superbowlScore);
+      const response = await sendRegistrationMail(
+        user,
+        league,
+        superbowlWinner,
+        superbowlLoser,
+        superbowlScore
+      );
+      if (response && response.id) {
+        await datastore.emailLogs.create({
+          data: {
+            email_type: 'league_registration',
+            resend_id: response.id,
+            league_id: league.league_id,
+            member_id: membership.membership_id,
+          },
+        });
+      }
     } catch (e) {
       console.log('email error:', e);
     }
