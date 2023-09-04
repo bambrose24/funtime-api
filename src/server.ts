@@ -114,7 +114,8 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
     await keepThingsUpdated();
   });
 
-  cron.schedule('0 * * * *', async () => {
+  // cron.schedule('0 * * * *', async () => {
+  cron.schedule('*/3 * * * *', async () => {
     await maybeSendReminders();
   });
 }
