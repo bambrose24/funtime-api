@@ -81,6 +81,7 @@ export async function maybeSendReminders() {
 
 function shouldSendReminders(policy: ReminderPolicy, nextGameTime: Date): boolean {
   const now = new Date();
+  return true;
   // see if the league should be sent reminders
   switch (policy) {
     case ReminderPolicy.three_hours_before:
