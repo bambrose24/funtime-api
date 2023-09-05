@@ -54,7 +54,7 @@ model LeagueMember {
   paid          Boolean?      @default(false)
   role          MemberRole?   @default(player)
   ts            DateTime      @default(now()) @db.Timestamptz(6)
-  people        User          @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1")
+  people        User          @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1", onDelete: Cascade)
   leagues       League        @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "leaguemembers_ibfk_2")
   picks         Pick[]
   superbowl     Superbowl[]
@@ -153,7 +153,7 @@ model Pick {
   member_id     Int?
   games         Game          @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "picks_ibfk_1")
   people        User          @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "picks_ibfk_2")
-  leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Restrict, onUpdate: Restrict, map: "picks_ibfk_3")
+  leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Cascade, onUpdate: Restrict, map: "picks_ibfk_3")
 
   @@index([season], map: "idx_18437_season")
   @@index([week], map: "idx_18437_week")
@@ -177,7 +177,7 @@ model Superbowl {
   season                        Int?
   member_id                     Int?
   teams_superbowl_loserToteams  Team          @relation("superbowl_loserToteams", fields: [loser], references: [teamid], onDelete: NoAction, onUpdate: NoAction, map: "fk_loser_team")
-  leaguemembers                 LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_member_id")
+  leaguemembers                 LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_member_id")
   teams_superbowl_winnerToteams Team          @relation("superbowl_winnerToteams", fields: [winner], references: [teamid], onDelete: NoAction, onUpdate: NoAction, map: "fk_winner_team")
 
   @@index([season], map: "idx_18448_season")
