@@ -29,6 +29,7 @@ class PicksByWeekResolver {
     @Arg('week', () => Int, {nullable: true})
     week: number | null
   ): Promise<PicksByWeekResponse> {
+    console.log('picksByWeek args', week, league_id);
     const {dbUser} = getUserEnforced();
     const [league, member, members] = await Promise.all([
       datastore.league.findFirst({

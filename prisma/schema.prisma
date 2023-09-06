@@ -152,7 +152,7 @@ model Pick {
   is_random     Boolean?
   member_id     Int?
   games         Game          @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "picks_ibfk_1")
-  people        User          @relation(fields: [uid], references: [uid], onUpdate: Restrict, map: "picks_ibfk_2")
+  people        User          @relation(fields: [uid], references: [uid], onDelete: Cascade, map: "picks_ibfk_2")
   leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Cascade, onUpdate: Restrict, map: "picks_ibfk_3")
 
   @@index([season], map: "idx_18437_season")
@@ -248,7 +248,7 @@ model EmailLogs {
   ts           DateTime  @default(now()) @db.Timestamptz(6)
 
   league League       @relation(fields: [league_id], references: [league_id], onUpdate: Restrict)
-  member LeagueMember @relation(fields: [member_id], references: [membership_id], onUpdate: Restrict)
+  member LeagueMember @relation(fields: [member_id], references: [membership_id], onDelete: Cascade)
 
   @@index([league_id], map: "idx_emaillogs_league_id")
   @@index([resend_id], map: "idx_emaillogs_resend_id")

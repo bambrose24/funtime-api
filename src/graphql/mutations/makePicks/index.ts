@@ -4,8 +4,6 @@ import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-g
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
 import {getUser} from '@shared/auth/user';
-export const LEAGUE_ID = 7;
-export const DEFAULT_ROLE = 'player';
 
 @ObjectType()
 class MakePicksResponse {

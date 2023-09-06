@@ -1,10 +1,14 @@
 import {memoryCache} from '../caching/memory';
-import {MSFGame, MSFGameSchedule} from './types';
+import {MSFGame} from './types';
+
+import AsyncLock from 'async-lock';
 
 var MySportsFeeds = require('mysportsfeeds-node');
 
 var msf = new MySportsFeeds('2.1', true);
 msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, 'MYSPORTSFEEDS');
+
+var msfLock = new AsyncLock();
 
 /*
 
@@ -64,22 +68,39 @@ export async function getGamesByWeek(
   useRedis: boolean = false
 ): Promise<Array<MSFGame>> {
   try {
-    const memoryCacheResult = memoryCache.get<Array<MSFGame>>(getWeekKey({season, week}));
+    console.log('getGamesByWeek week season', week, season);
+    const key = getWeekKey({season, week});
+
+    // First, check the memory cache
+    const memoryCacheResult = memoryCache.get<Array<MSFGame>>(key);
     if (memoryCacheResult) {
+      console.log('Returning data from memory cache');
       return memoryCacheResult;
     }
 
-    const games = await msf.getData(
-      'nfl',
-      `${season}-${season + 1}-regular`,
-      'weekly_games',
-      'json',
-      {week}
-    );
+    // If using Redis, check Redis cache here before the lock (similar to the memory cache check)
+    // If data is found in Redis, return it.
 
-    const res = games.games.map((g: any) => g as MSFGame);
-    memoryCache.set(getWeekKey({season, week}), res);
-    return res;
+    // If data is not in caches, acquire the lock and make the API call
+    return await msfLock.acquire(key, async () => {
+      // Double-check the cache after acquiring the lock in case another request populated it while waiting
+      const postLockMemoryCacheResult = memoryCache.get<Array<MSFGame>>(key);
+      if (postLockMemoryCacheResult) {
+        return postLockMemoryCacheResult;
+      }
+
+      const games = await msf.getData(
+        'nfl',
+        `${season}-${season + 1}-regular`,
+        'weekly_games',
+        'json',
+        {week}
+      );
+
+      const res = games.games.map((g: any) => g as MSFGame);
+      memoryCache.set(key, res);
+      return res;
+    });
   } catch (e) {
     console.error('error getting weekly games', e);
   }
