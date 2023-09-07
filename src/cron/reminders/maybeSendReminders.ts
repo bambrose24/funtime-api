@@ -74,7 +74,7 @@ export async function maybeSendReminders() {
       );
       const existingReminder = leagueReminderEmails.find(
         email =>
-          email?.week && email.wee === game.week && email.email_type === EmailType.week_reminder
+          email?.week && email.week === game.week && email.email_type === EmailType.week_reminder
       );
       if (!existingReminder) {
         // time to send a reminder to this person
