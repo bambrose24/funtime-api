@@ -45,12 +45,13 @@ export async function maybeSendReminders() {
     const sendReminders = shouldSendReminders(reminderPolicy, game.ts);
     if (!sendReminders) {
       console.info(
-        `Not sending reminders for league ${league.league_id} ${
-          game.ts
-        }, ${new Date()}, ${reminderPolicy}`
+        `Not sending reminders for league ${league.league_id} ${game.ts}, ${moment(game.ts)
+          .subtract(3, 'hours')
+          .toDate() < new Date()} ${new Date()}, ${reminderPolicy}`
       );
       continue;
     }
+    console.info(`Going to send reminders because sendReminders was true`);
 
     const leagueEmails = allExistingEmails.filter(e => e.league_id === league.league_id);
     const members = membersInLeagues.filter(m => m.league_id === league.league_id);
