@@ -132,11 +132,8 @@ export async function sendWeekReminderEmail({
   week: number;
   weekStartTime: Date;
 }) {
-  if (email !== 'bambrose24@gmail.com') {
-    return null;
-  }
   console.info(`Sending week pick reminder to ${email} for week ${week}`);
-  return await resend.sendEmail({
+  const response = await resend.sendEmail({
     ...getDefaultSendParams(email),
     to: email,
     subject: `REMINDER: Make your Funtime picks for week ${week}`,
@@ -150,4 +147,5 @@ export async function sendWeekReminderEmail({
       />
     ),
   });
+  return response;
 }

@@ -81,6 +81,9 @@ export async function maybeSendReminders() {
         week: game.week,
         weekStartTime: game.ts,
       });
+      console.log(
+        `Got response from reminder email to ${member.people.email}: ${JSON.stringify(response)}`
+      );
       if (response) {
         await datastore.emailLogs.create({
           data: {
