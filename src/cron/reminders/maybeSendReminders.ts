@@ -53,7 +53,7 @@ export async function maybeSendReminders() {
     }
     console.info(`Going to send reminders because sendReminders was true`);
 
-    const leagueEmails = allExistingEmails.filter(e => e.league_id === league.league_id);
+    const leagueReminderEmails = allExistingEmails.filter(e => e.league_id === league.league_id);
     const members = membersInLeagues.filter(m => m.league_id === league.league_id);
     const membersPicksForWeek = await datastore.pick.findMany({
       where: {
@@ -72,28 +72,34 @@ export async function maybeSendReminders() {
       console.info(
         `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
       );
-      // time to send a reminder to this person
-      const response = await sendWeekReminderEmail({
-        leagueName: league.name,
-        leagueId: league.league_id,
-        email: member.people.email,
-        username: member.people.username,
-        week: game.week,
-        weekStartTime: game.ts,
-      });
-      console.log(
-        `Got response from reminder email to ${member.people.email}: ${JSON.stringify(response)}`
+      const existingReminder = leagueReminderEmails.find(
+        email =>
+          email?.week && email.wee === game.week && email.email_type === EmailType.week_reminder
       );
-      if (response) {
-        await datastore.emailLogs.create({
-          data: {
-            email_type: EmailType.week_reminder,
-            resend_id: response.id,
-            member_id: member.membership_id,
-            league_id: member.league_id,
-            week: game.week,
-          },
+      if (!existingReminder) {
+        // time to send a reminder to this person
+        const response = await sendWeekReminderEmail({
+          leagueName: league.name,
+          leagueId: league.league_id,
+          email: member.people.email,
+          username: member.people.username,
+          week: game.week,
+          weekStartTime: game.ts,
         });
+        console.log(
+          `Got response from reminder email to ${member.people.email}: ${JSON.stringify(response)}`
+        );
+        if (response) {
+          await datastore.emailLogs.create({
+            data: {
+              email_type: EmailType.week_reminder,
+              resend_id: response.id,
+              member_id: member.membership_id,
+              league_id: member.league_id,
+              week: game.week,
+            },
+          });
+        }
       }
     }
   }
