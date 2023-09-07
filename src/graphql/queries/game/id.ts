@@ -8,4 +8,10 @@ export default class GameID {
   async id(@Root() game: Game): Promise<string> {
     return game.gid.toString();
   }
+
+  @FieldResolver(_type => Boolean)
+  async started(@Root() game: Game): Promise<boolean> {
+    const now = new Date();
+    return game.ts < now;
+  }
 }
