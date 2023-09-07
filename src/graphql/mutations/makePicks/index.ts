@@ -1,5 +1,5 @@
 import datastore from '@shared/datastore';
-import {User} from '@prisma/client';
+import {LeagueMember, User} from '@prisma/client';
 import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
@@ -30,7 +30,9 @@ class MakePicksResolver {
   @Mutation(() => MakePicksResponse)
   async makePicks(
     @Arg('league_id', () => Int) league_id: number,
-    @Arg('picks', () => [GamePick]) picks: GamePick[]
+    @Arg('picks', () => [GamePick]) picks: GamePick[],
+    @Arg('override_member_id', () => Int, {nullable: true})
+    override_member_id: number
   ): Promise<MakePicksResponse> {
     const auth = getUser();
     if (!auth || !auth.dbUser) {
@@ -38,9 +40,11 @@ class MakePicksResolver {
     }
     const dbUser = auth.dbUser;
 
-    const member = await datastore.leagueMember.findFirstOrThrow({
-      where: {league_id, people: {uid: dbUser.uid}},
-    });
+    const member = override_member_id
+      ? await datastore.leagueMember.findFirstOrThrow({where: {membership_id: override_member_id}})
+      : await datastore.leagueMember.findFirstOrThrow({
+          where: {league_id, people: {uid: dbUser.uid}},
+        });
     if (picks.length === 0) {
       return {success: false, user: dbUser};
     }
@@ -61,7 +65,7 @@ class MakePicksResolver {
     try {
       await sendPickSuccessEmail(member.membership_id, week, season);
     } catch (e) {
-      console.log('email error', e);
+      console.error('email error', e);
     }
 
     return {success: true, user: dbUser};
