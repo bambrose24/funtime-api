@@ -63,7 +63,9 @@ class MakePicksResolver {
     const {week, season} = await upsertWeekPicksForMember(member.membership_id, filteredPicks);
 
     try {
-      await sendPickSuccessEmail(member.membership_id, week, season);
+      const adminUsername = override_member_id ? dbUser.username : undefined;
+      console.log('adminUsername in picks mutation', adminUsername);
+      await sendPickSuccessEmail(member.membership_id, week, season, adminUsername);
     } catch (e) {
       console.error('email error', e);
     }

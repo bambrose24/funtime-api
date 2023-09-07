@@ -53,7 +53,8 @@ export async function sendRegistrationMail(
 export async function sendPickSuccessEmail(
   member_id: number,
   week: number,
-  season: number
+  season: number,
+  adminUsername?: string
 ): Promise<boolean> {
   const [games, picks, user, teams, league] = await Promise.all([
     datastore.game.findMany({
@@ -95,6 +96,7 @@ export async function sendPickSuccessEmail(
           games={games}
           picks={picks}
           teams={teams}
+          adminUsername={adminUsername}
         />
       ),
     });

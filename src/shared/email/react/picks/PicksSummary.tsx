@@ -12,16 +12,28 @@ type PicksSummaryProps = {
   teams: Team[];
   games: Game[];
   user: User;
+  adminUsername?: string;
 };
 
-export function PicksSummary({week, league, picks, teams, games, user}: PicksSummaryProps) {
+export function PicksSummary({
+  week,
+  league,
+  picks,
+  teams,
+  games,
+  user,
+  adminUsername,
+}: PicksSummaryProps) {
   return (
     <Html style={{paddingBottom: '20px'}}>
       <Container>
         <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
           <div>
-            Contgrats, {user.username}! Your picks are in for week {week}, {league.season}! See your
-            summary below.
+            Congrats, {user.username} - your picks are in for week {week}, {league.season}!
+            {adminUsername
+              ? ` Your picks were made by ${adminUsername} on your behalf. They are an admin of the league.`
+              : ''}{' '}
+            See your summary below.
           </div>
           <div style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
             {picks.map((pick, i) => {
