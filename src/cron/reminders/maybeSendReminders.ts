@@ -45,7 +45,9 @@ export async function maybeSendReminders() {
     const sendReminders = shouldSendReminders(reminderPolicy, game.ts);
     if (!sendReminders) {
       console.info(
-        `Not sending reminders for league ${league.league_id} because no reminder policy`
+        `Not sending reminders for league ${league.league_id} ${
+          game.ts
+        }, ${new Date()}, ${reminderPolicy}`
       );
       continue;
     }
@@ -101,7 +103,7 @@ function shouldSendReminders(policy: ReminderPolicy, nextGameTime: Date): boolea
       return (
         moment(nextGameTime)
           .subtract(3, 'hours')
-          .toDate() > now
+          .toDate() < now
       );
   }
 }
