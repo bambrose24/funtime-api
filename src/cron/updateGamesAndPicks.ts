@@ -40,6 +40,8 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           );
         }
 
+        const x = {"schedule":{"id":113866,"week":1,"startTime":"2023-09-08T00:20:00.000Z","endedTime":null,"awayTeam":{"id":61,"abbreviation":"DET"},"homeTeam":{"id":73,"abbreviation":"KC"},"venue":{"id":58,"name":"GEHA Field at Arrowhead Stadium"},"venueAllegiance":"HOME","scheduleStatus":"NORMAL","originalStartTime":null,"delayedOrPostponedReason":null,"playedStatus":"LIVE","attendance":null,"officials":[],"broadcasters":["NBC"],"weather":{"type":"SUNNY","description":"sky is clear","wind":{"speed":{"milesPerHour":9,"kilometersPerHour":14},"direction":{"degrees":96,"label":"ESE"}},"temperature":{"fahrenheit":85,"celsius":29},"precipitation":{"type":null,"percent":null,"amount":{"millimeters":null,"centimeters":null,"inches":null,"feet":null}},"humidityPercent":19}},"score":{"currentQuarter":3,"currentQuarterSecondsRemaining":577,"currentIntermission":null,"teamInPossession":{"id":73,"abbreviation":"KC"},"currentDown":2,"currentYardsRemaining":10,"lineOfScrimmage":{"team":{"id":73,"abbreviation":"KC"},"yardLine":35},"awayScoreTotal":14,"homeScoreTotal":14,"quarters":[{"quarterNumber":1,"awayScore":7,"homeScore":0},{"quarterNumber":2,"awayScore":0,"homeScore":14},{"quarterNumber":3,"awayScore":7,"homeScore":0}]}}
+
         const homeScore = msfGame?.score.homeScoreTotal;
         const awayScore = msfGame?.score.awayScoreTotal;
 

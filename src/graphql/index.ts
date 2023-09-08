@@ -33,7 +33,7 @@ import UserID from './queries/user/id';
 import {CreateLeagueMutation} from './mutations/createLeague';
 import LeagueRulesResolver from './queries/league/rules';
 import EmailLogsFields from './queries/emailLogs/fields';
-import {env} from 'src/config';
+import {env} from '../config';
 
 const SHOULD_AUTH_MUTATIONS = env === 'production';
 
