@@ -38,7 +38,7 @@ export default class GameLiveResolver {
       return null;
     }
 
-    console.log(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
+    console.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
 
     return {
       currentQuarter: msfGame.score.currentQuarter,

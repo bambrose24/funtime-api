@@ -32,6 +32,11 @@ export class WeekForPicksResolver {
     @Arg('week', () => Int, {nullable: true})
     week?: number | null
   ): Promise<WeekForPicksResponse> {
+    const user = getUser();
+    if (!user || !user.dbUser) {
+      throw new Error('Need registered authd user to make picks');
+    }
+
     let weekRes: number;
     let season: number;
     if (week && override) {
@@ -45,11 +50,6 @@ export class WeekForPicksResolver {
 
       weekRes = res.week;
       season = res.season;
-    }
-
-    const user = getUser();
-    if (!user || !user.dbUser) {
-      throw new Error('Need registered authd user to make picks');
     }
 
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({

@@ -64,7 +64,6 @@ class MakePicksResolver {
 
     try {
       const adminUsername = override_member_id ? dbUser.username : undefined;
-      console.log('adminUsername in picks mutation', adminUsername);
       await sendPickSuccessEmail(member.membership_id, week, season, adminUsername);
     } catch (e) {
       console.error('email error', e);
