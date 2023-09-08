@@ -33,8 +33,9 @@ import UserID from './queries/user/id';
 import {CreateLeagueMutation} from './mutations/createLeague';
 import LeagueRulesResolver from './queries/league/rules';
 import EmailLogsFields from './queries/emailLogs/fields';
+import {env} from 'src/config';
 
-const SHOULD_AUTH_MUTATIONS = true;
+const SHOULD_AUTH_MUTATIONS = env === 'production';
 
 // TODO figure out how to make all `datetime` MySQL columns automatically get this treatment
 const modelsEnhanceMap: ModelsEnhanceMap = {

@@ -78,29 +78,17 @@ export async function getGamesByWeek(
       return memoryCacheResult;
     }
 
-    // If using Redis, check Redis cache here before the lock (similar to the memory cache check)
-    // If data is found in Redis, return it.
+    const games = await msf.getData(
+      'nfl',
+      `${season}-${season + 1}-regular`,
+      'weekly_games',
+      'json',
+      {week}
+    );
 
-    // If data is not in caches, acquire the lock and make the API call
-    return await msfLock.acquire(key, async () => {
-      // Double-check the cache after acquiring the lock in case another request populated it while waiting
-      const postLockMemoryCacheResult = memoryCache.get<Array<MSFGame>>(key);
-      if (postLockMemoryCacheResult) {
-        return postLockMemoryCacheResult;
-      }
-
-      const games = await msf.getData(
-        'nfl',
-        `${season}-${season + 1}-regular`,
-        'weekly_games',
-        'json',
-        {week}
-      );
-
-      const res = games.games.map((g: any) => g as MSFGame);
-      memoryCache.set(key, res);
-      return res;
-    });
+    const res = games.games.map((g: any) => g as MSFGame);
+    memoryCache.set(key, res);
+    return res;
   } catch (e) {
     console.error('error getting weekly games', e);
   }

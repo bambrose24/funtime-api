@@ -4,6 +4,7 @@ import {ApolloContext} from 'src/graphql/server/types';
 import {getGamesByWeek} from '../../../shared/mysportsfeeds';
 import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
 import {Game} from '@prisma/client';
+import {timeout} from '@util/timeout';
 
 @ObjectType('GameLive')
 class GameLive {
@@ -22,28 +23,37 @@ export default class GameLiveResolver {
     @Root() game: Game,
     @Ctx() {prisma: datastore}: ApolloContext
   ): Promise<GameLive | undefined | null> {
-    const [teams, msfGames] = await Promise.all([
-      datastore.team.findMany({where: {teamid: {gt: 0}}}),
-      getGamesByWeek(game.season, game.week),
-    ]);
-    const homeTeam = teams.find(t => t.teamid === game.home)!;
-    const awayTeam = teams.find(t => t.teamid === game.away)!;
-    const msfGame = msfGames.find(
-      g =>
-        g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
-        g.schedule.awayTeam.abbreviation === awayTeam.abbrev
-    );
+    try {
+      const [teams, msfGames] = await Promise.all([
+        datastore.team.findMany({where: {teamid: {gt: 0}}}),
+        timeout(
+          getGamesByWeek(game.season, game.week),
+          3000,
+          'getGamesByWeek timed out after 3 seconds'
+        ),
+      ]);
+      const homeTeam = teams.find(t => t.teamid === game.home)!;
+      const awayTeam = teams.find(t => t.teamid === game.away)!;
+      const msfGame = msfGames.find(
+        g =>
+          g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
+          g.schedule.awayTeam.abbreviation === awayTeam.abbrev
+      );
 
-    if (!msfGame) {
+      if (!msfGame) {
+        return null;
+      }
+
+      console.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
+
+      return {
+        currentQuarter: msfGame.score.currentQuarter,
+        currentQuarterSecondsRemaining: msfGame.score.currentQuarterSecondsRemaining,
+        playedStatus: msfGame.schedule.playedStatus,
+      };
+    } catch (e) {
+      console.error(`Error fetching liveStatus for ${game.gid}: ${e}`);
       return null;
     }
-
-    console.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
-
-    return {
-      currentQuarter: msfGame.score.currentQuarter,
-      currentQuarterSecondsRemaining: msfGame.score.currentQuarterSecondsRemaining,
-      playedStatus: msfGame.schedule.playedStatus,
-    };
   }
 }

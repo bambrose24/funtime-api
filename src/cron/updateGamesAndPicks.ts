@@ -40,8 +40,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           );
         }
 
-        const homeScore = msfGame?.score.homeScoreTotal!;
-        const awayScore = msfGame?.score.awayScoreTotal!;
+        const homeScore = msfGame?.score.homeScoreTotal;
+        const awayScore = msfGame?.score.awayScoreTotal;
+
+        console.log(`[keepThingsUpdated] MSF Game in update for ${dbGame.gid}: ${JSON.stringify(msfGame)}`)
 
         await datastore.game.update({
           where: { gid: dbGame.gid },
@@ -55,8 +57,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
 
         if (
           msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&
-          homeScore !== null &&
-          awayScore !== null
+          homeScore !== null && 
+          homeScore !== undefined &&
+          awayScore !== null && 
+          awayScore !== undefined
         ) {
           const winner =
             homeScore === awayScore
