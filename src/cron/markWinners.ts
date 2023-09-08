@@ -7,13 +7,13 @@ export async function markWinners(season: number) {
     datastore.game.findMany({where: {season}, select: {gid: true, week: true}}),
   ]);
 
-  console.log(`going to mark winners for season ${season} (${leaguesForSeason.length} leagues)`);
+  console.info(`going to mark winners for season ${season} (${leaguesForSeason.length} leagues)`);
   const seasonWeeks = Array.from(new Set(games.map(g => g.week)));
 
   for (const league of leaguesForSeason) {
     const {league_id} = league;
     const existingWinnersForSeason = await datastore.weekWinners.findMany({where: {league_id}});
-    console.log(`existing winners for season ${existingWinnersForSeason.length}`);
+    console.info(`existing winners for season ${existingWinnersForSeason.length}`);
     const weeksWithWinners = Array.from(new Set(existingWinnersForSeason.map(w => w.week)));
     const weeksToCheck = seasonWeeks.filter(w => !weeksWithWinners.includes(w));
     for (const week of weeksToCheck) {
@@ -21,7 +21,7 @@ export async function markWinners(season: number) {
       if (winners && winners.length) {
         for (const winner of winners) {
           for (const member of winner.member) {
-            console.log(
+            console.info(
               `creating winner for ${week} ${season} for league ${league_id} - ${member.membership_id}`
             );
             await datastore.weekWinners.create({
