@@ -27,8 +27,8 @@ export default class LeagueID {
   async status(@Root() league: League): Promise<LeagueStatus> {
     const now = new Date();
     const [firstGame, lastGame] = await Promise.all([
-      datastore.game.findFirst({where: {season: league.season}, orderBy: {ts: 'desc'}}),
       datastore.game.findFirst({where: {season: league.season}, orderBy: {ts: 'asc'}}),
+      datastore.game.findFirst({where: {season: league.season}, orderBy: {ts: 'desc'}}),
     ]);
 
     if (firstGame && now < firstGame.ts) {
