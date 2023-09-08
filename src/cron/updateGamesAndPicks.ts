@@ -89,7 +89,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           const correctPickIds: number[] = [];
           const wrongPickIds: number[] = [];
           picks.forEach((p) => {
-            if (winner === null || p.winner === winner) {
+            if (p.winner && (winner === null || p.winner === winner)) {
               correctPickIds.push(p.pickid);
             } else {
               wrongPickIds.push(p.pickid);
