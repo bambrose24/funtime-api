@@ -56,6 +56,7 @@ export default class EmailLogsFields {
       if (!response) {
         return null;
       }
+      // this is returning nullable fields even though the package types says it won't... ugh
       return {...response, id: emailLog.resend_id};
     } catch (e) {
       console.error(`Error trying to read resend email ${emailLog.resend_id}: ${e}`);
