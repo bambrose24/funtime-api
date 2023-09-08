@@ -11,31 +11,31 @@ class ResendEmail {
   @Field(_type => [String!], {nullable: true})
   cc: string[] | null;
 
-  @Field(_type => String)
+  @Field(_type => String, {nullable: true})
   created_at: string;
 
-  @Field(_type => String)
+  @Field(_type => String, {nullable: true})
   from: string;
 
   @Field(_type => String, {nullable: true})
   html: string | null;
 
-  @Field(_type => String)
+  @Field(_type => ID)
   id: string;
 
-  @Field(_type => String)
+  @Field(_type => String, {nullable: true})
   last_event: string;
 
   @Field(_type => [String!], {nullable: true})
   reply_to: string[] | null;
 
-  @Field(_type => String)
+  @Field(_type => String, {nullable: true})
   subject: string;
 
   @Field(_type => String, {nullable: true})
   text: string | null;
 
-  @Field(_type => [String!])
+  @Field(_type => [String!], {nullable: true})
   to: string[];
 }
 
@@ -56,7 +56,7 @@ export default class EmailLogsFields {
       if (!response) {
         return null;
       }
-      return response;
+      return {...response, id: emailLog.resend_id};
     } catch (e) {
       console.error(`Error trying to read resend email ${emailLog.resend_id}: ${e}`);
       return null;
