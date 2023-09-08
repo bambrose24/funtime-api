@@ -58,7 +58,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         });
 
         if (
-          msfGame?.schedule.playedStatus === MSFGamePlayedStatus.COMPLETED &&
+          (msfGame?.schedule?.playedStatus === MSFGamePlayedStatus.COMPLETED || msfGame?.schedule?.playedStatus === MSFGamePlayedStatus.COMPLETED_PENDING_REVIEW) &&
           homeScore !== null && 
           homeScore !== undefined &&
           awayScore !== null && 
