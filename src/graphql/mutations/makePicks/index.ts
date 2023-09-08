@@ -1,5 +1,5 @@
 import datastore from '@shared/datastore';
-import {LeagueMember, User} from '@prisma/client';
+import {LeagueMember, MemberRole, User} from '@prisma/client';
 import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
@@ -40,11 +40,20 @@ class MakePicksResolver {
     }
     const dbUser = auth.dbUser;
 
+    const viewerMember = await datastore.leagueMember.findFirstOrThrow({
+      where: {league_id, people: {uid: dbUser.uid}},
+    });
+    if (override_member_id && viewerMember.role !== MemberRole.admin) {
+      throw new Error(
+        `You cannot make picks for someone if you are not an admin (viewer uid ${dbUser?.uid} league_id ${league_id} override_member_id ${override_member_id})`
+      );
+    }
+
+    const isImpersonating = Boolean(override_member_id);
+
     const member = override_member_id
       ? await datastore.leagueMember.findFirstOrThrow({where: {membership_id: override_member_id}})
-      : await datastore.leagueMember.findFirstOrThrow({
-          where: {league_id, people: {uid: dbUser.uid}},
-        });
+      : viewerMember;
     if (picks.length === 0) {
       return {success: false, user: dbUser};
     }
@@ -58,12 +67,16 @@ class MakePicksResolver {
       },
     });
     const startedGids = new Set(startedGamesForWeek.map(g => g.gid));
-    const filteredPicks = picks.filter(p => !startedGids.has(p.game_id));
+    const filteredPicks = isImpersonating ? picks : picks.filter(p => !startedGids.has(p.game_id));
 
-    const {week, season} = await upsertWeekPicksForMember(member.membership_id, filteredPicks);
+    const {week, season} = await upsertWeekPicksForMember(
+      member.membership_id,
+      filteredPicks,
+      isImpersonating
+    );
 
     try {
-      const adminUsername = override_member_id ? dbUser.username : undefined;
+      const adminUsername = isImpersonating ? dbUser.username : undefined;
       await sendPickSuccessEmail(member.membership_id, week, season, adminUsername);
     } catch (e) {
       console.error('email error', e);
@@ -75,7 +88,8 @@ class MakePicksResolver {
 
 async function upsertWeekPicksForMember(
   member_id: number,
-  picks: Array<GamePick>
+  picks: Array<GamePick>,
+  isImpersonating: boolean
 ): Promise<{week: number; season: number}> {
   const user = await datastore.leagueMember
     .findUniqueOrThrow({where: {membership_id: member_id}})
@@ -100,20 +114,20 @@ async function upsertWeekPicksForMember(
   const week = games[0].week;
   const season = games[0].season;
 
-  // TODO check if the person is able to make picks for the week based on game start time
-
-  // TODO let picks happen until the "majority" time
-
   const existingPick = await datastore.pick.findFirst({
-    where: {member_id: {equals: member_id}},
+    where: {
+      member_id,
+      week,
+      season,
+    },
   });
 
   if (existingPick) {
     await datastore.pick.deleteMany({
       where: {
-        member_id: {equals: member_id},
-        week: {equals: week},
-        season: {equals: season},
+        member_id,
+        week,
+        season,
       },
     });
   }
