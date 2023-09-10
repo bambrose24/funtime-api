@@ -1,4 +1,4 @@
-import {Ctx, Field, FieldResolver, Int, ObjectType, Resolver, Root} from 'type-graphql';
+import {Ctx, Field, FieldResolver, ID, Int, ObjectType, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloContext} from 'src/graphql/server/types';
 import {getGamesByWeek} from '../../../shared/mysportsfeeds';
@@ -8,6 +8,8 @@ import {timeout} from '@util/timeout';
 
 @ObjectType('GameLive')
 class GameLive {
+  @Field(() => ID)
+  id: string;
   @Field(() => Int, {nullable: true})
   currentQuarter?: number | null | undefined;
   @Field(() => Int, {nullable: true})
@@ -47,6 +49,7 @@ export default class GameLiveResolver {
       console.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
 
       return {
+        id: `msf_${game.gid}`,
         currentQuarter: msfGame.score.currentQuarter,
         currentQuarterSecondsRemaining: msfGame.score.currentQuarterSecondsRemaining,
         playedStatus: msfGame.schedule.playedStatus,
