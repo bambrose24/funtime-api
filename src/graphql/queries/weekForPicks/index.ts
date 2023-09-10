@@ -1,13 +1,15 @@
 import {Game, LeagueMember, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
+import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import {SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 
 @ObjectType()
 class WeekForPicksResponse {
+  @Field(() => ID)
+  id: string;
   @Field(() => Int, {nullable: true})
   week: number | null;
   @Field(() => Int, {nullable: true})
@@ -45,7 +47,16 @@ export class WeekForPicksResolver {
     } else {
       const res = await findWeekForPicks({league_id});
       if (res === null) {
-        return {week: null, season: null, games: [], existingPicks: [], leagueMember: null};
+        return {
+          id: `${league_id}_${member_id}${
+            override !== undefined && override !== null ? `_${override}` : ``
+          }${week !== undefined && week !== null ? `_${week}` : ``}`,
+          week: null,
+          season: null,
+          games: [],
+          existingPicks: [],
+          leagueMember: null,
+        };
       }
 
       weekRes = res.week;
@@ -81,6 +92,9 @@ export class WeekForPicksResolver {
     ]);
 
     return {
+      id: `${league_id}_${member_id}${
+        override !== undefined && override !== null ? `_${override}` : ``
+      }${week !== undefined && week !== null ? `_${week}` : ``}`,
       week: weekRes,
       season,
       games,
