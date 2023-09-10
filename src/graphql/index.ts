@@ -35,6 +35,7 @@ import LeagueRulesResolver from './queries/league/rules';
 import EmailLogsFields from './queries/emailLogs/fields';
 import {env} from '../config';
 import LeagueMemberPeopleResolver from './queries/league/memberpeople';
+import LeagueRankingsResolver from './queries/league/rankings';
 
 const SHOULD_AUTH_MUTATIONS = env === 'production';
 
@@ -185,6 +186,7 @@ const resolvers = [
   LeagueRulesResolver,
   EmailLogsFields,
   LeagueMemberPeopleResolver,
+  LeagueRankingsResolver,
 ] as const;
 
 export default resolvers;
