@@ -3,12 +3,14 @@ import {Game, MemberRole, Pick, Prisma} from '@prisma/client';
 import datastore from '@shared/datastore';
 import moment from 'moment';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
+import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import {getUserEnforced} from '@shared/auth/user';
 
 @ObjectType()
 class PicksByWeekResponse {
+  @Field(() => ID)
+  id: string;
   @Field(() => Int, {nullable: true})
   week: number | null;
   @Field(() => Int, {nullable: true})
@@ -29,7 +31,6 @@ class PicksByWeekResolver {
     @Arg('week', () => Int, {nullable: true})
     week: number | null
   ): Promise<PicksByWeekResponse> {
-    console.log('picksByWeek args', week, league_id);
     const {dbUser} = getUserEnforced();
     const [league, member, members] = await Promise.all([
       datastore.league.findFirst({
@@ -88,6 +89,7 @@ class PicksByWeekResolver {
 
     if (!games || games.length === 0) {
       return {
+        id: `${week}_${season}`,
         week,
         season,
         canView: override || false,
@@ -109,6 +111,7 @@ class PicksByWeekResolver {
     });
 
     return {
+      id: `${week}_${season}`,
       week: realWeek,
       season: realSeason,
       canView: override || canView,
