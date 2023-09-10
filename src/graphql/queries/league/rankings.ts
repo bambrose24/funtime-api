@@ -41,6 +41,7 @@ export default class LeagueRankingsResolver {
           leaguemembers: {
             league_id: league.league_id,
           },
+          done: 1,
         },
         _count: {
           _all: true, // Count all fields (this will give us the count of correct picks for each member)
