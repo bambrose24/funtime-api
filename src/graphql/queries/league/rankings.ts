@@ -69,8 +69,6 @@ export default class LeagueRankingsResolver {
       return prev;
     }, {} as Record<number, typeof picksUnsorted>);
 
-    const picks = _.orderBy(picksUnsorted, '_count', 'desc');
-
     const resultNoRanks: Array<Omit<LeagueRanking, 'ranking'>> = Object.keys(
       memberIdToAggregates
     ).map((memberIdRaw, i) => {
