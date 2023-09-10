@@ -1,6 +1,6 @@
 import {FieldResolver, Resolver, Root, ID, registerEnumType, Ctx, Arg} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
-import {League, LeagueMember} from '@prisma/client';
+import {Game, League, LeagueMember} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
 import {ApolloContext} from '@graphql/server/types';
@@ -66,6 +66,18 @@ export default class LeagueID {
     }
     return await datastore.leagueMember.findFirst({
       where: {league_id: league.league_id, people: {uid: dbUser.uid}},
+    });
+  }
+
+  @FieldResolver(_type => TypeGraphQL.Game, {nullable: true})
+  async mostRecentlyStartedGame(
+    @Root() league: League,
+    @Ctx() {prisma: datastore}: ApolloContext
+  ): Promise<Game | null> {
+    const now = new Date();
+    return await datastore.game.findFirst({
+      where: {season: league.season, ts: {lte: now}},
+      orderBy: {ts: 'asc'},
     });
   }
 }
