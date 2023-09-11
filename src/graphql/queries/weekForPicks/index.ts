@@ -94,7 +94,6 @@ export class WeekForPicksResolver {
         : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
     ]);
-    console.log('week and existingPicks', member_id, week, existingPicks.length);
 
     return {
       id: `${league_id}_${member_id}${
