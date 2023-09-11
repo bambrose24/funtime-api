@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Game, MemberRole, Pick, Prisma} from '@prisma/client';
+import {Game, LatePolicy, MemberRole, Pick, Prisma} from '@prisma/client';
 import datastore from '@shared/datastore';
 import moment from 'moment';
 import * as TypeGraphQL from '@generated/type-graphql';
@@ -100,7 +100,7 @@ class PicksByWeekResolver {
 
     const {week: realWeek, season: realSeason} = games[0];
 
-    const canView = games[0].ts < moment().toDate();
+    const hasWeekStarted = games[0].ts < new Date();
 
     const picks = await datastore.pick.findMany({
       where: {
@@ -108,6 +108,17 @@ class PicksByWeekResolver {
         season: {equals: realSeason},
         member_id: {in: members.map(m => m.membership_id)},
       },
+    });
+
+    const viewerHasPicks = picks.some(
+      p => member?.membership_id && p.member_id === member.membership_id
+    );
+
+    const canView = canViewPicks({
+      latePolicy: league.late_policy || 'close_at_first_game_start',
+      viewerHasPicks,
+      hasWeekStarted,
+      override,
     });
 
     return {
@@ -118,6 +129,30 @@ class PicksByWeekResolver {
       picks,
       games,
     };
+  }
+}
+
+function canViewPicks({
+  latePolicy,
+  viewerHasPicks,
+  hasWeekStarted,
+  override,
+}: {
+  latePolicy: LatePolicy;
+  viewerHasPicks: boolean;
+  hasWeekStarted: boolean;
+  override: boolean;
+}): boolean {
+  if (override) {
+    return true;
+  }
+  switch (latePolicy) {
+    case 'allow_late_and_lock_after_start':
+      return hasWeekStarted ? viewerHasPicks : false;
+    case 'allow_late_whole_week':
+      return hasWeekStarted ? true : false;
+    case 'close_at_first_game_start':
+      return hasWeekStarted ? true : false;
   }
 }
 
