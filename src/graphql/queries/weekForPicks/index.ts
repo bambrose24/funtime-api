@@ -87,7 +87,11 @@ export class WeekForPicksResolver {
       datastore.game.findMany({
         where: {week: weekRes, season},
       }),
-      datastore.pick.findMany({where: {leaguemembers: {league_id, membership_id: memberId}}}),
+      week
+        ? datastore.pick.findMany({
+            where: {week, leaguemembers: {league_id, membership_id: memberId}},
+          })
+        : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
     ]);
 
