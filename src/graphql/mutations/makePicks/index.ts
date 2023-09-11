@@ -1,5 +1,5 @@
 import datastore from '@shared/datastore';
-import {LeagueMember, MemberRole, User} from '@prisma/client';
+import {MemberRole, User} from '@prisma/client';
 import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
