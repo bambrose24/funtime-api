@@ -114,7 +114,7 @@ async function findWeekForPicks({
   week: number;
   season: number;
 } | null> {
-  const [gamesWithinMonth, league, member, memberPicks] = await Promise.all([
+  const [gamesWithinMonth, league, memberPicks] = await Promise.all([
     datastore.game.findMany({
       where: {
         ts: {
@@ -129,7 +129,6 @@ async function findWeekForPicks({
       orderBy: {ts: 'asc'},
     }),
     datastore.league.findFirstOrThrow({where: {league_id}}),
-    datastore.leagueMember.findFirstOrThrow({where: {membership_id: member_id}}),
     datastore.pick.findMany({where: {member_id}}),
   ]);
 
@@ -175,7 +174,7 @@ function firstNotStartedWeek(gamesSorted: Array<Game>) {
   const now = new Date();
   const startedWeekSeasons = new Set();
   for (const game of gamesSorted) {
-    if (game.ts > now) {
+    if (game.ts < now) {
       startedWeekSeasons.add(`${game.week},${game.season}`);
     }
   }
