@@ -84,6 +84,7 @@ enum ReminderPolicy {
 enum LatePolicy {
   allow_late_whole_week
   close_at_first_game_start
+  allow_late_and_lock_after_start
 }
 
 model League {

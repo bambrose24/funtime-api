@@ -39,30 +39,6 @@ export class WeekForPicksResolver {
       throw new Error('Need registered authd user to make picks');
     }
 
-    let weekRes: number;
-    let season: number;
-    if (week && override) {
-      weekRes = week;
-      season = SEASON;
-    } else {
-      const res = await findWeekForPicks({league_id});
-      if (res === null) {
-        return {
-          id: `${league_id}_${member_id}${
-            override !== undefined && override !== null ? `_${override}` : ``
-          }${week !== undefined && week !== null ? `_${week}` : ``}`,
-          week: null,
-          season: null,
-          games: [],
-          existingPicks: [],
-          leagueMember: null,
-        };
-      }
-
-      weekRes = res.week;
-      season = res.season;
-    }
-
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: user.dbUser.uid}},
     });
@@ -82,6 +58,30 @@ export class WeekForPicksResolver {
       }
     }
     const memberId = member_id ?? viewerMember.membership_id;
+
+    let weekRes: number;
+    let season: number;
+    if (week && override) {
+      weekRes = week;
+      season = SEASON;
+    } else {
+      const res = await findWeekForPicks({league_id, member_id: memberId});
+      if (res === null) {
+        return {
+          id: `${league_id}_${member_id}${
+            override !== undefined && override !== null ? `_${override}` : ``
+          }${week !== undefined && week !== null ? `_${week}` : ``}`,
+          week: null,
+          season: null,
+          games: [],
+          existingPicks: [],
+          leagueMember: null,
+        };
+      }
+
+      weekRes = res.week;
+      season = res.season;
+    }
 
     const [games, existingPicks, leagueMember] = await Promise.all([
       datastore.game.findMany({
@@ -106,13 +106,15 @@ export class WeekForPicksResolver {
 
 async function findWeekForPicks({
   league_id,
+  member_id,
 }: {
   league_id: number;
+  member_id: number;
 }): Promise<{
   week: number;
   season: number;
 } | null> {
-  const [gamesWithinMonth, league] = await Promise.all([
+  const [gamesWithinMonth, league, member, memberPicks] = await Promise.all([
     datastore.game.findMany({
       where: {
         ts: {
@@ -127,16 +129,36 @@ async function findWeekForPicks({
       orderBy: {ts: 'asc'},
     }),
     datastore.league.findFirstOrThrow({where: {league_id}}),
+    datastore.leagueMember.findFirstOrThrow({where: {membership_id: member_id}}),
+    datastore.pick.findMany({where: {member_id}}),
   ]);
+
+  const nextUnstartedGame = firstNotStartedGame(gamesWithinMonth);
+  const nextUnstartedWeek = firstNotStartedWeek(gamesWithinMonth);
 
   switch (league.late_policy) {
     case 'allow_late_whole_week':
-      return firstNotStartedGame(gamesWithinMonth);
+      return nextUnstartedGame;
     case 'close_at_first_game_start':
-      return firstNotStartedWeek(gamesWithinMonth);
+      return nextUnstartedWeek;
+    case 'allow_late_and_lock_after_start':
+      if (!nextUnstartedGame) {
+        return null;
+      }
+      const hasPicksForCurrentWeek = memberPicks.some(p => p.week === nextUnstartedGame.week);
+      const hasWeekStarted = weekHasStarted(gamesWithinMonth, nextUnstartedGame.week);
+      if (hasPicksForCurrentWeek && hasWeekStarted) {
+        return nextUnstartedWeek;
+      }
+      return nextUnstartedGame;
   }
 
   return null;
+}
+
+function weekHasStarted(gamesSorted: Array<Game>, week: number) {
+  const now = new Date();
+  return gamesSorted.some(g => g.week === week && g.ts < now);
 }
 
 function firstNotStartedGame(gamesSorted: Array<Game>) {
