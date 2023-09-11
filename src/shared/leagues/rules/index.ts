@@ -1,6 +1,7 @@
 import {LatePolicy, PickPolicy, ReminderPolicy, ScoringType} from '@prisma/client';
 import {Field, ID, ObjectType} from 'type-graphql';
 
+// comment for redeploy
 @ObjectType('LeagueRuleWithExplanation')
 export class LeagueRuleWithExplanation {
   @Field(() => ID)
