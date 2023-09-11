@@ -32,7 +32,7 @@ export class WeekForPicksResolver {
     @Arg('override', () => Boolean, {nullable: true})
     override?: boolean | null,
     @Arg('week', () => Int, {nullable: true})
-    week?: number | null
+    weekArg?: number | null
   ): Promise<WeekForPicksResponse> {
     const user = getUser();
     if (!user || !user.dbUser) {
@@ -59,10 +59,10 @@ export class WeekForPicksResolver {
     }
     const memberId = member_id ?? viewerMember.membership_id;
 
-    let weekRes: number;
+    let week: number;
     let season: number;
-    if (week && override) {
-      weekRes = week;
+    if (weekArg && override) {
+      week = weekArg;
       season = SEASON;
     } else {
       const res = await findWeekForPicks({league_id, member_id: memberId});
@@ -70,7 +70,7 @@ export class WeekForPicksResolver {
         return {
           id: `${league_id}_${member_id}${
             override !== undefined && override !== null ? `_${override}` : ``
-          }${week !== undefined && week !== null ? `_${week}` : ``}`,
+          }${weekArg !== undefined && weekArg !== null ? `_${weekArg}` : ``}`,
           week: null,
           season: null,
           games: [],
@@ -79,27 +79,28 @@ export class WeekForPicksResolver {
         };
       }
 
-      weekRes = res.week;
+      week = res.week;
       season = res.season;
     }
 
     const [games, existingPicks, leagueMember] = await Promise.all([
       datastore.game.findMany({
-        where: {week: weekRes, season},
+        where: {week, season},
       }),
-      week
+      week !== null && week !== undefined
         ? datastore.pick.findMany({
             where: {week, leaguemembers: {league_id, membership_id: memberId}},
           })
         : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
     ]);
+    console.log('week and existingPicks', member_id, week, existingPicks.length);
 
     return {
       id: `${league_id}_${member_id}${
         override !== undefined && override !== null ? `_${override}` : ``
       }${week !== undefined && week !== null ? `_${week}` : ``}`,
-      week: weekRes,
+      week,
       season,
       games,
       existingPicks,
