@@ -88,17 +88,18 @@ export async function sendPickSuccessEmail(
       ...getDefaultSendParams(email),
       to: user.email,
       subject: `Your Funtime Picks for Week ${week}, ${season}`,
-      react: (
-        <PicksSummary
-          week={week}
-          league={league.leagues}
-          user={user}
-          games={games}
-          picks={picks}
-          teams={teams}
-          adminUsername={adminUsername}
-        />
-      ),
+      // react: (
+      //   <PicksSummary
+      //     week={week}
+      //     league={league.leagues}
+      //     user={user}
+      //     games={games}
+      //     picks={picks}
+      //     teams={teams}
+      //     adminUsername={adminUsername}
+      //   />
+      // ),
+      html: getWeekPicksContent({week, season: league.leagues.season, user, games, picks, teams}),
     });
     await datastore.emailLogs.create({
       data: {

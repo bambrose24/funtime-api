@@ -60,12 +60,19 @@ export function getWeekPicksContent({
     `Congrats ${user.username}! You just made your picks for Week ${week}, ${season}, and ` +
     `they're saved in system. Below is a summary of your picks:`;
 
+  const tiebreakerPick = picks.find(p => p.score !== null && p.score > 0);
+  const tiebreakerGame = games.find(g => g.gid === tiebreakerPick?.gid);
+
+  let allGames = tiebreakerGame
+    ? [...games.filter(g => g.gid !== tiebreakerGame.gid), tiebreakerGame]
+    : [...games];
+
   res += '<br/>';
-  games.forEach(g => {
+  allGames.forEach(g => {
     res += '<br/>';
     const pick = picks.find(p => p.gid === g.gid);
     if (!pick) {
-      throw new Error('could not find pick for game when preparing picks email');
+      return;
     }
 
     const winner = pick.winner;
