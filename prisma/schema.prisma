@@ -152,6 +152,7 @@ model Pick {
   done          Int?          @default(0)
   is_random     Boolean?
   member_id     Int?
+  winnerTeam    Team?         @relation("picks_winnerTeam", fields: [winner], references: [teamid])
   games         Game          @relation(fields: [gid], references: [gid], onUpdate: Restrict, map: "picks_ibfk_1")
   people        User          @relation(fields: [uid], references: [uid], onDelete: Cascade, map: "picks_ibfk_2")
   leaguemembers LeagueMember? @relation(fields: [member_id], references: [membership_id], onDelete: Cascade, onUpdate: Restrict, map: "picks_ibfk_3")
@@ -206,6 +207,7 @@ model Team {
   loc                               String      @db.VarChar(255)
   name                              String      @db.VarChar(255)
   conference                        String?     @db.VarChar(50)
+  picks_chosen                      Pick[]      @relation("picks_winnerTeam")
   games_games_homeToteams           Game[]      @relation("games_homeToteams")
   games_games_awayToteams           Game[]      @relation("games_awayToteams")
   superbowl_superbowl_loserToteams  Superbowl[] @relation("superbowl_loserToteams")
