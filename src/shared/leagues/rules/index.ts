@@ -19,6 +19,8 @@ export function getLatePickPolicyDescription(policy: LatePolicy): string {
       return `You can make picks through the end of the week, except for games that have started.`;
     case LatePolicy.close_at_first_game_start:
       return `As soon as the first game of the week starts, you cannot make any picks.`;
+    case LatePolicy.allow_late_and_lock_after_start:
+      return `If you're late, it's ok, you can pick games that haven't started. But when the week starts, picks are not editable and all picks are revealed to people who have made them.`;
   }
 }
 
