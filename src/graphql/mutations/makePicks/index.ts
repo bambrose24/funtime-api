@@ -43,7 +43,11 @@ class MakePicksResolver {
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: dbUser.uid}},
     });
-    if (override_member_id && viewerMember.role !== MemberRole.admin) {
+    if (
+      override_member_id &&
+      override_member_id !== viewerMember.membership_id &&
+      viewerMember.role !== MemberRole.admin
+    ) {
       throw new Error(
         `You cannot make picks for someone if you are not an admin (viewer uid ${dbUser?.uid} league_id ${league_id} override_member_id ${override_member_id})`
       );
