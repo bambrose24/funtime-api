@@ -9,7 +9,10 @@ const axiomTransport = new AxiomTransport({
   orgId: 'funtime-ywin', // defaults to process.env.AXIOM_ORG_ID
 });
 
-const transports = env === 'production' ? [axiomTransport] : [new Console()];
+const transports = env === 'production' ? [axiomTransport] : [axiomTransport];
+
+const cronOrServer: 'cron' | 'server' =
+  process.env.FUNTIME_RUN_SERVER === 'true' ? 'server' : 'cron';
 
 export const logger = createLogger({
   level: 'info',
@@ -21,7 +24,7 @@ export const logger = createLogger({
     format.splat(),
     format.json()
   ),
-  defaultMeta: {service: 'funtime-api', env},
+  defaultMeta: {service: 'funtime-api', env, serverApp: cronOrServer},
   transports: transports,
   exceptionHandlers: transports,
   rejectionHandlers: transports,
