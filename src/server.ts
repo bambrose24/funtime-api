@@ -148,7 +148,7 @@ async function bootstrap(httpServerFromFn: Server) {
       ApolloServerPluginDrainHttpServer({httpServer: httpServerFromFn}),
     ],
     formatError: (error: GraphQLFormattedError) => {
-      logger.error(`[graphql] Formatting Apollo Error`, {error});
+      logger.error(`[graphql] Got apollo server error`, {error});
       return error;
     },
   });
