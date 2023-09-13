@@ -1,4 +1,4 @@
-import {env} from 'src/config';
+import {env} from '../../src/config';
 import {createLogger, format} from 'winston';
 import {WinstonTransport as AxiomTransport} from '@axiomhq/winston';
 
