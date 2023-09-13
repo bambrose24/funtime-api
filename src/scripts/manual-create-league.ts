@@ -1,5 +1,6 @@
 import datastore from '@shared/datastore';
 import {SEASON} from '@util/const';
+import {logger} from '@util/logger';
 import {nanoid} from 'nanoid';
 
 async function run() {
@@ -32,7 +33,7 @@ async function run() {
     },
   });
 
-  console.log(`created league ${league.league_id} with membership ${membership.membership_id}`);
+  logger.info(`created league ${league.league_id} with membership ${membership.membership_id}`);
 }
 
 run();

@@ -35,6 +35,7 @@ import {ApolloContext} from '@graphql/server/types';
 import datastore from '@shared/datastore';
 import {sentryPlugin} from '@util/sentry';
 import {maybeSendReminders} from '@cron/reminders/maybeSendReminders';
+import {loggingPlugin} from '@graphql/plugins/loggingPlugin';
 
 const app = express();
 
@@ -134,7 +135,7 @@ async function bootstrap() {
     introspection: true,
     // Need to figure out how to clear the cache after mutations
     // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
-    plugins: [sentryPlugin],
+    plugins: [sentryPlugin, loggingPlugin],
   });
 
   await server.start();

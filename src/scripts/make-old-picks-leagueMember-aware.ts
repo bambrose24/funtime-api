@@ -1,4 +1,5 @@
 import datastore from '@shared/datastore';
+import {logger} from '@util/logger';
 
 async function run() {
   const picksWithoutMember = await datastore.pick.findMany({});
@@ -12,7 +13,7 @@ async function run() {
   const solvedMembershipIds = new Set<number>();
 
   for (let i = 0; i < picksWithoutMember.length; i++) {
-    console.log(`updating pick ${i} of ${picksWithoutMember.length}`);
+    logger.info(`updating pick ${i} of ${picksWithoutMember.length}`);
 
     const pick = picksWithoutMember[i];
 
@@ -24,7 +25,7 @@ async function run() {
     }
 
     if (pick.member_id !== member.membership_id) {
-      console.log(
+      logger.info(
         `  [doing real update pickid ${pick.pickid} to member_id ${member.membership_id} from ${pick.member_id}]`
       );
 
@@ -33,7 +34,7 @@ async function run() {
         data: {member_id: member.membership_id},
       });
     } else {
-      console.log(`  [skipping update for pickid ${pick.pickid} because already equal members]`);
+      logger.info(`  [skipping update for pickid ${pick.pickid} because already equal members]`);
     }
 
     solvedMembershipIds.add(member.membership_id);

@@ -1,4 +1,5 @@
 import datastore from '@shared/datastore';
+import {logger} from '@util/logger';
 import _ from 'lodash';
 
 async function run() {
@@ -42,22 +43,22 @@ async function run() {
   // await datastore.user.delete({ where: { uid: 50 } });
 
   const johnPicks = await datastore.pick.findMany({where: {uid: 50}});
-  console.log('johnPicks', johnPicks.length);
+  logger.info('johnPicks', johnPicks.length);
   const usersGroupedByEmail = _.groupBy(users, u => u.email);
   const noEmail = users.filter(u => !u.email);
-  console.log('noEmail', noEmail);
-  console.log(
+  logger.info('noEmail', noEmail);
+  logger.info(
     'duplicateEmails',
     Object.values(usersGroupedByEmail).filter(x => x.length > 1)
   );
 
   Object.values(usersGroupedByEmail).forEach(userList => {
     if (userList.length > 1) {
-      console.log('userList', userList.length, userList);
+      logger.info('userList', userList.length, userList);
     }
   });
 
-  // console.log(Object.keys(picksGrouped), picks.slice(0, 3));
+  // logger.info(Object.keys(picksGrouped), picks.slice(0, 3));
 }
 
 run();

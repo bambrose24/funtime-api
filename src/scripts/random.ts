@@ -1,4 +1,5 @@
 import datastore from '@shared/datastore';
+import {logger} from '@util/logger';
 
 async function run() {
   // await datastore.pick.updateMany({data: {done: 1}, where: {leaguemembers: {league_id: {lte: 7}}}});
@@ -7,7 +8,7 @@ async function run() {
     where: {leaguemembers: {league_id: 8}, week: 2},
   });
 
-  console.log(week2);
+  logger.info(week2);
 }
 
 run();

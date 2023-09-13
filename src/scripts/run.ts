@@ -19,10 +19,11 @@ process.env.FUNTIME_ENV = env;
 
 import {resolve} from 'path';
 import {execSync} from 'child_process';
+import {logger} from '@util/logger';
 
 const scriptPath = resolve(__dirname, scriptName);
 
-console.log(`Running script: ${scriptPath}.ts`);
+logger.info(`Running script: ${scriptPath}.ts`);
 execSync(`npx ts-node -r tsconfig-paths/register ${scriptPath}`, {
   stdio: 'inherit',
 });
