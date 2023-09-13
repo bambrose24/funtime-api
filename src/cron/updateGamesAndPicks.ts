@@ -44,7 +44,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         const homeScore = msfGame?.score.homeScoreTotal;
         const awayScore = msfGame?.score.awayScoreTotal;
 
-        logger.info(`[cron] MSF Game in update for ${dbGame.gid}: ${JSON.stringify(msfGame)}`)
+        logger.info(`[cron] MSF Game in update for ${dbGame.gid}`, msfGame)
 
         await datastore.game.update({
           where: { gid: dbGame.gid },
