@@ -11,7 +11,6 @@ const axiomTransport = new AxiomTransport({
 
 const transports = env === 'production' ? [axiomTransport] : [axiomTransport];
 
-// comment for redeploy
 const cronOrServer: 'cron' | 'server' =
   process.env.FUNTIME_RUN_SERVER === 'true' ? 'server' : 'cron';
 
