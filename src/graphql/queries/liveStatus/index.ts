@@ -5,6 +5,7 @@ import {getGamesByWeek} from '../../../shared/mysportsfeeds';
 import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
 import {Game} from '@prisma/client';
 import {timeout} from '@util/timeout';
+import {logger} from '@util/logger';
 
 @ObjectType('GameLive')
 class GameLive {
@@ -46,7 +47,7 @@ export default class GameLiveResolver {
         return null;
       }
 
-      console.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
+      logger.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
 
       return {
         id: `msf_${game.gid}`,

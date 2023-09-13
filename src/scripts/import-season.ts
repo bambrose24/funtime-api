@@ -8,13 +8,14 @@ import datastore from '@shared/datastore';
 import {getGamesBySeason} from '@shared/mysportsfeeds';
 import {MSFGame} from '@shared/mysportsfeeds/types';
 import {SEASON} from '@util/const';
+import {logger} from '@util/logger';
 import _ from 'lodash';
 import {env} from 'src/config';
 
 async function run() {
   const existingGames = await datastore.game.findMany({where: {season: SEASON}});
   if (existingGames.length > 0) {
-    console.log(
+    logger.info(
       `not importing season because ${existingGames.length} games exist for season ${SEASON} in env ${env}`
     );
     return;
@@ -30,9 +31,9 @@ async function run() {
   });
 
   const dbGames = games.map((g: MSFGame) => convertToDBGameForCreation(SEASON, g, teamsMap));
-  console.log(`prepped ${dbGames.length} games to input`);
+  logger.info(`prepped ${dbGames.length} games to input`);
   const res = await datastore.game.createMany({data: dbGames});
-  console.log(`created ${res.count} games for ${SEASON}`);
+  logger.info(`created ${res.count} games for ${SEASON}`);
 
   const newGames = await datastore.game.findMany({where: {season: SEASON}});
 

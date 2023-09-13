@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 import {Game} from '@prisma/client';
 import datastore from '@shared/datastore';
+import {logger} from '@util/logger';
 
 // npx ts-node src/scripts/update-tiebreakers.ts
 async function run() {
@@ -19,14 +20,14 @@ async function run() {
     gamesToMakeTiebreakers.push(weekGames[weekGames.length - 1]);
   });
 
-  console.log(`going to update ${gamesToMakeTiebreakers.length} games`);
+  logger.info(`going to update ${gamesToMakeTiebreakers.length} games`);
   const {count} = await datastore.game.updateMany({
     where: {
       gid: {in: gamesToMakeTiebreakers.map(g => g.gid)},
     },
     data: {is_tiebreaker: true},
   });
-  console.log(`affected ${count} rows`);
+  logger.info(`affected ${count} rows`);
 }
 
 run();

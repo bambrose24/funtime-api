@@ -2,6 +2,7 @@ import { Game, Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import { SEASON } from "@util/const";
+import { logger } from "@util/logger";
 import _ from "lodash";
 import moment from "moment";
 
@@ -35,7 +36,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
             g.schedule.awayTeam.abbreviation === awayTeam.abbrev
         );
         if (!msfGame) {
-          console.log(
+          logger.info(
             `[cron] could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
           );
         }
@@ -43,7 +44,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         const homeScore = msfGame?.score.homeScoreTotal;
         const awayScore = msfGame?.score.awayScoreTotal;
 
-        console.info(`[cron] MSF Game in update for ${dbGame.gid}: ${JSON.stringify(msfGame)}`)
+        logger.info(`[cron] MSF Game in update for ${dbGame.gid}: ${JSON.stringify(msfGame)}`)
 
         await datastore.game.update({
           where: { gid: dbGame.gid },
@@ -72,7 +73,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           const picks = await datastore.pick.findMany({
             where: { gid: dbGame.gid },
           });
-          console.info(`[cron] setting game ${dbGame.gid} to done`);
+          logger.info(`[cron] setting game ${dbGame.gid} to done`);
 
           const gameUpdateData = {
             done: true,
@@ -94,7 +95,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
             }
           });
 
-          console.info(
+          logger.info(
             `[cron] updating picks for ${dbGame.gid} - setting ${correctPickIds.length} to correct and ${wrongPickIds.length} to wrong`
           );
 

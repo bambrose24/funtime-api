@@ -107,7 +107,7 @@ app.use(async (req, res, next) => {
 
 // Run the 3 minute cron
 if (process.env.FUNTIME_RUN_CRON === 'true') {
-  console.log(`Starting cron in ${env}`);
+  logger.info(`Starting cron in ${env}`);
 
   // 3 mins to keep games updated
   cron.schedule('*/3 * * * *', async () => {

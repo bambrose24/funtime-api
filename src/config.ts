@@ -22,7 +22,7 @@ if (process.env.FUNTIME_ENV) {
   environment = process.env.FUNTIME_ENV as Env;
 }
 
-console.log(`env: ${environment}`);
+console.info(`env: ${environment}`);
 
 export const env = environment;
 const config = configMap[env];

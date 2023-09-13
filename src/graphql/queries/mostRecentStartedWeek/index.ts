@@ -5,6 +5,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import moment from 'moment';
+import {logger} from '@util/logger';
 
 @ObjectType()
 class MostRecentStartedWeekResponse {
@@ -30,8 +31,6 @@ class MostRecentStartedWeekResolver {
       },
       orderBy: {ts: 'desc'},
     });
-
-    console.log(mostRecentStartedGame, now(), moment());
 
     if (!mostRecentStartedGame) {
       throw new Error('No games have ts before right now');

@@ -7,6 +7,7 @@ import {WeekPicksReminder} from './react/reminders/WeekPicksReminder';
 
 import {getDefaultSendParams, getWeekPicksContent} from './util';
 import {PicksSummary} from './react/picks/PicksSummary';
+import {logger} from '@util/logger';
 
 export async function sendRegistrationMail(
   user: User,
@@ -110,9 +111,9 @@ export async function sendPickSuccessEmail(
         member_id: member_id,
       },
     });
-    console.log(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
+    logger.info(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
   } catch (e) {
-    console.log('got an error sending pick success email: ', JSON.stringify(e));
+    logger.error('got an error sending pick success email: ', JSON.stringify(e));
   }
 
   return false;
@@ -133,7 +134,7 @@ export async function sendWeekReminderEmail({
   week: number;
   weekStartTime: Date;
 }) {
-  console.info(`Sending week pick reminder to ${email} for week ${week}`);
+  logger.info(`Sending week pick reminder to ${email} for week ${week}`);
   const response = await resend.sendEmail({
     ...getDefaultSendParams(email),
     to: email,

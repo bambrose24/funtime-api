@@ -2,6 +2,7 @@ import {memoryCache} from '../caching/memory';
 import {MSFGame} from './types';
 
 import AsyncLock from 'async-lock';
+import {logger} from '@util/logger';
 
 var MySportsFeeds = require('mysportsfeeds-node');
 
@@ -53,7 +54,7 @@ export async function getGamesBySeason(season: number): Promise<Array<MSFGame>> 
     );
     return games.games.map((g: any) => g as MSFGame);
   } catch (e) {
-    console.log('error getting games by season', e);
+    logger.error('error getting games by season', e);
   }
   return [];
 }
@@ -68,15 +69,15 @@ export async function getGamesByWeek(
   useRedis: boolean = false
 ): Promise<Array<MSFGame>> {
   try {
-    console.log('getGamesByWeek week season', week, season);
     const key = getWeekKey({season, week});
 
     // First, check the memory cache
     const memoryCacheResult = memoryCache.get<Array<MSFGame>>(key);
     if (memoryCacheResult) {
-      console.log('Returning data from memory cache');
+      logger.info(`Returning getGamesByWeek data from memory cache for ${season} ${week}`);
       return memoryCacheResult;
     }
+    logger.info(`Could not find getGamesByWeek in cache for ${season} ${week}`);
 
     const games = await msf.getData(
       'nfl',

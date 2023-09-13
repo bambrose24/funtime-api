@@ -3,6 +3,7 @@ import datastore from '@shared/datastore';
 import {sendWeekReminderEmail} from '@shared/email';
 import {SEASON} from '@util/const';
 import {nextNotStartedGame} from '@util/data/nextNotStartedGame';
+import {logger} from '@util/logger';
 import moment from 'moment';
 
 export async function maybeSendReminders() {
@@ -24,11 +25,11 @@ export async function maybeSendReminders() {
   ]);
   const game = await nextNotStartedGame();
   if (!game) {
-    console.info(`No game found for nextNotStartedGame, not sending reminders`);
+    logger.info(`No game found for nextNotStartedGame, not sending reminders`);
     return;
   }
 
-  console.info(
+  logger.info(
     `Going to attempt to send reminders for ${leaguesForSeason.length} leagues ${JSON.stringify(
       leaguesForSeason.map(l => {
         return {league_id: l.league_id};
@@ -44,14 +45,14 @@ export async function maybeSendReminders() {
 
     const sendReminders = shouldSendReminders(reminderPolicy, game.ts);
     if (!sendReminders) {
-      console.info(
+      logger.info(
         `Not sending reminders for league ${league.league_id} ${game.ts}, ${moment(game.ts)
           .subtract(3, 'hours')
           .toDate() < new Date()} ${new Date()}, ${reminderPolicy}`
       );
       continue;
     }
-    console.info(`Going to send reminders because sendReminders was true`);
+    logger.info(`Going to send reminders because sendReminders was true`);
 
     const leagueReminderEmails = allExistingEmails.filter(e => e.league_id === league.league_id);
     const members = membersInLeagues.filter(m => m.league_id === league.league_id);
@@ -62,14 +63,14 @@ export async function maybeSendReminders() {
       },
     });
     const pickedMembers = new Set(membersPicksForWeek.map(p => p.member_id));
-    console.log(
+    logger.info(
       `All the members to ponder reminders to ${JSON.stringify(members.map(m => m.membership_id))}`
     );
     for (const member of members) {
       if (pickedMembers.has(member.membership_id)) {
         continue;
       }
-      console.info(
+      logger.info(
         `Going to send reminder to ${member.people.email} (${member.people.uid}, ${member.people.username}) for week ${game.week}`
       );
       const existingReminder = leagueReminderEmails.find(
@@ -86,7 +87,7 @@ export async function maybeSendReminders() {
           week: game.week,
           weekStartTime: game.ts,
         });
-        console.log(
+        logger.info(
           `Got response from reminder email to ${member.people.email}: ${JSON.stringify(response)}`
         );
         if (response) {

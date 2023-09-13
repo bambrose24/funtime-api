@@ -5,6 +5,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {sendRegistrationMail} from '@shared/email';
 import {SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
+import {logger} from '@util/logger';
 export const LEAGUE_ID = 7;
 export const DEFAULT_ROLE = 'player';
 
@@ -90,7 +91,7 @@ class RegisterResolver {
         });
       }
     } catch (e) {
-      console.log('email error:', e);
+      logger.error('email error:', e);
     }
 
     return {success: true, user, membership};
