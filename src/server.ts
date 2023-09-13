@@ -7,15 +7,17 @@ import {ProfilingIntegration} from '@sentry/profiling-node';
 
 import morgan from 'morgan';
 import helmet from 'helmet';
+import http from 'http';
 import StatusCodes from 'http-status-codes';
 import express, {NextFunction, Request, Response} from 'express';
+
+import {ApolloServerPluginDrainHttpServer} from '@apollo/server/plugin/drainHttpServer';
 
 import {json} from 'body-parser';
 
 import cron from 'node-cron';
 
 import 'express-async-errors';
-import logger from 'jet-logger';
 
 import httpContext from 'express-http-context';
 
@@ -36,6 +38,9 @@ import datastore from '@shared/datastore';
 import {sentryPlugin} from '@util/sentry';
 import {maybeSendReminders} from '@cron/reminders/maybeSendReminders';
 import {loggingPlugin} from '@graphql/plugins/loggingPlugin';
+import {Server} from 'http';
+import {GraphQLFormattedError} from 'graphql';
+import {logger} from '@util/logger';
 
 const app = express();
 
@@ -72,6 +77,8 @@ app.use(Sentry.Handlers.tracingHandler());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+const httpServer = http.createServer(app);
+
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -84,7 +91,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Error handling
 app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) => {
-  logger.err(err, true);
+  logger.error(`API server error`, {errror: err});
   const status = err instanceof CustomError ? err.HttpStatus : StatusCodes.BAD_REQUEST;
   return res.status(status).json({
     error: err.message,
@@ -121,7 +128,7 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
   });
 }
 
-async function bootstrap() {
+async function bootstrap(httpServerFromFn: Server) {
   const schema = await buildSchema({
     resolvers,
     dateScalarMode: 'isoDate',
@@ -135,7 +142,15 @@ async function bootstrap() {
     introspection: true,
     // Need to figure out how to clear the cache after mutations
     // cache: new KeyvAdapter(new Keyv(process.env.REDIS_URL)),
-    plugins: [sentryPlugin, loggingPlugin],
+    plugins: [
+      sentryPlugin,
+      loggingPlugin,
+      ApolloServerPluginDrainHttpServer({httpServer: httpServerFromFn}),
+    ],
+    formatError: (error: GraphQLFormattedError) => {
+      logger.error(`[graphql] Formatting Apollo Error`, {error});
+      return error;
+    },
   });
 
   await server.start();
@@ -156,7 +171,7 @@ async function bootstrap() {
   );
 }
 
-bootstrap().then(() => {
+bootstrap(httpServer).then(() => {
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler());
 });
