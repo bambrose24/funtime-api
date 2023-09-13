@@ -5,3 +5,4 @@ supabase/*
 !supabase/config.toml
 prod.pgsql
 dist/
+info.log
