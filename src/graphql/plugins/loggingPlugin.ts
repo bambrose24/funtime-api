@@ -20,12 +20,14 @@ export const loggingPlugin: ApolloServerPlugin<ApolloContext> = {
         async willSendResponse() {
           const endTime = new Date();
           const totalTimeMs = endTime.valueOf() - startTime.valueOf();
-          logger.info(`[graphql] Operation time log`, {
-            operationName: request.operationName,
-            query: request.query,
-            variables: request.variables,
-            graphqlRequestTimeMs: totalTimeMs,
-          });
+          if (request.operationName && !IGNORE_OPERATION_NAMES.includes(request.operationName)) {
+            logger.info(`[graphql] Operation time log`, {
+              operationName: request.operationName,
+              query: request.query,
+              variables: request.variables,
+              graphqlRequestTimeMs: totalTimeMs,
+            });
+          }
         },
       });
     });
