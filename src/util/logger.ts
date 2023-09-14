@@ -37,7 +37,7 @@ function getDefaultLoggingMeta() {
   return meta;
 }
 
-export const logger = createLogger({
+const winstonLogger = createLogger({
   level: 'info',
   format: format.combine(
     format.timestamp({
@@ -52,6 +52,25 @@ export const logger = createLogger({
   exceptionHandlers: transports,
   rejectionHandlers: transports,
 });
+
+type Logger = {
+  info: (message: any, meta?: object) => typeof winstonLogger;
+  error: (message: any, meta?: object) => typeof winstonLogger;
+};
+
+export const logger: Logger = {
+  ...winstonLogger,
+  info: (message, meta = {}) => {
+    const globalMeta = getDefaultLoggingMeta();
+    winstonLogger.info(message, {...meta, ...globalMeta});
+    return winstonLogger;
+  },
+  error: (message, meta = {}) => {
+    const globalMeta = getDefaultLoggingMeta();
+    winstonLogger.error(message, {...meta, ...globalMeta});
+    return winstonLogger;
+  },
+};
 
 // export const logger = createLogger({
 //   level: 'info',

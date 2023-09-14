@@ -43,20 +43,8 @@ async function run() {
   // await datastore.user.delete({ where: { uid: 50 } });
 
   const johnPicks = await datastore.pick.findMany({where: {uid: 50}});
-  logger.info('johnPicks', johnPicks.length);
   const usersGroupedByEmail = _.groupBy(users, u => u.email);
   const noEmail = users.filter(u => !u.email);
-  logger.info('noEmail', noEmail);
-  logger.info(
-    'duplicateEmails',
-    Object.values(usersGroupedByEmail).filter(x => x.length > 1)
-  );
-
-  Object.values(usersGroupedByEmail).forEach(userList => {
-    if (userList.length > 1) {
-      logger.info('userList', userList.length, userList);
-    }
-  });
 
   // logger.info(Object.keys(picksGrouped), picks.slice(0, 3));
 }

@@ -113,7 +113,7 @@ export async function sendPickSuccessEmail(
     });
     logger.info(`successfully sent picks email to ${user.email} for week ${week}, ${season}`);
   } catch (e) {
-    logger.error('got an error sending pick success email: ', JSON.stringify(e));
+    logger.error('got an error sending pick success email: ', {error: e});
   }
 
   return false;
