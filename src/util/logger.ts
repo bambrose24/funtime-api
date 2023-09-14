@@ -1,5 +1,5 @@
 import {env} from '../../src/config';
-import winston, {createLogger, format} from 'winston';
+import winston, {createLogger, format, transport} from 'winston';
 import {WinstonTransport as AxiomTransport} from '@axiomhq/winston';
 import {Console} from 'winston/lib/winston/transports';
 import {getUser} from '@shared/auth/user';
@@ -10,7 +10,9 @@ const axiomTransport = new AxiomTransport({
   orgId: 'funtime-ywin', // defaults to process.env.AXIOM_ORG_ID
 });
 
-const transports = env === 'production' ? [axiomTransport] : [axiomTransport];
+const consoleTransport = new winston.transports.Console({format: winston.format.simple()});
+
+const transports = env === 'production' ? [axiomTransport] : [consoleTransport];
 
 const cronOrServer: 'cron' | 'server' =
   process.env.FUNTIME_RUN_SERVER === 'true' ? 'server' : 'cron';
