@@ -48,18 +48,19 @@ enum MemberRole {
 }
 
 model LeagueMember {
-  membership_id Int           @id(map: "idx_18414_primary") @default(autoincrement())
-  league_id     Int
-  user_id       Int
-  paid          Boolean?      @default(false)
-  role          MemberRole?   @default(player)
-  ts            DateTime      @default(now()) @db.Timestamptz(6)
-  people        User          @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1", onDelete: Cascade)
-  leagues       League        @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "leaguemembers_ibfk_2")
-  picks         Pick[]
-  superbowl     Superbowl[]
-  WeekWinners   WeekWinners[]
-  EmailLogs     EmailLogs[]
+  membership_id  Int             @id(map: "idx_18414_primary") @default(autoincrement())
+  league_id      Int
+  user_id        Int
+  paid           Boolean?        @default(false)
+  role           MemberRole?     @default(player)
+  ts             DateTime        @default(now()) @db.Timestamptz(6)
+  people         User            @relation(fields: [user_id], references: [uid], onUpdate: Restrict, map: "leaguemembers_ibfk_1", onDelete: Cascade)
+  leagues        League          @relation(fields: [league_id], references: [league_id], onUpdate: Restrict, map: "leaguemembers_ibfk_2")
+  picks          Pick[]
+  superbowl      Superbowl[]
+  WeekWinners    WeekWinners[]
+  EmailLogs      EmailLogs[]
+  LeagueMessages LeagueMessage[]
 
   @@index([paid], map: "idx_18414_paid")
   @@index([role], map: "idx_18414_role")
@@ -106,6 +107,7 @@ model League {
   priorLeague           League?         @relation("prior_leagues", fields: [prior_league_id], references: [league_id])
   nextLeague            League?         @relation("prior_leagues")
   EmailLogs             EmailLogs[]
+  LeagueMessages        LeagueMessage[]
 
   @@index([season], map: "idx_18422_season")
   @@index([name], map: "idx_18422_name")
@@ -261,4 +263,30 @@ model EmailLogs {
   @@index([league_id, week], map: "idx_emaillogs_league_week")
   @@index([member_id, week], map: "idx_emaillogs_member_week")
   @@index([league_id, member_id, week], map: "idx_emaillogs_league_member_week")
+}
+
+model LeagueMessage {
+  message_id   String      @id @default(cuid())
+  content      String
+  member_id    Int
+  league_id    Int
+  week         Int? // This is optional
+  message_type MessageType
+  createdAt    DateTime    @default(now())
+
+  member LeagueMember @relation(fields: [member_id], references: [membership_id])
+  league League       @relation(fields: [league_id], references: [league_id])
+
+  @@index([league_id])
+  @@index([member_id])
+  @@index([league_id, member_id])
+  @@index([createdAt]) // ts is equivalent to createdAt here
+  @@index([message_type])
+  @@index([league_id, message_type])
+  @@map("leaguemessages")
+}
+
+enum MessageType {
+  WEEK_COMMENT
+  LEAGUE_MESSAGE
 }
