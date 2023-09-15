@@ -123,7 +123,12 @@ class PicksByWeekResolver {
         },
       }),
       datastore.leagueMessage.findMany({
-        where: {league_id, message_type: MessageType.WEEK_COMMENT, status: MessageStatus.PUBLISHED},
+        where: {
+          league_id,
+          message_type: MessageType.WEEK_COMMENT,
+          status: MessageStatus.PUBLISHED,
+          week,
+        },
         orderBy: {createdAt: 'asc'},
       }),
     ]);

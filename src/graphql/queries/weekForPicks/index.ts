@@ -97,7 +97,12 @@ export class WeekForPicksResolver {
         : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
       datastore.leagueMessage.findMany({
-        where: {league_id, message_type: MessageType.WEEK_COMMENT, status: MessageStatus.PUBLISHED},
+        where: {
+          league_id,
+          message_type: MessageType.WEEK_COMMENT,
+          status: MessageStatus.PUBLISHED,
+          week,
+        },
         orderBy: {createdAt: 'asc'},
       }),
     ]);
