@@ -37,6 +37,7 @@ import {env} from '../config';
 import LeagueMemberPeopleResolver from './queries/league/memberpeople';
 import LeagueRankingsResolver from './queries/league/rankings';
 import LeaguePickResolver from './queries/league/picks';
+import LeagueMessageIDResolver from './queries/messages/id';
 
 const SHOULD_AUTH_MUTATIONS = env === 'production';
 
@@ -70,6 +71,11 @@ const modelsEnhanceMap: ModelsEnhanceMap = {
   SuperbowlSquare: {
     fields: {
       ts: [Field(() => DateTimeResolver)],
+    },
+  },
+  LeagueMessage: {
+    fields: {
+      createdAt: [Field(() => DateTimeResolver)],
     },
   },
 };
@@ -169,6 +175,7 @@ const idResolvers = [
   SuperbowlSquareID,
   TeamID,
   UserID,
+  LeagueMessageIDResolver,
 ];
 
 const resolvers = [
