@@ -22,7 +22,6 @@ function getDefaultLoggingMeta() {
 
   try {
     const user = getUser();
-    console.log('trying to log and found user', JSON.stringify(user));
     if (user?.dbUser) {
       meta.userId = user.dbUser.uid;
       meta.email = user.dbUser.email;
