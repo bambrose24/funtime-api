@@ -1,5 +1,5 @@
 import datastore from '@shared/datastore';
-import {MemberRole, User} from '@prisma/client';
+import {MemberRole, MessageType, User} from '@prisma/client';
 import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
@@ -32,7 +32,9 @@ class MakePicksResolver {
     @Arg('league_id', () => Int) league_id: number,
     @Arg('picks', () => [GamePick]) picks: GamePick[],
     @Arg('override_member_id', () => Int, {nullable: true})
-    override_member_id: number
+    override_member_id: number,
+    @Arg('message', () => String, {nullable: true})
+    message: string | null
   ): Promise<MakePicksResponse> {
     const auth = getUser();
     if (!auth || !auth.dbUser) {
@@ -78,6 +80,17 @@ class MakePicksResolver {
       filteredPicks,
       isImpersonating
     );
+
+    if (message) {
+      await datastore.leagueMessage.create({
+        data: {
+          message_type: MessageType.WEEK_COMMENT,
+          content: message,
+          league_id,
+          member_id: member.membership_id,
+        },
+      });
+    }
 
     try {
       const adminUsername = isImpersonating ? dbUser.username : undefined;
