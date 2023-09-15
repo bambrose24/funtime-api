@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Game, LatePolicy, MemberRole, Pick, Prisma} from '@prisma/client';
+import {
+  Game,
+  LatePolicy,
+  LeagueMessage,
+  MemberRole,
+  MessageType,
+  Pick,
+  Prisma,
+} from '@prisma/client';
 import datastore from '@shared/datastore';
 import moment from 'moment';
 import * as TypeGraphQL from '@generated/type-graphql';
@@ -21,6 +29,8 @@ class PicksByWeekResponse {
   picks: Array<Pick>;
   @Field(() => [TypeGraphQL.Game]!)
   games: Array<Game>;
+  @Field(() => [TypeGraphQL.LeagueMessage])
+  messages: LeagueMessage[];
 }
 
 class PicksByWeekResolver {
@@ -95,6 +105,7 @@ class PicksByWeekResolver {
         canView: override || false,
         picks: [],
         games: [],
+        messages: [],
       };
     }
 
@@ -102,13 +113,18 @@ class PicksByWeekResolver {
 
     const hasWeekStarted = games[0].ts < new Date();
 
-    const picks = await datastore.pick.findMany({
-      where: {
-        week: {equals: realWeek},
-        season: {equals: realSeason},
-        member_id: {in: members.map(m => m.membership_id)},
-      },
-    });
+    const [picks, messages] = await Promise.all([
+      datastore.pick.findMany({
+        where: {
+          week: {equals: realWeek},
+          season: {equals: realSeason},
+          member_id: {in: members.map(m => m.membership_id)},
+        },
+      }),
+      datastore.leagueMessage.findMany({
+        where: {league_id, message_type: MessageType.WEEK_COMMENT},
+      }),
+    ]);
 
     const viewerHasPicks = picks.some(
       p => member?.membership_id && p.member_id === member.membership_id
@@ -128,6 +144,7 @@ class PicksByWeekResolver {
       canView: override || canView,
       picks,
       games,
+      messages,
     };
   }
 }
