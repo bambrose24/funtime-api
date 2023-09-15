@@ -266,13 +266,14 @@ model EmailLogs {
 }
 
 model LeagueMessage {
-  message_id   String      @id @default(cuid())
+  message_id   String        @id @default(cuid())
   content      String
   member_id    Int
   league_id    Int
   week         Int? // This is optional
   message_type MessageType
-  createdAt    DateTime    @default(now())
+  status       MessageStatus @default(PUBLISHED)
+  createdAt    DateTime      @default(now())
 
   member LeagueMember @relation(fields: [member_id], references: [membership_id])
   league League       @relation(fields: [league_id], references: [league_id])
@@ -283,7 +284,13 @@ model LeagueMessage {
   @@index([createdAt]) // ts is equivalent to createdAt here
   @@index([message_type])
   @@index([league_id, message_type])
+  @@index([league_id, message_type, status])
   @@map("leaguemessages")
+}
+
+enum MessageStatus {
+  PUBLISHED
+  DELETED
 }
 
 enum MessageType {
