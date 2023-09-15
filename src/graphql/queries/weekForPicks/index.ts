@@ -1,4 +1,4 @@
-import {Game, LeagueMember, Pick} from '@prisma/client';
+import {Game, LeagueMember, LeagueMessage, MessageType, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
@@ -20,6 +20,8 @@ class WeekForPicksResponse {
   existingPicks: Array<Pick>;
   @Field(() => TypeGraphQL.LeagueMember, {nullable: true})
   leagueMember: LeagueMember | null;
+  @Field(() => [TypeGraphQL.LeagueMessage])
+  messages: LeagueMessage[];
 }
 
 export class WeekForPicksResolver {
@@ -76,6 +78,7 @@ export class WeekForPicksResolver {
           games: [],
           existingPicks: [],
           leagueMember: null,
+          messages: [],
         };
       }
 
@@ -83,7 +86,7 @@ export class WeekForPicksResolver {
       season = res.season;
     }
 
-    const [games, existingPicks, leagueMember] = await Promise.all([
+    const [games, existingPicks, leagueMember, messages] = await Promise.all([
       datastore.game.findMany({
         where: {week, season},
       }),
@@ -93,6 +96,9 @@ export class WeekForPicksResolver {
           })
         : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
+      datastore.leagueMessage.findMany({
+        where: {league_id, message_type: MessageType.WEEK_COMMENT},
+      }),
     ]);
 
     return {
@@ -104,6 +110,7 @@ export class WeekForPicksResolver {
       games,
       existingPicks,
       leagueMember,
+      messages,
     };
   }
 }
