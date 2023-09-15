@@ -1,4 +1,4 @@
-import {Game, LeagueMember, LeagueMessage, MessageType, Pick} from '@prisma/client';
+import {Game, LeagueMember, LeagueMessage, MessageStatus, MessageType, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
@@ -97,7 +97,7 @@ export class WeekForPicksResolver {
         : [],
       datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
       datastore.leagueMessage.findMany({
-        where: {league_id, message_type: MessageType.WEEK_COMMENT},
+        where: {league_id, message_type: MessageType.WEEK_COMMENT, status: MessageStatus.PUBLISHED},
         orderBy: {createdAt: 'asc'},
       }),
     ]);

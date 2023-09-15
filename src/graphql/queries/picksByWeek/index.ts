@@ -4,6 +4,7 @@ import {
   LatePolicy,
   LeagueMessage,
   MemberRole,
+  MessageStatus,
   MessageType,
   Pick,
   Prisma,
@@ -122,7 +123,8 @@ class PicksByWeekResolver {
         },
       }),
       datastore.leagueMessage.findMany({
-        where: {league_id, message_type: MessageType.WEEK_COMMENT},
+        where: {league_id, message_type: MessageType.WEEK_COMMENT, status: MessageStatus.PUBLISHED},
+        orderBy: {createdAt: 'asc'},
       }),
     ]);
 
