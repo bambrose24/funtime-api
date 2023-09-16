@@ -127,7 +127,7 @@ class PicksByWeekResolver {
           league_id,
           message_type: MessageType.WEEK_COMMENT,
           status: MessageStatus.PUBLISHED,
-          week,
+          week: realWeek,
         },
         orderBy: {createdAt: 'asc'},
       }),
