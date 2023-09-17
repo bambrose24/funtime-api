@@ -25,9 +25,10 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   for (let dbGamesChunk of gamesChunked) {
     await Promise.all(
       dbGamesChunk.map(async (dbGame) => {
-        // if (dbGame.done) {
-        //   return;
-        // }
+        if (dbGame.ts < moment().subtract(30, 'days').toDate()) {
+          // if it's been 30 days don't bother wasting resources trying to update
+          return;
+        }
         const homeTeam = teamsMap[dbGame.home];
         const awayTeam = teamsMap[dbGame.away];
         const msfGame = games.find(
