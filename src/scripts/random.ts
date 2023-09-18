@@ -1,5 +1,6 @@
 import {MessageType} from '@prisma/client';
 import datastore from '@shared/datastore';
+import {getGamesByWeek} from '@shared/mysportsfeeds';
 import {logger} from '@util/logger';
 
 async function run() {
@@ -14,6 +15,8 @@ async function run() {
   //     member_id: 382,
   //   },
   // });
+  const games = await getGamesByWeek(2023, 2);
+  console.log(games);
 }
 
 run();
