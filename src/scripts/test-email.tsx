@@ -9,7 +9,7 @@ async function run() {
     orderBy: {ts: 'asc'},
   });
   const game = games[0]!;
-  sendWeekReminderEmail({
+  const response = await sendWeekReminderEmail({
     leagueName: 'League Name',
     leagueId: 8,
     email: 'bambrose24@gmail.com',
@@ -17,6 +17,7 @@ async function run() {
     week: 1,
     weekStartTime: game.ts,
   });
+  console.log('response?', response);
 }
 
 run();
