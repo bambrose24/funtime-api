@@ -3,6 +3,7 @@ import {CreateEmailOptions} from 'resend/build/src/emails/interfaces';
 
 const FROM_EMAIL = 'team@play-funtime.com';
 
+// should put this somewhere else maybe?
 export function getDefaultSendParams(
   email: string
 ): Pick<CreateEmailOptions, 'reply_to' | 'from' | 'cc'> {
