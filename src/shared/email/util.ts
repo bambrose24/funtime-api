@@ -9,7 +9,8 @@ export function getDefaultSendParams(
   return {
     reply_to: ['bambrose24@gmail.com', 'erica0ambrose@gmail.com'],
     from: FROM_EMAIL,
-    cc: email !== 'bambrose24@gmail.com' ? 'bambrose24@gmail.com' : undefined,
+    // uncomment this to get cc'd on all the emails
+    // cc: email !== 'bambrose24@gmail.com' ? 'bambrose24@gmail.com' : undefined,
   };
 }
 
