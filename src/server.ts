@@ -122,7 +122,7 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
     try {
       await keepThingsUpdated();
     } catch (e) {
-      console.error(`Got top level cron error: ${e}`);
+      logger.error(`Got top level cron error: ${e}`, {error: e});
     }
   });
 
