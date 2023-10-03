@@ -119,7 +119,11 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
 
   // 3 mins to keep games updated
   cron.schedule('*/3 * * * *', async () => {
-    await keepThingsUpdated();
+    try {
+      await keepThingsUpdated();
+    } catch (e) {
+      console.error(`Got top level cron error: ${e}`);
+    }
   });
 
   // cron.schedule('0 * * * *', async () => {
