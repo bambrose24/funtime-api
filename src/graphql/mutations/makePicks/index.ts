@@ -88,6 +88,7 @@ class MakePicksResolver {
           content: message,
           league_id,
           member_id: member.membership_id,
+          week,
         },
       });
     }
