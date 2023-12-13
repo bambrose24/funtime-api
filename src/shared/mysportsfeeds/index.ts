@@ -7,6 +7,7 @@ import {logger} from '@util/logger';
 var MySportsFeeds = require('mysportsfeeds-node');
 
 var msf = new MySportsFeeds('2.1', true);
+console.log('MSF KEY', process.env.MYSPORTSFEEDS_API_KEY);
 msf.authenticate(process.env.MYSPORTSFEEDS_API_KEY, 'MYSPORTSFEEDS');
 
 var msfLock = new AsyncLock();

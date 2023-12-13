@@ -4,6 +4,12 @@
 // "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts"
 // REMINDER TO CHANGE THE DB URL
 
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  require('dotenv').config();
+}
+
 const scriptName = process.argv[2];
 let env = process.argv[3];
 
