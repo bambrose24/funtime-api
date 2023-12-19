@@ -122,6 +122,9 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           data: {
             homerecord,
             awayrecord,
+            ...(msfGame?.schedule.startTime
+              ? { ts: moment(msfGame.schedule.startTime).toDate() }
+              : {}),
           },
         });
       })
