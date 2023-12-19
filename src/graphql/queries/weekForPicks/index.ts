@@ -89,6 +89,7 @@ export class WeekForPicksResolver {
     const [games, existingPicks, leagueMember, messages] = await Promise.all([
       datastore.game.findMany({
         where: {week, season},
+        orderBy: {ts: 'asc'},
       }),
       week !== null && week !== undefined
         ? datastore.pick.findMany({
