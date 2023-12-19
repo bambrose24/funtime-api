@@ -6,7 +6,7 @@ import {sendRegistrationMail} from '@shared/email';
 import {SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 import {logger} from '@util/logger';
-export const LEAGUE_ID = 7;
+export const LEAGUE_ID = 8;
 export const DEFAULT_ROLE = 'player';
 
 @ObjectType()

@@ -6,6 +6,9 @@ import _ from 'lodash';
 
 async function run() {
   console.log('starting script');
+
+  await datastore.weekWinners.deleteMany({where: {week: 15, league_id: 8}});
+
   console.log('ending script');
 }
 
