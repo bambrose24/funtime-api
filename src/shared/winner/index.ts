@@ -82,8 +82,8 @@ export async function calculateWinnersFromDonePicks(
     let membersStats = weekMemberIds.map(member_id => {
       return {
         member_id: member_id!,
-        correct: memberToCorrectCount[member_id!] || 0,
-        score_diff: memberToScore[member_id!] || 999,
+        correct: memberToCorrectCount[member_id!] ?? 0,
+        score_diff: memberToScore[member_id!] ?? 999,
       };
     });
 
