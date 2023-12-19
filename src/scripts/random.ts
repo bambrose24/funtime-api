@@ -7,7 +7,8 @@ import _ from 'lodash';
 async function run() {
   console.log('starting script');
 
-  await datastore.weekWinners.deleteMany({where: {week: 15, league_id: 8}});
+  const notDone2022 = await datastore.game.findMany({where: {done: false, season: 2022}});
+  console.log('notDone?', notDone2022.length);
 
   console.log('ending script');
 }

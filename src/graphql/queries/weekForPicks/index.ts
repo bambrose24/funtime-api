@@ -108,7 +108,7 @@ export class WeekForPicksResolver {
     ]);
 
     return {
-      id: `${league_id}_${member_id}${
+      id: `${league_id}_${memberId}${
         override !== undefined && override !== null ? `_${override}` : ``
       }${week !== undefined && week !== null ? `_${week}` : ``}`,
       week,
