@@ -1,13 +1,13 @@
 import {EmailType, LatePolicy, ReminderPolicy} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {sendWeekReminderEmail} from '@shared/email';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {nextNotStartedGame} from '@util/data/nextNotStartedGame';
 import {logger} from '@util/logger';
 import moment from 'moment';
 
 export async function maybeSendReminders() {
-  const currentSeason = SEASON;
+  const currentSeason = DEFAULT_SEASON;
   const now = new Date();
 
   const leaguesForSeason = await datastore.league.findMany({where: {season: currentSeason}});

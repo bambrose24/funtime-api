@@ -4,6 +4,8 @@
 // "run-script": "ts-node -r tsconfig-paths/register src/scripts/run.ts"
 // REMINDER TO CHANGE THE DB URL
 
+import 'reflect-metadata';
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call

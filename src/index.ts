@@ -1,5 +1,5 @@
-import 'module-alias/register';
 import 'reflect-metadata';
+import 'module-alias/register';
 import logger from 'jet-logger';
 import server from './server';
 import config, {env} from './config';

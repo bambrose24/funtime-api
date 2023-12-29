@@ -3,7 +3,7 @@ import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 
 @ObjectType()
@@ -65,7 +65,7 @@ export class WeekForPicksResolver {
     let season: number;
     if (weekArg && override) {
       week = weekArg;
-      season = SEASON;
+      season = DEFAULT_SEASON;
     } else {
       const res = await findWeekForPicks({league_id, member_id: memberId});
       if (res === null) {

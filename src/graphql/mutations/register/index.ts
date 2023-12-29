@@ -3,7 +3,7 @@ import {LeagueMember, User} from '@prisma/client';
 import {Arg, Field, Int, Mutation, ObjectType, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendRegistrationMail} from '@shared/email';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 import {logger} from '@util/logger';
 export const LEAGUE_ID = 8;

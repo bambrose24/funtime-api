@@ -1,5 +1,5 @@
 import datastore from '@shared/datastore';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
 import {nanoid} from 'nanoid';
 
@@ -12,7 +12,7 @@ async function run() {
   const league = await datastore.league.create({
     data: {
       name: 'Funtime 2023',
-      season: SEASON,
+      season: DEFAULT_SEASON,
       share_code: shareCode,
       created_by_user_id: bob.uid,
       superbowl_competition: true,

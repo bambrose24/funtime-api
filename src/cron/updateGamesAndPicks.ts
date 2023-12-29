@@ -1,7 +1,7 @@
 import { Game, Team } from "@prisma/client";
 import datastore from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
-import { SEASON } from "@util/const";
+import { DEFAULT_SEASON } from "@util/const";
 import { logger } from "@util/logger";
 import _ from "lodash";
 import moment from "moment";
@@ -10,7 +10,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
   const [dbGames, teams] = await Promise.all([
     datastore.game.findMany({
       where: {
-        season: { equals: SEASON },
+        season: { equals: DEFAULT_SEASON },
         week: { in: games.map((g) => g.schedule.week) },
       },
     }),
@@ -130,6 +130,8 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
       })
     );
   }
+
+  
 }
 
 function getRecord(

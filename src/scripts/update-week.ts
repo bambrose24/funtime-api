@@ -6,7 +6,17 @@ import moment from 'moment';
 async function run() {
   const week = 15;
   const season = 2023;
+  updateWeek({week, season});
+  await Promise.all(
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(async w => {
+      updateWeek({week: w, season});
+    })
+  );
+}
+
+export async function updateWeek({week, season}: {week: number; season: number}) {
   const seasonGames = await getGamesByWeek(season, week);
+  const now = new Date();
 
   const games = seasonGames.filter(g => g.schedule.week === week);
 
@@ -37,6 +47,7 @@ async function run() {
       await datastore.game.update({
         where: {gid: dbGame.gid},
         data: {
+          done: now < date.toDate() ? false : true,
           ts: date.toDate(),
           seconds: unix,
         },

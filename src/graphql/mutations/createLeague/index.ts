@@ -2,7 +2,7 @@ import {Arg, Mutation, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {CreateLeagueInput} from './types';
 import datastore from '@shared/datastore';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 import {nanoid} from 'nanoid';
 
@@ -20,7 +20,7 @@ export class CreateLeagueMutation {
     const league = await datastore.league.create({
       data: {
         name: data.leagueName,
-        season: SEASON,
+        season: DEFAULT_SEASON,
         created_by_user_id: uid,
         share_code: nanoid(),
         superbowl_competition: data.superbowlCompetition,

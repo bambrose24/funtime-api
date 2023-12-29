@@ -7,21 +7,21 @@ import {Game, Team} from '@prisma/client';
 import datastore from '@shared/datastore';
 import {getGamesBySeason} from '@shared/mysportsfeeds';
 import {MSFGame} from '@shared/mysportsfeeds/types';
-import {SEASON} from '@util/const';
+import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
 import _ from 'lodash';
 import {env} from 'src/config';
 
 async function run() {
-  const existingGames = await datastore.game.findMany({where: {season: SEASON}});
+  const existingGames = await datastore.game.findMany({where: {season: DEFAULT_SEASON}});
   if (existingGames.length > 0) {
     logger.info(
-      `not importing season because ${existingGames.length} games exist for season ${SEASON} in env ${env}`
+      `not importing season because ${existingGames.length} games exist for season ${DEFAULT_SEASON} in env ${env}`
     );
     return;
   }
 
-  const games = await getGamesBySeason(SEASON);
+  const games = await getGamesBySeason(DEFAULT_SEASON);
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
   });
@@ -30,12 +30,14 @@ async function run() {
     teamsMap[t.abbrev!] = t;
   });
 
-  const dbGames = games.map((g: MSFGame) => convertToDBGameForCreation(SEASON, g, teamsMap));
+  const dbGames = games.map((g: MSFGame) =>
+    convertToDBGameForCreation(DEFAULT_SEASON, g, teamsMap)
+  );
   logger.info(`prepped ${dbGames.length} games to input`);
   const res = await datastore.game.createMany({data: dbGames});
-  logger.info(`created ${res.count} games for ${SEASON}`);
+  logger.info(`created ${res.count} games for ${DEFAULT_SEASON}`);
 
-  const newGames = await datastore.game.findMany({where: {season: SEASON}});
+  const newGames = await datastore.game.findMany({where: {season: DEFAULT_SEASON}});
 
   const weeks = new Set(newGames.map(g => g.week));
   for (const week of [...weeks]) {
