@@ -12,6 +12,7 @@ async function run() {
   // const notDone2022 = await datastore.game.findMany({where: {done: false, season: 2022}});
   // console.log('notDone?', notDone2022.length);
 
+  // hi
   const week = 19;
   const season = 2023;
   const games = await datastore.game.findMany({where: {week, season}});
