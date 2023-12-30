@@ -27,7 +27,7 @@ const getTTLExtension = (ttl: number) => {
           if (readOperations.includes(operation)) {
             logger.info(`prisma_read`, {operation, model});
             // TODO look at cache
-            const key = stringify(args);
+            const key = stringify({model, operation, args});
             const cachedResult = memoryCache.get<ReturnType<typeof query>>(key);
             if (cachedResult) {
               logger.info(`prisma_cache_hit`, {operation, model});

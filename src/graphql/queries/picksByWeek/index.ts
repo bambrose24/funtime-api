@@ -122,6 +122,8 @@ class PicksByWeekResolver {
 
     const hasWeekStarted = games[0].ts < new Date();
 
+    console.log('members????', members);
+
     const [picks, messages] = await Promise.all([
       datastore.pick.findMany({
         where: {
