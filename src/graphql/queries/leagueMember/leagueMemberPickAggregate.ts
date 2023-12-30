@@ -3,7 +3,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloContext} from 'src/graphql/server/types';
 import {Game, LeagueMember} from '@prisma/client';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 
 type T = Parameters<typeof datastore.pick.aggregate>;
 

@@ -1,7 +1,7 @@
 import {FieldResolver, Resolver, Root, ID, ObjectType, Field} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League, LeagueMember, User} from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import _ from 'lodash';
 import {PRISMA_CACHES} from '@util/const';
 

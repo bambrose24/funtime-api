@@ -2,7 +2,7 @@ import {FieldResolver, Resolver, Root, ID, Int, ObjectType, Field} from 'type-gr
 import * as TypeGraphQL from '@generated/type-graphql';
 import {LeagueMember} from '@prisma/client';
 import {getNextGame} from '@shared/queries/getNextGame';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {RequestContext} from '@util/request-context';
 import {PRISMA_CACHES} from '@util/const';
 

@@ -10,7 +10,7 @@ import {
   getSuperbowlRuleDescription,
   LeagueRuleWithExplanation,
 } from '@shared/leagues/rules';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {PRISMA_CACHES} from '@util/const';
 
 @Resolver(() => TypeGraphQL.League)

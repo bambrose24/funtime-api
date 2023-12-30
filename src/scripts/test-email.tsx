@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {sendWeekReminderEmail} from '../../src/shared/email';
-import datastore from '../shared/datastore';
+import {datastore} from '../shared/datastore';
 
 async function run() {
   const games = await datastore.game.findMany({

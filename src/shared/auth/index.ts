@@ -1,7 +1,7 @@
 import httpContext from 'express-http-context';
 import {createClient} from '@supabase/supabase-js';
 import {setToken, setUser} from './user';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import * as Sentry from '@sentry/node';
 import {PRISMA_CACHES} from '@util/const';
 

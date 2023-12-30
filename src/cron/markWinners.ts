@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {calculateWinnersFromDonePicks} from '@shared/winner';
 import {logger} from '@util/logger';
 

@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {logger} from '@util/logger';
 import _ from 'lodash';
 

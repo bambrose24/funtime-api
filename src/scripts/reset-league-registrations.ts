@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 
 async function run() {
   const leagueIdToReset = 8;

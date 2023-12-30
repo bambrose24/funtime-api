@@ -9,7 +9,7 @@ import {
   Pick,
   Prisma,
 } from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import moment from 'moment';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';

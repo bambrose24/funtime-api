@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
 import {nanoid} from 'nanoid';

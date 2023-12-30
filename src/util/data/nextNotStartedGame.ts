@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {DEFAULT_SEASON, PRISMA_CACHES} from '@util/const';
 
 export async function nextNotStartedGame() {

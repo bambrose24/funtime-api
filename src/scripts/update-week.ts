@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {getGamesBySeason, getGamesByWeek} from '@shared/mysportsfeeds';
 import _ from 'lodash';
 import moment from 'moment';

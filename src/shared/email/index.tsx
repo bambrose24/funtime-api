@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {EmailType, League, User} from '@prisma/client';
-import datastore from '../datastore';
+import {datastore} from '../datastore';
 import {resend} from './client';
 import {RegistrationEmail} from './react/registration/RegistrationEmail';
 import {WeekPicksReminder} from './react/reminders/WeekPicksReminder';

@@ -1,4 +1,4 @@
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 
 async function run() {
   // const members = await datastore.leagueMember.findMany({where: {league_id: 8}});

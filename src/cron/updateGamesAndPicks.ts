@@ -1,5 +1,5 @@
 import { Game, Team } from "@prisma/client";
-import datastore from "@shared/datastore";
+import { datastore } from "@shared/datastore";
 import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
 import { DEFAULT_SEASON } from "@util/const";
 import { logger } from "@util/logger";

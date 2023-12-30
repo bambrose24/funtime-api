@@ -1,5 +1,5 @@
 import {EmailType, LatePolicy, ReminderPolicy} from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {sendWeekReminderEmail} from '@shared/email';
 import {DEFAULT_SEASON} from '@util/const';
 import {nextNotStartedGame} from '@util/data/nextNotStartedGame';

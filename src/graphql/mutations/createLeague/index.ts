@@ -1,7 +1,7 @@
 import {Arg, Mutation, Resolver} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {CreateLeagueInput} from './types';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {DEFAULT_SEASON} from '@util/const';
 import {getUser} from '@shared/auth/user';
 import {nanoid} from 'nanoid';

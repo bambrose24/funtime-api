@@ -1,7 +1,7 @@
 import {FieldResolver, Resolver, Root, ID, registerEnumType, Ctx, Arg} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Game, League, LeagueMember} from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {AggregateResponse} from '@graphql/util/aggregateResponse';
 import {ApolloContext} from '@graphql/server/types';
 import {getUser} from '@shared/auth/user';

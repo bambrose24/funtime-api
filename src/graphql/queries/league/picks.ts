@@ -1,7 +1,7 @@
 import {FieldResolver, Resolver, Root, ID, ObjectType, Field, Arg} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League, Pick} from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {PRISMA_CACHES} from '@util/const';
 
 @Resolver(() => TypeGraphQL.League)

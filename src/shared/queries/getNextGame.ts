@@ -1,5 +1,5 @@
 import {Game} from '@prisma/client';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {PRISMA_CACHES} from '@util/const';
 
 export async function getNextGame({

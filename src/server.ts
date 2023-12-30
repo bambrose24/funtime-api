@@ -34,7 +34,7 @@ import {env} from './config';
 import {authorizeAndSetSupabaseUser} from '@shared/auth';
 import {customAuthChecker} from '@shared/auth/graphql';
 import {ApolloContext} from '@graphql/server/types';
-import datastore from '@shared/datastore';
+import {datastore} from '@shared/datastore';
 import {sentryPlugin} from '@util/sentry';
 import {maybeSendReminders} from '@cron/reminders/maybeSendReminders';
 import {loggingPlugin} from '@graphql/plugins/loggingPlugin';
