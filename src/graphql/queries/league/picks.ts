@@ -2,6 +2,7 @@ import {FieldResolver, Resolver, Root, ID, ObjectType, Field, Arg} from 'type-gr
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League, Pick} from '@prisma/client';
 import datastore from '@shared/datastore';
+import {PRISMA_CACHES} from '@util/const';
 
 @Resolver(() => TypeGraphQL.League)
 export default class LeaguePickResolver {
@@ -15,6 +16,7 @@ export default class LeaguePickResolver {
   ): Promise<Pick[]> {
     return await datastore.pick.findMany({
       where: {...(whereArg ?? {}), leaguemembers: {league_id: league.league_id}},
+      cacheStrategy: PRISMA_CACHES.oneMinute,
     });
   }
 }

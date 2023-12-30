@@ -2,6 +2,7 @@ import {FieldResolver, Resolver, Root, ID, Int, Arg} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {League, LeagueMember, User} from '@prisma/client';
 import datastore from '@shared/datastore';
+import {PRISMA_CACHES} from '@util/const';
 
 @Resolver(() => TypeGraphQL.User)
 export default class UserID {
@@ -18,6 +19,7 @@ export default class UserID {
   ): Promise<League | null> {
     const membership = await datastore.leagueMember.findFirst({
       where: {league_id, user_id: user.uid},
+      cacheStrategy: PRISMA_CACHES.oneHour,
     });
     if (!membership) {
       return null;
@@ -33,6 +35,7 @@ export default class UserID {
   ): Promise<LeagueMember | null> {
     const membership = await datastore.leagueMember.findFirst({
       where: {league_id, user_id: user.uid},
+      cacheStrategy: PRISMA_CACHES.oneHour,
     });
     if (!membership) {
       return null;

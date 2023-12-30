@@ -4,6 +4,7 @@ import {League, LeagueMember, User} from '@prisma/client';
 import datastore from '@shared/datastore';
 import _ from 'lodash';
 import {withRankingField} from '@util/withRankingField';
+import {PRISMA_CACHES} from '@util/const';
 
 @ObjectType('LeagueRanking')
 export class LeagueRanking {
@@ -46,10 +47,12 @@ export default class LeagueRankingsResolver {
         _count: {
           _all: true, // Count all fields (this will give us the count of correct picks for each member)
         },
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
       datastore.leagueMember.findMany({
         where: {league_id: league.league_id},
         include: {people: true},
+        cacheStrategy: PRISMA_CACHES.oneHour,
       }),
     ]);
 

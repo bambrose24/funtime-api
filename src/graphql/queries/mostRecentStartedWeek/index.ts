@@ -6,6 +6,7 @@ import {Arg, Field, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import moment from 'moment';
 import {logger} from '@util/logger';
+import {PRISMA_CACHES} from '@util/const';
 
 @ObjectType()
 class MostRecentStartedWeekResponse {
@@ -39,9 +40,10 @@ class MostRecentStartedWeekResolver {
     const {week, season} = mostRecentStartedGame;
 
     const [games, picks] = await Promise.all([
-      datastore.game.findMany({where: {week, season}}),
+      datastore.game.findMany({where: {week, season}, cacheStrategy: PRISMA_CACHES.oneMinute}),
       datastore.pick.findMany({
         where: {week, leaguemembers: {league_id}},
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
     ]);
 

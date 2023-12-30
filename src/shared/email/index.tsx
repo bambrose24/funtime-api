@@ -6,7 +6,6 @@ import {RegistrationEmail} from './react/registration/RegistrationEmail';
 import {WeekPicksReminder} from './react/reminders/WeekPicksReminder';
 
 import {getDefaultSendParams, getWeekPicksContent} from './util';
-import {PicksSummary} from './react/picks/PicksSummary';
 import {logger} from '@util/logger';
 
 export async function sendRegistrationMail(

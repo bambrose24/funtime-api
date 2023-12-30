@@ -4,7 +4,7 @@ import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-g
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
 import {getUser} from '@shared/auth/user';
-import {SIXTY_SECONDS_SWR} from '@util/const';
+import {PRISMA_CACHES} from '@util/const';
 
 @ObjectType()
 class MakePicksResponse {
@@ -45,7 +45,7 @@ class MakePicksResolver {
 
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: dbUser.uid}},
-      cacheStrategy: SIXTY_SECONDS_SWR,
+      cacheStrategy: PRISMA_CACHES.oneDay,
     });
     if (
       override_member_id &&
@@ -62,7 +62,7 @@ class MakePicksResolver {
     const member = override_member_id
       ? await datastore.leagueMember.findFirstOrThrow({
           where: {membership_id: override_member_id},
-          cacheStrategy: SIXTY_SECONDS_SWR,
+          cacheStrategy: PRISMA_CACHES.oneDay,
         })
       : viewerMember;
     if (picks.length === 0) {
@@ -76,7 +76,6 @@ class MakePicksResolver {
           lt: new Date(),
         },
       },
-      cacheStrategy: SIXTY_SECONDS_SWR,
     });
     const startedGids = new Set(startedGamesForWeek.map(g => g.gid));
     const filteredPicks = isImpersonating ? picks : picks.filter(p => !startedGids.has(p.game_id));

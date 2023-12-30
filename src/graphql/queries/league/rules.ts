@@ -11,6 +11,7 @@ import {
   LeagueRuleWithExplanation,
 } from '@shared/leagues/rules';
 import datastore from '@shared/datastore';
+import {PRISMA_CACHES} from '@util/const';
 
 @Resolver(() => TypeGraphQL.League)
 export default class LeagueRulesResolver {
@@ -24,7 +25,10 @@ export default class LeagueRulesResolver {
 }
 
 export async function getRulesForLeague(league_id: number): Promise<LeagueRuleWithExplanation[]> {
-  const league = await datastore.league.findFirstOrThrow({where: {league_id}});
+  const league = await datastore.league.findFirstOrThrow({
+    where: {league_id},
+    cacheStrategy: PRISMA_CACHES.oneDay,
+  });
   const rules: LeagueRuleWithExplanation[] = [
     ...(league.late_policy
       ? [

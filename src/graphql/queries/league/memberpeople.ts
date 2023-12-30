@@ -3,6 +3,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {League, LeagueMember, User} from '@prisma/client';
 import datastore from '@shared/datastore';
 import _ from 'lodash';
+import {PRISMA_CACHES} from '@util/const';
 
 @ObjectType('LeagueMemberPeople')
 export class MemberPeople {
@@ -28,6 +29,7 @@ export default class LeagueMemberPeopleResolver {
     const membersAndPeople = await datastore.leagueMember.findMany({
       where: {league_id},
       include: {people: true},
+      cacheStrategy: PRISMA_CACHES.oneMinute,
     });
 
     return membersAndPeople.map(m => {

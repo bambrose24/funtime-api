@@ -4,6 +4,7 @@ import {getGamesByWeek} from '@shared/mysportsfeeds';
 import {MSFGame} from '@shared/mysportsfeeds/types';
 import {getNextGame} from '@shared/queries/getNextGame';
 import httpContext from 'express-http-context';
+import {PRISMA_CACHES} from './const';
 
 type RequestContextTypes = {
   getGamesByWeek: {
@@ -50,7 +51,10 @@ async function get<T extends keyof RequestContextTypes>(
       const {leagueId} = params as RequestContextTypes['getLeague']['params'];
       const contextMap = (httpContext.get(key) ?? {}) as Record<number, League | null>;
       if (!(leagueId in contextMap)) {
-        const league = await datastore.league.findFirst({where: {league_id: leagueId}});
+        const league = await datastore.league.findFirst({
+          where: {league_id: leagueId},
+          cacheStrategy: PRISMA_CACHES.oneHour,
+        });
         contextMap[leagueId] = league;
       }
       httpContext.set(key, contextMap);

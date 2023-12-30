@@ -3,7 +3,7 @@ import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
-import {DEFAULT_SEASON, SIXTY_SECONDS_SWR} from '@util/const';
+import {DEFAULT_SEASON, PRISMA_CACHES} from '@util/const';
 import {getUser} from '@shared/auth/user';
 
 @ObjectType()
@@ -43,6 +43,7 @@ export class WeekForPicksResolver {
 
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: user.dbUser.uid}},
+      cacheStrategy: PRISMA_CACHES.oneHour,
     });
 
     if (member_id) {
@@ -51,6 +52,7 @@ export class WeekForPicksResolver {
           league_id,
           membership_id: member_id,
         },
+        cacheStrategy: PRISMA_CACHES.oneHour,
       });
       if (!otherMember) {
         throw new Error(`Could not find member ${member_id} to make picks on behalf of`);
@@ -90,17 +92,17 @@ export class WeekForPicksResolver {
       datastore.game.findMany({
         where: {week, season},
         orderBy: {ts: 'asc'},
-        cacheStrategy: SIXTY_SECONDS_SWR,
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
       week !== null && week !== undefined
         ? datastore.pick.findMany({
             where: {week, leaguemembers: {league_id, membership_id: memberId}},
-            cacheStrategy: SIXTY_SECONDS_SWR,
+            cacheStrategy: PRISMA_CACHES.oneMinute,
           })
         : [],
       datastore.leagueMember.findFirst({
         where: {membership_id: memberId},
-        cacheStrategy: SIXTY_SECONDS_SWR,
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
       datastore.leagueMessage.findMany({
         where: {
@@ -110,7 +112,7 @@ export class WeekForPicksResolver {
           week,
         },
         orderBy: {createdAt: 'asc'},
-        cacheStrategy: SIXTY_SECONDS_SWR,
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
     ]);
 
@@ -151,10 +153,10 @@ async function findWeekForPicks({
         },
       },
       orderBy: {ts: 'asc'},
-      cacheStrategy: SIXTY_SECONDS_SWR,
+      cacheStrategy: PRISMA_CACHES.oneMinute,
     }),
-    datastore.league.findFirstOrThrow({where: {league_id}, cacheStrategy: SIXTY_SECONDS_SWR}),
-    datastore.pick.findMany({where: {member_id}, cacheStrategy: SIXTY_SECONDS_SWR}),
+    datastore.league.findFirstOrThrow({where: {league_id}, cacheStrategy: PRISMA_CACHES.oneMinute}),
+    datastore.pick.findMany({where: {member_id}, cacheStrategy: PRISMA_CACHES.oneMinute}),
   ]);
 
   const nextUnstartedGame = firstNotStartedGame(gamesWithinMonth);

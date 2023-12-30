@@ -15,6 +15,7 @@ import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
 import {getUserEnforced} from '@shared/auth/user';
+import {PRISMA_CACHES} from '@util/const';
 
 @ObjectType()
 class PicksByWeekResponse {
@@ -44,8 +45,9 @@ class PicksByWeekResolver {
   ): Promise<PicksByWeekResponse> {
     const {dbUser} = getUserEnforced();
     const [league, member, members] = await Promise.all([
-      datastore.league.findFirst({
-        where: {league_id: {equals: league_id}},
+      datastore.league.findFirstOrThrow({
+        where: {league_id},
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
       dbUser?.uid
         ? datastore.leagueMember.findFirst({
@@ -53,9 +55,10 @@ class PicksByWeekResolver {
               league_id,
               user_id: dbUser.uid,
             },
+            cacheStrategy: PRISMA_CACHES.oneMinute,
           })
         : null,
-      datastore.leagueMember.findMany({where: {league_id}}),
+      datastore.leagueMember.findMany({where: {league_id}, cacheStrategy: PRISMA_CACHES.oneMinute}),
     ]);
 
     const override = member?.role === MemberRole.admin;
@@ -76,6 +79,7 @@ class PicksByWeekResolver {
       games = await datastore.game.findMany({
         where: whereInput,
         orderBy: {ts: 'asc'},
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       });
     } else {
       const lastStartedGame = await datastore.game.findFirst({
@@ -94,6 +98,7 @@ class PicksByWeekResolver {
             season: {equals: lastStartedGame.season},
           },
           orderBy: {ts: 'asc'},
+          cacheStrategy: PRISMA_CACHES.oneMinute,
         });
       }
     }
@@ -121,6 +126,7 @@ class PicksByWeekResolver {
           season: {equals: realSeason},
           member_id: {in: members.map(m => m.membership_id)},
         },
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
       datastore.leagueMessage.findMany({
         where: {
@@ -130,6 +136,7 @@ class PicksByWeekResolver {
           week: realWeek,
         },
         orderBy: {createdAt: 'asc'},
+        cacheStrategy: PRISMA_CACHES.oneMinute,
       }),
     ]);
 
