@@ -40,7 +40,7 @@ const getTTLExtension = (ttl: number) => {
           }
           // clear the cache because it's not a read happening
           logger.info(`prisma_non_read`, {operation, model});
-          memoryCache.flushAll();
+          // memoryCache.flushAll();
           return query(args);
         },
       },
