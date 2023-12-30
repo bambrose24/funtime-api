@@ -27,7 +27,7 @@ export default class LeagueRulesResolver {
 export async function getRulesForLeague(league_id: number): Promise<LeagueRuleWithExplanation[]> {
   const league = await datastore.league.findFirstOrThrow({
     where: {league_id},
-    cacheStrategy: PRISMA_CACHES.oneDay,
+    // cacheStrategy PRISMA_CACHES.oneDay,
   });
   const rules: LeagueRuleWithExplanation[] = [
     ...(league.late_policy

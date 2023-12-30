@@ -19,7 +19,7 @@ export default class UserID {
   ): Promise<League | null> {
     const membership = await datastore.leagueMember.findFirst({
       where: {league_id, user_id: user.uid},
-      cacheStrategy: PRISMA_CACHES.oneHour,
+      // cacheStrategy PRISMA_CACHES.oneHour,
     });
     if (!membership) {
       return null;
@@ -35,7 +35,7 @@ export default class UserID {
   ): Promise<LeagueMember | null> {
     const membership = await datastore.leagueMember.findFirst({
       where: {league_id, user_id: user.uid},
-      cacheStrategy: PRISMA_CACHES.oneHour,
+      // cacheStrategy PRISMA_CACHES.oneHour,
     });
     if (!membership) {
       return null;

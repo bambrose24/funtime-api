@@ -22,7 +22,7 @@ export async function authorizeAndSetSupabaseUser(token: string): Promise<void> 
     if (user.data.user) {
       const dbUser = await datastore.user.findFirst({
         where: {email: user.data.user.email},
-        cacheStrategy: PRISMA_CACHES.oneMinute,
+        // cacheStrategy PRISMA_CACHES.oneMinute,
       });
       if (dbUser) {
         Sentry.setUser({

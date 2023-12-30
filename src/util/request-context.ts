@@ -53,7 +53,7 @@ async function get<T extends keyof RequestContextTypes>(
       if (!(leagueId in contextMap)) {
         const league = await datastore.league.findFirst({
           where: {league_id: leagueId},
-          cacheStrategy: PRISMA_CACHES.oneHour,
+          // cacheStrategy PRISMA_CACHES.oneHour,
         });
         contextMap[leagueId] = league;
       }

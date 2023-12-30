@@ -27,7 +27,7 @@ export default class LeagueMemberID {
     }
     const pick = await datastore.pick.findFirst({
       where: {member_id: leagueMember.membership_id, gid: nextGame.gid},
-      cacheStrategy: PRISMA_CACHES.oneMinute,
+      // cacheStrategy PRISMA_CACHES.oneMinute,
     });
     return Boolean(pick);
   }

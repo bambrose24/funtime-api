@@ -31,12 +31,12 @@ export default class LeagueID {
       datastore.game.findFirst({
         where: {season: league.season},
         orderBy: {ts: 'asc'},
-        cacheStrategy: PRISMA_CACHES.oneMinute,
+        // cacheStrategy PRISMA_CACHES.oneMinute,
       }),
       datastore.game.findFirst({
         where: {season: league.season},
         orderBy: {ts: 'desc'},
-        cacheStrategy: PRISMA_CACHES.oneMinute,
+        // cacheStrategy PRISMA_CACHES.oneMinute,
       }),
     ]);
 
@@ -75,7 +75,7 @@ export default class LeagueID {
     }
     return await datastore.leagueMember.findFirst({
       where: {league_id: league.league_id, people: {uid: dbUser.uid}},
-      cacheStrategy: PRISMA_CACHES.oneMinute,
+      // cacheStrategy PRISMA_CACHES.oneMinute,
     });
   }
 

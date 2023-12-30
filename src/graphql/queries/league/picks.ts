@@ -16,7 +16,7 @@ export default class LeaguePickResolver {
   ): Promise<Pick[]> {
     return await datastore.pick.findMany({
       where: {...(whereArg ?? {}), leaguemembers: {league_id: league.league_id}},
-      cacheStrategy: PRISMA_CACHES.oneMinute,
+      // cacheStrategy PRISMA_CACHES.oneMinute,
     });
   }
 }

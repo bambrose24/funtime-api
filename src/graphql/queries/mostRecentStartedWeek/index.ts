@@ -40,10 +40,13 @@ class MostRecentStartedWeekResolver {
     const {week, season} = mostRecentStartedGame;
 
     const [games, picks] = await Promise.all([
-      datastore.game.findMany({where: {week, season}, cacheStrategy: PRISMA_CACHES.oneMinute}),
+      datastore.game.findMany({
+        where: {week, season},
+        // cacheStrategy PRISMA_CACHES.oneMinute
+      }),
       datastore.pick.findMany({
         where: {week, leaguemembers: {league_id}},
-        cacheStrategy: PRISMA_CACHES.oneMinute,
+        // cacheStrategy PRISMA_CACHES.oneMinute,
       }),
     ]);
 

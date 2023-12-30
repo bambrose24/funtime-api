@@ -29,7 +29,7 @@ export default class LeagueMemberPeopleResolver {
     const membersAndPeople = await datastore.leagueMember.findMany({
       where: {league_id},
       include: {people: true},
-      cacheStrategy: PRISMA_CACHES.oneMinute,
+      // cacheStrategy PRISMA_CACHES.oneMinute,
     });
 
     return membersAndPeople.map(m => {

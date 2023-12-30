@@ -45,7 +45,7 @@ class MakePicksResolver {
 
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: dbUser.uid}},
-      cacheStrategy: PRISMA_CACHES.oneDay,
+      // cacheStrategy PRISMA_CACHES.oneDay,
     });
     if (
       override_member_id &&
@@ -62,7 +62,7 @@ class MakePicksResolver {
     const member = override_member_id
       ? await datastore.leagueMember.findFirstOrThrow({
           where: {membership_id: override_member_id},
-          cacheStrategy: PRISMA_CACHES.oneDay,
+          // cacheStrategy PRISMA_CACHES.oneDay,
         })
       : viewerMember;
     if (picks.length === 0) {

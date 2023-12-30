@@ -7,6 +7,6 @@ export async function nextNotStartedGame() {
   return await datastore.game.findFirst({
     where: {season: currentSeason, ts: {gte: now}},
     orderBy: {ts: 'asc'},
-    cacheStrategy: PRISMA_CACHES.oneMinute,
+    // cacheStrategy PRISMA_CACHES.oneMinute,
   });
 }

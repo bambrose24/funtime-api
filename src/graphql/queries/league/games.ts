@@ -15,7 +15,7 @@ export default class LeagueGames {
   ): Promise<Game[]> {
     return await datastore.game.findMany({
       where: {...where, season: league.season},
-      cacheStrategy: PRISMA_CACHES.oneMinute,
+      // cacheStrategy PRISMA_CACHES.oneMinute,
     });
   }
 }

@@ -47,12 +47,12 @@ export default class LeagueRankingsResolver {
         _count: {
           _all: true, // Count all fields (this will give us the count of correct picks for each member)
         },
-        cacheStrategy: PRISMA_CACHES.oneMinute,
+        // cacheStrategy PRISMA_CACHES.oneMinute,
       }),
       datastore.leagueMember.findMany({
         where: {league_id: league.league_id},
         include: {people: true},
-        cacheStrategy: PRISMA_CACHES.oneHour,
+        // cacheStrategy PRISMA_CACHES.oneHour,
       }),
     ]);
 
