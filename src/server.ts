@@ -135,7 +135,6 @@ if (process.env.FUNTIME_RUN_CRON === 'true') {
 async function bootstrap(httpServerFromFn: Server) {
   const schema = await buildSchema({
     resolvers,
-    dateScalarMode: 'isoDate',
     authChecker: customAuthChecker,
   });
 
