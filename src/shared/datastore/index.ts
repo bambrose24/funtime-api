@@ -22,20 +22,25 @@ const getTTLExtension = (ttl: number) => {
   return Prisma.defineExtension({
     query: {
       $allModels: {
-        $allOperations: async ({args, query, operation}) => {
+        $allOperations: async ({args, query, operation, model}) => {
+          logger.info(`prisma_operation`, {operation, model});
           if (readOperations.includes(operation)) {
+            logger.info(`prisma_read`, {operation, model});
             // TODO look at cache
             const key = stringify(args);
             const cachedResult = memoryCache.get<ReturnType<typeof query>>(key);
             if (cachedResult) {
-              logger.info(`prisma_cache_hit`, {operation});
+              logger.info(`prisma_cache_hit`, {operation, model});
               return cachedResult;
             }
-            logger.info(`prisma_cache_miss`, {operation});
+            logger.info(`prisma_cache_miss`, {operation, model});
             const result = await query(args);
             memoryCache.set(key, result, ttl);
             return result;
           }
+          // clear the cache because it's not a read happening
+          logger.info(`prisma_non_read`, {operation, model});
+          memoryCache.flushAll();
           return query(args);
         },
       },
