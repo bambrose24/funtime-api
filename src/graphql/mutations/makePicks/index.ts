@@ -4,6 +4,7 @@ import {Arg, Field, InputType, Int, Mutation, ObjectType, Resolver} from 'type-g
 import * as TypeGraphQL from '@generated/type-graphql';
 import {sendPickSuccessEmail} from '@shared/email';
 import {getUser} from '@shared/auth/user';
+import {SIXTY_SECONDS_SWR} from '@util/const';
 
 @ObjectType()
 class MakePicksResponse {
@@ -44,6 +45,7 @@ class MakePicksResolver {
 
     const viewerMember = await datastore.leagueMember.findFirstOrThrow({
       where: {league_id, people: {uid: dbUser.uid}},
+      cacheStrategy: SIXTY_SECONDS_SWR,
     });
     if (
       override_member_id &&
@@ -58,7 +60,10 @@ class MakePicksResolver {
     const isImpersonating = Boolean(override_member_id);
 
     const member = override_member_id
-      ? await datastore.leagueMember.findFirstOrThrow({where: {membership_id: override_member_id}})
+      ? await datastore.leagueMember.findFirstOrThrow({
+          where: {membership_id: override_member_id},
+          cacheStrategy: SIXTY_SECONDS_SWR,
+        })
       : viewerMember;
     if (picks.length === 0) {
       return {success: false, user: dbUser};
@@ -71,6 +76,7 @@ class MakePicksResolver {
           lt: new Date(),
         },
       },
+      cacheStrategy: SIXTY_SECONDS_SWR,
     });
     const startedGids = new Set(startedGamesForWeek.map(g => g.gid));
     const filteredPicks = isImpersonating ? picks : picks.filter(p => !startedGids.has(p.game_id));
@@ -109,9 +115,9 @@ async function upsertWeekPicksForMember(
   picks: Array<GamePick>,
   isImpersonating: boolean
 ): Promise<{week: number; season: number}> {
-  const user = await datastore.leagueMember
-    .findUniqueOrThrow({where: {membership_id: member_id}})
-    .people();
+  const user = await datastore.user.findFirstOrThrow({
+    where: {leaguemembers: {some: {membership_id: member_id}}},
+  });
 
   if (!user) {
     throw new Error('Could not make picks for unknown member');

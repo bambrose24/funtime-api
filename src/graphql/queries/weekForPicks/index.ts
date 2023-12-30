@@ -3,7 +3,7 @@ import datastore from '@shared/datastore';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {Arg, Field, ID, Int, ObjectType, Query} from 'type-graphql';
 import {now} from '@util/time';
-import {DEFAULT_SEASON} from '@util/const';
+import {DEFAULT_SEASON, SIXTY_SECONDS_SWR} from '@util/const';
 import {getUser} from '@shared/auth/user';
 
 @ObjectType()
@@ -90,13 +90,18 @@ export class WeekForPicksResolver {
       datastore.game.findMany({
         where: {week, season},
         orderBy: {ts: 'asc'},
+        cacheStrategy: SIXTY_SECONDS_SWR,
       }),
       week !== null && week !== undefined
         ? datastore.pick.findMany({
             where: {week, leaguemembers: {league_id, membership_id: memberId}},
+            cacheStrategy: SIXTY_SECONDS_SWR,
           })
         : [],
-      datastore.leagueMember.findFirst({where: {membership_id: memberId}}),
+      datastore.leagueMember.findFirst({
+        where: {membership_id: memberId},
+        cacheStrategy: SIXTY_SECONDS_SWR,
+      }),
       datastore.leagueMessage.findMany({
         where: {
           league_id,
@@ -105,6 +110,7 @@ export class WeekForPicksResolver {
           week,
         },
         orderBy: {createdAt: 'asc'},
+        cacheStrategy: SIXTY_SECONDS_SWR,
       }),
     ]);
 
@@ -145,9 +151,10 @@ async function findWeekForPicks({
         },
       },
       orderBy: {ts: 'asc'},
+      cacheStrategy: SIXTY_SECONDS_SWR,
     }),
-    datastore.league.findFirstOrThrow({where: {league_id}}),
-    datastore.pick.findMany({where: {member_id}}),
+    datastore.league.findFirstOrThrow({where: {league_id}, cacheStrategy: SIXTY_SECONDS_SWR}),
+    datastore.pick.findMany({where: {member_id}, cacheStrategy: SIXTY_SECONDS_SWR}),
   ]);
 
   const nextUnstartedGame = firstNotStartedGame(gamesWithinMonth);

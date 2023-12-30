@@ -9,6 +9,6 @@ COPY . .
 
 EXPOSE 8080
 
-RUN npm run build
+RUN npm run build-prod
 
 CMD [ "npm", "start" ]

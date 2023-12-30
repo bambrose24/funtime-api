@@ -45,7 +45,7 @@ export default class LeagueID {
     @Root() league: League,
     @Ctx() {prisma: datastore}: ApolloContext,
     @Arg('where', _type => TypeGraphQL.LeagueMemberWhereInput, {nullable: true})
-    where: Parameters<typeof datastore.leagueMember.aggregate>[0]['where']
+    where: TypeGraphQL.LeagueMemberWhereInput
   ): Promise<AggregateResponse> {
     const res = await datastore.leagueMember.aggregate({
       _count: {membership_id: true},

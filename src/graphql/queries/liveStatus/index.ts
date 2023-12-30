@@ -28,7 +28,7 @@ export default class GameLiveResolver {
   ): Promise<GameLive | undefined | null> {
     try {
       const [teams, msfGames] = await Promise.all([
-        datastore.team.findMany({where: {teamid: {gt: 0}}}),
+        datastore.team.findMany({where: {teamid: {gt: 0}}, cacheStrategy: {swr: 1000, ttl: 1000}}),
         timeout(
           getGamesByWeek(game.season, game.week),
           3000,

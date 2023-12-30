@@ -68,7 +68,7 @@ export async function sendPickSuccessEmail(
         member_id: {equals: member_id},
       },
     }),
-    datastore.leagueMember.findFirstOrThrow({where: {membership_id: member_id}}).people(),
+    datastore.user.findFirstOrThrow({where: {leaguemembers: {some: {membership_id: member_id}}}}),
     datastore.team.findMany({where: {teamid: {gt: 0}}}),
     datastore.leagueMember.findFirstOrThrow({
       where: {membership_id: member_id},

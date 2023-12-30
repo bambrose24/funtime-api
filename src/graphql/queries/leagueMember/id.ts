@@ -4,6 +4,7 @@ import {LeagueMember} from '@prisma/client';
 import {getNextGame} from '@shared/queries/getNextGame';
 import datastore from '@shared/datastore';
 import {RequestContext} from '@util/request-context';
+import {SIXTY_SECONDS_SWR} from '@util/const';
 
 @Resolver(() => TypeGraphQL.LeagueMember)
 export default class LeagueMemberID {
@@ -26,6 +27,7 @@ export default class LeagueMemberID {
     }
     const pick = await datastore.pick.findFirst({
       where: {member_id: leagueMember.membership_id, gid: nextGame.gid},
+      cacheStrategy: SIXTY_SECONDS_SWR,
     });
     return Boolean(pick);
   }
