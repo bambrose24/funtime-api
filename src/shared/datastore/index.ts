@@ -23,6 +23,7 @@ const getTTLExtension = (ttl: number) => {
     query: {
       $allModels: {
         $allOperations: async ({args, query, operation, model}) => {
+          const startTime = Date.now();
           logger.info(`prisma_operation`, {operation, model});
           if (readOperations.includes(operation)) {
             logger.info(`prisma_read`, {operation, model});
@@ -31,11 +32,18 @@ const getTTLExtension = (ttl: number) => {
             const key = stringify({prismaOperationCacheKey});
             const cachedResult = memoryCache.get<ReturnType<typeof query>>(key);
             if (cachedResult) {
-              logger.info(`prisma_cache_hit`, {operation, model});
+              const endTime = Date.now();
+              const operationTime = endTime - startTime;
+              logger.info(`prisma_cache_hit`, {operation, model, operationTime});
+
               return cachedResult;
             }
-            logger.info(`prisma_cache_miss`, {operation, model});
             const result = await query(args);
+
+            const endTime = Date.now();
+            const operationTime = endTime - startTime;
+
+            logger.info(`prisma_cache_miss`, {operation, model, operationTime});
             memoryCache.set(key, result, ttl);
             return result;
           }
