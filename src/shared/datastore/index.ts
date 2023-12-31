@@ -24,7 +24,7 @@ const getTTLExtension = (ttl: number) => {
       $allModels: {
         $allOperations: async ({args, query, operation, model}) => {
           const startTime = Date.now();
-          logger.info(`prisma_operation`, {operation, model});
+          logger.info(`prisma_operation_start`, {prismaOperation: operation, prismaModel: model});
           if (readOperations.includes(operation)) {
             logger.info(`prisma_read`, {operation, model});
             // TODO look at cache
@@ -34,7 +34,11 @@ const getTTLExtension = (ttl: number) => {
             if (cachedResult) {
               const endTime = Date.now();
               const operationTime = endTime - startTime;
-              logger.info(`prisma_cache_hit`, {operation, model, operationTime});
+              logger.info(`prisma_cache_hit`, {
+                prismaOperation: operation,
+                prismaModel: model,
+                prismaOperationTime: operationTime,
+              });
 
               return cachedResult;
             }
@@ -43,13 +47,20 @@ const getTTLExtension = (ttl: number) => {
             const endTime = Date.now();
             const operationTime = endTime - startTime;
 
-            logger.info(`prisma_cache_miss`, {operation, model, operationTime});
+            logger.info(`prisma_cache_miss`, {
+              prismaOperation: operation,
+              prismaModel: model,
+              prismaOperationTime: operationTime,
+            });
             memoryCache.set(key, result, ttl);
             return result;
           }
+
+          logger.info(`prisma_non_read`, {prismaOperation: operation, prismaModel: model});
+
           // clear the cache because it's not a read happening
-          logger.info(`prisma_non_read`, {operation, model});
           // memoryCache.flushAll();
+
           return query(args);
         },
       },
