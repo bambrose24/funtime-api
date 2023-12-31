@@ -60,7 +60,7 @@ const getTTLExtension = (ttl: number) => {
 const datastore = new PrismaClient({
   // log: ["error", "info", "query", "warn"],
   log: ['error'],
-}).$extends(getTTLExtension(15));
+}).$extends(getTTLExtension(30));
 
 // datastore.$use(cacheMiddleware);
 export {datastore};
