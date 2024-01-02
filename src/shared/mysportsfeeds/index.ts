@@ -91,7 +91,7 @@ export async function getGamesByWeek(
     memoryCache.set(key, res);
     return res;
   } catch (e) {
-    console.error('error getting weekly games', e);
+    logger.error('error getting weekly games', e);
   }
   return [];
 }
