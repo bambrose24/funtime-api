@@ -5,13 +5,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 import {Game, Team} from '@prisma/client';
 import {datastore} from '@shared/datastore';
-import {msf} from '@shared/dataproviders/mysportsfeeds';
 import {MSFGame} from '@shared/dataproviders/mysportsfeeds/types';
 import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
 import _ from 'lodash';
 import {env} from 'src/config';
 import {DataProviderGame} from '@shared/dataproviders/types';
+import {provider} from '@shared/dataproviders';
 
 async function run() {
   const existingGames = await datastore.game.findMany({where: {season: DEFAULT_SEASON}});
@@ -22,7 +22,7 @@ async function run() {
     return;
   }
 
-  const games = await msf.getGamesBySeason({season: DEFAULT_SEASON});
+  const games = await provider.getGamesBySeason({season: DEFAULT_SEASON});
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
   });

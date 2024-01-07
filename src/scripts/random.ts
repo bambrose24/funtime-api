@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import _ from 'lodash';
-import {msf} from '@shared/dataproviders/mysportsfeeds';
+import {provider} from '@shared/dataproviders';
 
 async function run() {
   try {
     console.log('starting script');
 
-    const games = await msf.getGamesBySeason({season: 2023});
+    const games = await provider.getGamesBySeason({season: 2023});
     console.log('games??', games.length);
 
     console.log('ending script');

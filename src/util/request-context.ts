@@ -1,9 +1,9 @@
 import {Game, League} from '@prisma/client';
 import {datastore} from '@shared/datastore';
-import {msf} from '@shared/dataproviders/mysportsfeeds';
 import {getNextGame} from '@shared/queries/getNextGame';
 import httpContext from 'express-http-context';
 import {DataProviderGame} from '@shared/dataproviders/types';
+import {provider} from '@shared/dataproviders';
 
 type RequestContextTypes = {
   getGamesByWeek: {
@@ -40,7 +40,7 @@ async function get<T extends keyof RequestContextTypes>(
       const contextMap = (httpContext.get(key) ?? {}) as Record<string, DataProviderGame[]>;
       const contextKey = `${week}_${season}`;
       if (!(contextKey in contextMap)) {
-        const fromMSF = await msf.getGamesByWeek({season, week});
+        const fromMSF = await provider.getGamesByWeek({season, week});
         contextMap[contextKey] = fromMSF;
       }
       httpContext.set(key, contextMap);

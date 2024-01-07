@@ -5,7 +5,6 @@ import {MSFGamePlayedStatus} from '../../../shared/dataproviders/mysportsfeeds/t
 import {Game} from '@prisma/client';
 import {timeout} from '@util/timeout';
 import {logger} from '@util/logger';
-import {msf} from '@shared/dataproviders/mysportsfeeds';
 import {RequestContext} from '@util/request-context';
 
 @ObjectType('GameLive')

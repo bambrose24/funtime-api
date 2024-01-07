@@ -1,7 +1,6 @@
 import {datastore} from '@shared/datastore';
-import {msf} from '@shared/dataproviders/mysportsfeeds';
 import _ from 'lodash';
-import moment from 'moment';
+import {provider} from '@shared/dataproviders';
 
 async function run() {
   const week = 15;
@@ -15,7 +14,7 @@ async function run() {
 }
 
 export async function updateWeek({week, season}: {week: number; season: number}) {
-  const seasonGames = await msf.getGamesByWeek({season, week});
+  const seasonGames = await provider.getGamesByWeek({season, week});
   const now = new Date();
 
   const games = seasonGames.filter(g => g.week === week);
