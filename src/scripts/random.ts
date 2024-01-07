@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import _ from 'lodash';
-import {msf} from '@shared/mysportsfeeds';
+import {msf} from '@shared/dataproviders/mysportsfeeds';
 
 async function run() {
   try {

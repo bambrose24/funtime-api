@@ -1,11 +1,11 @@
 import {Ctx, Field, FieldResolver, ID, Int, ObjectType, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloContext} from 'src/graphql/server/types';
-import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
+import {MSFGamePlayedStatus} from '../../../shared/dataproviders/mysportsfeeds/types';
 import {Game} from '@prisma/client';
 import {timeout} from '@util/timeout';
 import {logger} from '@util/logger';
-import {msf} from '@shared/mysportsfeeds';
+import {msf} from '@shared/dataproviders/mysportsfeeds';
 import {RequestContext} from '@util/request-context';
 
 @ObjectType('GameLive')
@@ -30,7 +30,7 @@ export default class GameLiveResolver {
     // const nullItOut: boolean = true;
     // if (nullItOut) return null;
     try {
-      const [teams, msfGames] = await Promise.all([
+      const [teams, providerGames] = await Promise.all([
         datastore.team.findMany({
           where: {teamid: {gt: 0}},
           // cacheStrategy PRISMA_CACHES.oneDay
@@ -43,23 +43,28 @@ export default class GameLiveResolver {
       ]);
       const homeTeam = teams.find(t => t.teamid === game.home)!;
       const awayTeam = teams.find(t => t.teamid === game.away)!;
-      const msfGame = msfGames?.find(
-        g =>
-          g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
-          g.schedule.awayTeam.abbreviation === awayTeam.abbrev
+      const providerGame = providerGames?.find(
+        g => g.homeAbbrev === homeTeam.abbrev && g.awayAbbrev === awayTeam.abbrev
       );
 
-      if (!msfGame) {
+      if (!providerGame) {
         return null;
       }
 
-      logger.info(`msfGame for ${game.gid}: ${JSON.stringify(msfGame)}`);
+      logger.info(`msfGame for ${game.gid}: ${JSON.stringify(providerGame)}`);
 
       return {
         id: `msf_${game.gid}`,
-        currentQuarter: msfGame.score.currentQuarter,
-        currentQuarterSecondsRemaining: msfGame.score.currentQuarterSecondsRemaining,
-        playedStatus: msfGame.schedule.playedStatus,
+        currentQuarter: providerGame.quarter,
+        currentQuarterSecondsRemaining: providerGame.secondsInQuarter,
+        playedStatus:
+          providerGame.status === 'done'
+            ? MSFGamePlayedStatus.COMPLETED
+            : providerGame.status === 'in_progress'
+            ? MSFGamePlayedStatus.LIVE
+            : providerGame.status === 'not_started'
+            ? MSFGamePlayedStatus.UNPLAYED
+            : MSFGamePlayedStatus.UNPLAYED,
       };
     } catch (e) {
       console.error(`Error fetching liveStatus for ${game.gid}: ${e}`);

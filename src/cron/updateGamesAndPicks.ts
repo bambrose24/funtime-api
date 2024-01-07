@@ -1,17 +1,18 @@
 import { Game, Team } from "@prisma/client";
 import { datastore } from "@shared/datastore";
-import { MSFGame, MSFGamePlayedStatus } from "@shared/mysportsfeeds/types";
+import { MSFGame, MSFGamePlayedStatus } from "@shared/dataproviders/mysportsfeeds/types";
 import { DEFAULT_SEASON } from "@util/const";
 import { logger } from "@util/logger";
 import _ from "lodash";
 import moment from "moment";
+import { DataProviderGame } from "@shared/dataproviders/types";
 
-export default async function updateGamesAndPicks(games: Array<MSFGame>) {
+export default async function updateGamesAndPicks(games: Array<DataProviderGame>) {
   const [dbGames, teams] = await Promise.all([
     datastore.game.findMany({
       where: {
         season: { equals: DEFAULT_SEASON },
-        week: { in: games.map((g) => g.schedule.week) },
+        week: { in: games.map((g) => g.week) },
       },
     }),
     datastore.team.findMany({ where: { teamid: { gt: 0 } } }),
@@ -31,21 +32,22 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         }
         const homeTeam = teamsMap[dbGame.home];
         const awayTeam = teamsMap[dbGame.away];
-        const msfGame = games.find(
+        const providerGame = games.find(
           (g) =>
-            g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
-            g.schedule.awayTeam.abbreviation === awayTeam.abbrev
+            g.homeAbbrev === homeTeam.abbrev &&
+            g.awayAbbrev === awayTeam.abbrev
+             && g.week === dbGame.week
         );
-        if (!msfGame) {
+        if (!providerGame) {
           logger.info(
             `[cron] could not find msf game for ${awayTeam.abbrev}@${homeTeam.abbrev}`
           );
         }
 
-        const homeScore = msfGame?.score.homeScoreTotal;
-        const awayScore = msfGame?.score.awayScoreTotal;
+        const homeScore = providerGame?.homeScore;
+        const awayScore = providerGame?.awayScore;
 
-        logger.info(`[cron] MSF Game in update for ${dbGame.gid}`, msfGame)
+        logger.info(`[cron] Data Provider Game in update for ${dbGame.gid}`, providerGame)
 
         await datastore.game.update({
           where: { gid: dbGame.gid },
@@ -58,7 +60,7 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
         });
 
         if (
-          (msfGame?.schedule?.playedStatus === MSFGamePlayedStatus.COMPLETED || msfGame?.schedule?.playedStatus === MSFGamePlayedStatus.COMPLETED_PENDING_REVIEW) &&
+          providerGame?.status === 'done' &&
           homeScore !== null && 
           homeScore !== undefined &&
           awayScore !== null && 
@@ -81,8 +83,8 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
             winner,
             homescore: homeScore,
             awayscore: awayScore,
-            ...(msfGame?.schedule.startTime
-              ? { ts: moment(msfGame.schedule.startTime).toDate() }
+            ...(providerGame?.startTime
+              ? { ts: moment(providerGame.startTime).toDate() }
               : {}),
           } satisfies Parameters<typeof datastore["game"]["update"]>[0]["data"];
 
@@ -122,8 +124,8 @@ export default async function updateGamesAndPicks(games: Array<MSFGame>) {
           data: {
             homerecord,
             awayrecord,
-            ...(msfGame?.schedule.startTime
-              ? { ts: moment(msfGame.schedule.startTime).toDate() }
+            ...(providerGame?.startTime
+              ? { ts: providerGame?.startTime }
               : {}),
           },
         });

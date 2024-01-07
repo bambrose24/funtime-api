@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   require('dotenv').config();
 }
-import {msf} from '@shared/mysportsfeeds';
+import {msf} from '@shared/dataproviders/mysportsfeeds';
 import {logger} from '@util/logger';
 
 async function run() {

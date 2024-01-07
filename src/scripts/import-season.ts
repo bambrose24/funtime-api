@@ -5,12 +5,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 import {Game, Team} from '@prisma/client';
 import {datastore} from '@shared/datastore';
-import {msf} from '@shared/mysportsfeeds';
-import {MSFGame} from '@shared/mysportsfeeds/types';
+import {msf} from '@shared/dataproviders/mysportsfeeds';
+import {MSFGame} from '@shared/dataproviders/mysportsfeeds/types';
 import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
 import _ from 'lodash';
 import {env} from 'src/config';
+import {DataProviderGame} from '@shared/dataproviders/types';
 
 async function run() {
   const existingGames = await datastore.game.findMany({where: {season: DEFAULT_SEASON}});
@@ -30,7 +31,7 @@ async function run() {
     teamsMap[t.abbrev!] = t;
   });
 
-  const dbGames = games.map((g: MSFGame) =>
+  const dbGames = games.map((g: DataProviderGame) =>
     convertToDBGameForCreation(DEFAULT_SEASON, g, teamsMap)
   );
   logger.info(`prepped ${dbGames.length} games to input`);
@@ -59,7 +60,7 @@ async function run() {
 
 function convertToDBGameForCreation(
   season: number,
-  game: MSFGame,
+  game: DataProviderGame,
   teamsMap: Record<string, Team>
 ): Pick<
   Game,
@@ -76,17 +77,17 @@ function convertToDBGameForCreation(
   | 'msf_id'
 > {
   return {
-    home: teamsMap[game.schedule.homeTeam.abbreviation].teamid,
+    home: teamsMap[game.homeAbbrev].teamid,
     homescore: 0,
-    away: teamsMap[game.schedule.awayTeam.abbreviation].teamid,
+    away: teamsMap[game.awayAbbrev].teamid,
     awayscore: 0,
     season,
-    week: game.schedule.week,
-    ts: new Date(game.schedule.startTime),
-    seconds: new Date(game.schedule.startTime).getTime() / 1000,
+    week: game.week,
+    ts: new Date(game.startTime),
+    seconds: +game.startTime / 1000,
     done: false,
     winner: null,
-    msf_id: game.schedule.id,
+    msf_id: 0, // TODO make an espn ID
   };
 }
 

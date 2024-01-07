@@ -1,5 +1,5 @@
 import {datastore} from '@shared/datastore';
-import {msf} from '@shared/mysportsfeeds';
+import {msf} from '@shared/dataproviders/mysportsfeeds';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -18,7 +18,7 @@ export async function updateWeek({week, season}: {week: number; season: number})
   const seasonGames = await msf.getGamesByWeek({season, week});
   const now = new Date();
 
-  const games = seasonGames.filter(g => g.schedule.week === week);
+  const games = seasonGames.filter(g => g.week === week);
 
   const dbGames = await datastore.game.findMany({
     where: {week, season},
@@ -32,24 +32,19 @@ export async function updateWeek({week, season}: {week: number; season: number})
     games.map(async g => {
       const dbGame = dbGames.find(
         db =>
-          db.teams_games_awayToteams.abbrev === g.schedule.awayTeam.abbreviation &&
-          db.teams_games_homeToteams.abbrev === g.schedule.homeTeam.abbreviation
+          db.teams_games_awayToteams.abbrev === g.awayAbbrev &&
+          db.teams_games_homeToteams.abbrev === g.homeAbbrev &&
+          g.week === db.week
       );
       if (!dbGame) {
         return;
       }
-      if (dbGame.is_tiebreaker) {
-        console.log('tiebreaker?', dbGame);
-      }
-      const date = moment(g.schedule.startTime);
-      const unix = date.unix();
-      console.log(g.schedule.awayTeam.abbreviation, g.schedule.homeTeam.abbreviation, unix);
       await datastore.game.update({
         where: {gid: dbGame.gid},
         data: {
-          done: now < date.toDate() ? false : true,
-          ts: date.toDate(),
-          seconds: unix,
+          done: g.status === 'done',
+          ts: g.startTime,
+          seconds: +g.startTime,
         },
       });
     })
