@@ -1,7 +1,7 @@
 import {Ctx, Field, FieldResolver, ID, Int, ObjectType, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloContext} from 'src/graphql/server/types';
-import {getGamesByWeek} from '../../../shared/mysportsfeeds';
+import {getGamesByWeek_DEPRECATED} from '../../../shared/mysportsfeeds/old';
 import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
 import {Game} from '@prisma/client';
 import {timeout} from '@util/timeout';
@@ -27,7 +27,7 @@ export default class GameLiveResolver {
     @Root() game: Game,
     @Ctx() {prisma: datastore}: ApolloContext
   ): Promise<GameLive | undefined | null> {
-    const maybe: boolean = true;
+    const maybe: boolean = false;
     if (maybe) return null;
     try {
       const [teams, msfGames] = await Promise.all([
@@ -36,7 +36,7 @@ export default class GameLiveResolver {
           // cacheStrategy PRISMA_CACHES.oneDay
         }),
         timeout(
-          getGamesByWeek(game.season, game.week),
+          getGamesByWeek_DEPRECATED(game.season, game.week),
           3000,
           'getGamesByWeek timed out after 3 seconds'
         ),

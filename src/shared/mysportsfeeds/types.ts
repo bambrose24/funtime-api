@@ -7,6 +7,15 @@ export enum MSFGamePlayedStatus {
   COMPLETED_PENDING_REVIEW = 'COMPLETED_PENDING_REVIEW',
 }
 
+export type WeekSeasonOptions = {
+  week: number;
+  season: number;
+};
+
+export type SeasonOptions = {
+  season: number;
+};
+
 registerEnumType(MSFGamePlayedStatus, {
   name: 'MSFGamePlayedStatus',
   description: 'Status of the game',

@@ -1,5 +1,5 @@
 import {datastore} from '@shared/datastore';
-import {getGamesBySeason, getGamesByWeek} from '@shared/mysportsfeeds';
+import {getGamesBySeason_DEPRECATED, getGamesByWeek_DEPRECATED} from '@shared/mysportsfeeds/old';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -15,7 +15,7 @@ async function run() {
 }
 
 export async function updateWeek({week, season}: {week: number; season: number}) {
-  const seasonGames = await getGamesByWeek(season, week);
+  const seasonGames = await getGamesByWeek_DEPRECATED(season, week);
   const now = new Date();
 
   const games = seasonGames.filter(g => g.schedule.week === week);

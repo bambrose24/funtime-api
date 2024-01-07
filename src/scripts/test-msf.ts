@@ -4,10 +4,10 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 import {logger} from '@util/logger';
-import {getGamesBySeason, getGamesByWeek} from '../shared/mysportsfeeds';
+import {getGamesBySeason_DEPRECATED, getGamesByWeek_DEPRECATED} from '../shared/mysportsfeeds/old';
 
 async function run() {
-  const games = await getGamesByWeek(2022, 1);
+  const games = await getGamesByWeek_DEPRECATED(2022, 1);
   logger.info(games[0]);
 }
 
