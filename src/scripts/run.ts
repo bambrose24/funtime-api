@@ -5,6 +5,7 @@
 // REMINDER TO CHANGE THE DB URL
 
 import 'reflect-metadata';
+import 'module-alias/register';
 
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 if (process.env.NODE_ENV !== 'production') {
@@ -32,6 +33,6 @@ import {logger} from '@util/logger';
 const scriptPath = resolve(__dirname, scriptName);
 
 logger.info(`Running script: ${scriptPath}.ts`);
-execSync(`npx ts-node -r tsconfig-paths/register ${scriptPath}`, {
+execSync(`npx ts-node -r module-alias/register ${scriptPath}`, {
   stdio: 'inherit',
 });

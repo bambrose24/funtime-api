@@ -3,6 +3,7 @@ import {MSFGame} from './types';
 
 import AsyncLock from 'async-lock';
 import {logger} from '@util/logger';
+// import {RequestContext} from '@util/request-context';
 
 var MySportsFeeds = require('mysportsfeeds-node');
 
@@ -59,8 +60,8 @@ export async function getGamesBySeason(season: number): Promise<Array<MSFGame>> 
   return [];
 }
 
-function getWeekKey(options: {season: number; week: number}): string {
-  return `msf_week_${options.week}_${options.season}`;
+function getWeekKey({season, week}: {season: number; week: number}): string {
+  return `msf_week_${week}_${season}`;
 }
 
 export async function getGamesByWeek(
@@ -72,6 +73,10 @@ export async function getGamesByWeek(
     const key = getWeekKey({season, week});
 
     // First, check the memory cache
+    // const cachedGames = await RequestContext.get('getGamesByWeek', {week, season});
+    // if (cachedGames) {
+    //   return cachedGames;
+    // }
     const memoryCacheResult = memoryCache.get<Array<MSFGame>>(key);
     if (memoryCacheResult) {
       logger.info(`Returning getGamesByWeek data from memory cache for ${season} ${week}`);

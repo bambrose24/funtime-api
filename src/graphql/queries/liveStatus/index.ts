@@ -27,6 +27,8 @@ export default class GameLiveResolver {
     @Root() game: Game,
     @Ctx() {prisma: datastore}: ApolloContext
   ): Promise<GameLive | undefined | null> {
+    const maybe: boolean = true;
+    if (maybe) return null;
     try {
       const [teams, msfGames] = await Promise.all([
         datastore.team.findMany({
