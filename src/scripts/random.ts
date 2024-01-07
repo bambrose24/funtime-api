@@ -1,8 +1,4 @@
 import 'reflect-metadata';
-import {LEAGUE_ID} from '@graphql/mutations/register';
-import {datastore} from '@shared/datastore';
-import {getGamesByWeek_DEPRECATED} from '@shared/mysportsfeeds/old';
-import {logger} from '@util/logger';
 import _ from 'lodash';
 import {msf} from '@shared/mysportsfeeds';
 

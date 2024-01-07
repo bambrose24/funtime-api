@@ -1,3 +1,4 @@
+import {logger} from '@util/logger';
 import {MSFGame, SeasonOptions, WeekSeasonOptions} from './types';
 
 function gamesURL({week, season}: WeekSeasonOptions) {
@@ -26,6 +27,7 @@ export class MSFClient {
   }
 
   async getGamesByWeek({week, season}: WeekSeasonOptions): Promise<Array<MSFGame>> {
+    logger.info(`Fetching games by week ${week} ${season}`);
     const res = await fetch(gamesURL({week, season}), {
       headers: new Headers({
         ...this.headers(),
@@ -37,6 +39,7 @@ export class MSFClient {
   }
 
   async getGamesBySeason({season}: SeasonOptions): Promise<Array<MSFGame>> {
+    logger.info(`Fetching games by season ${season}`);
     const res = await fetch(seasonURL({season}), {
       headers: new Headers({
         ...this.headers(),

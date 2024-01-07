@@ -1,12 +1,12 @@
 import {Ctx, Field, FieldResolver, ID, Int, ObjectType, Resolver, Root} from 'type-graphql';
 import * as TypeGraphQL from '@generated/type-graphql';
 import {ApolloContext} from 'src/graphql/server/types';
-import {getGamesByWeek_DEPRECATED} from '../../../shared/mysportsfeeds/old';
 import {MSFGamePlayedStatus} from '../../../shared/mysportsfeeds/types';
 import {Game} from '@prisma/client';
 import {timeout} from '@util/timeout';
 import {logger} from '@util/logger';
-import {PRISMA_CACHES} from '@util/const';
+import {msf} from '@shared/mysportsfeeds';
+import {RequestContext} from '@util/request-context';
 
 @ObjectType('GameLive')
 class GameLive {
@@ -36,14 +36,14 @@ export default class GameLiveResolver {
           // cacheStrategy PRISMA_CACHES.oneDay
         }),
         timeout(
-          getGamesByWeek_DEPRECATED(game.season, game.week),
+          RequestContext.get('getGamesByWeek', game),
           3000,
           'getGamesByWeek timed out after 3 seconds'
         ),
       ]);
       const homeTeam = teams.find(t => t.teamid === game.home)!;
       const awayTeam = teams.find(t => t.teamid === game.away)!;
-      const msfGame = msfGames.find(
+      const msfGame = msfGames?.find(
         g =>
           g.schedule.homeTeam.abbreviation === homeTeam.abbrev &&
           g.schedule.awayTeam.abbreviation === awayTeam.abbrev

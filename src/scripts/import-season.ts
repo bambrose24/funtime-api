@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 import {Game, Team} from '@prisma/client';
 import {datastore} from '@shared/datastore';
-import {getGamesBySeason_DEPRECATED} from '@shared/mysportsfeeds/old';
+import {msf} from '@shared/mysportsfeeds';
 import {MSFGame} from '@shared/mysportsfeeds/types';
 import {DEFAULT_SEASON} from '@util/const';
 import {logger} from '@util/logger';
@@ -21,7 +21,7 @@ async function run() {
     return;
   }
 
-  const games = await getGamesBySeason_DEPRECATED(DEFAULT_SEASON);
+  const games = await msf.getGamesBySeason({season: DEFAULT_SEASON});
   const teams = await datastore.team.findMany({
     where: {teamid: {gte: 0}},
   });
