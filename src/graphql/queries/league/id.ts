@@ -46,6 +46,9 @@ export default class LeagueID {
     if (lastGame && now < lastGame.ts) {
       return LeagueStatus.IN_PROGRESS;
     }
+    if (lastGame && !lastGame.done) {
+      return LeagueStatus.IN_PROGRESS;
+    }
     return LeagueStatus.DONE;
   }
 
