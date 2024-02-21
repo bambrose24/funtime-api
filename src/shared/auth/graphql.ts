@@ -17,5 +17,6 @@ export const customAuthChecker: AuthChecker<ApolloContext, Role> = async (
   if (roles.includes(Role.SysAdmin)) {
     return user?.dbUser?.email === 'bambrose24@gmail.com';
   }
+  console.log('hi');
   return true;
 };
